@@ -1,0 +1,10 @@
+<x-layouts.admin title="News article details">
+    <div class="mb-6 flex flex-wrap justify-between gap-4">
+        <div><a href="{{ route('admin.news.index') }}" class="text-sm font-medium text-amber-700">← News</a><h2 class="mt-2 text-2xl font-semibold">{{ $article->translation('al')?->title }}</h2><p class="mt-1 text-sm text-slate-500">{{ $article->translation('en')?->title }}</p></div>
+        <div class="flex gap-2"><a href="{{ route('admin.news.edit', $article) }}" class="rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Edit article</a>@can('delete', $article)<form method="POST" action="{{ route('admin.news.destroy', $article) }}" data-confirm="Move this article to trash?">@csrf @method('DELETE')<button class="rounded-lg border border-red-300 px-4 py-2.5 text-sm text-red-700">Trash</button></form>@endcan</div>
+    </div>
+    <div class="grid gap-5 lg:grid-cols-3">
+        <section class="rounded-2xl border border-slate-200 bg-white p-5 lg:col-span-2">@foreach (config('cms.locales') as $locale => $name) @php $translation = $article->translations->firstWhere('locale', $locale); @endphp<div class="{{ ! $loop->first ? 'mt-6 border-t border-slate-200 pt-6' : '' }}"><h3 class="font-semibold">{{ $name }}</h3><p class="mt-1 text-xs text-slate-500">/{{ $locale }}/news/{{ $translation?->slug }}</p><p class="mt-3 text-sm text-slate-600">{{ $translation?->excerpt }}</p></div>@endforeach</section>
+        <aside class="rounded-2xl border border-slate-200 bg-white p-5 text-sm"><dl class="space-y-3"><div><dt class="text-slate-500">Status</dt><dd>{{ $article->status->label() }}</dd></div><div><dt class="text-slate-500">Publication</dt><dd>{{ $article->published_at?->format('d M Y H:i') ?? 'Not scheduled' }}</dd></div><div><dt class="text-slate-500">Author</dt><dd>{{ $article->author_name ?: $article->createdBy?->name }}</dd></div></dl></aside>
+    </div>
+</x-layouts.admin>

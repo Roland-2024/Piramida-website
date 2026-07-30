@@ -1,0 +1,72 @@
+name: piramida_website
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        APP_UID: ${APP_UID:-1000}
+        APP_GID: ${APP_GID:-1000}
+    environment:
+      WAIT_FOR_DB: "true"
+      WAIT_DB_HOST: db
+      WAIT_DB_PORT: 3306
+      WAIT_DB_DATABASE: ${DB_DATABASE:-piramida}
+      WAIT_DB_USERNAME: ${DB_USERNAME:-piramida}
+      WAIT_DB_PASSWORD: ${DB_PASSWORD:-piramida_local}
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "php-fpm", "-t"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    image: nginx:1.28-alpine
+    ports:
+      - "${APP_PORT:-8088}:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      app:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-piramida}
+      MYSQL_USER: ${DB_USERNAME:-piramida}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-piramida_local}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-piramida_root_local}
+    ports:
+      - "${DB_FORWARD_PORT:-3308}:3306"
+    volumes:
+      - piramida_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  node:
+    image: node:24-alpine
+    profiles: ["frontend"]
+    working_dir: /var/www/html
+    environment:
+      VITE_PORT: ${VITE_PORT:-5178}
+    command: npm run dev -- --host 0.0.0.0
+    ports:
+      - "${VITE_PORT:-5178}:5173"
+    volumes:
+      - .:/var/www/html
+      - piramida_node_modules:/var/www/html/node_modules
+
+volumes:
+  piramida_mysql_data:
+  piramida_node_modules:

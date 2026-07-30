@@ -1,0 +1,69 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+button,
+a,
+input,
+select,
+textarea {
+    @apply transition-colors;
+}
+
+.rich-text {
+    @apply mt-2 overflow-hidden rounded-lg border border-slate-300 bg-white focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-200;
+}
+
+.rich-text__toolbar {
+    @apply flex flex-wrap gap-1 border-b border-slate-200 bg-slate-50 p-2;
+}
+
+.rich-text__toolbar button {
+    @apply rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium hover:bg-slate-100;
+}
+
+.rich-text__editor {
+    @apply min-h-56 px-4 py-3 text-sm leading-7 outline-none;
+}
+
+.rich-text__editor h2 {
+    @apply my-4 text-2xl font-semibold;
+}
+
+.rich-text__editor ul {
+    @apply my-3 list-disc pl-6;
+}
+
+.rich-text__editor ol {
+    @apply my-3 list-decimal pl-6;
+}
+
+.prose-content p {
+    @apply my-4 leading-7;
+}
+
+.prose-content h2 {
+    @apply mb-4 mt-8 text-3xl font-semibold tracking-tight;
+}
+
+.prose-content h3 {
+    @apply mb-3 mt-7 text-2xl font-semibold;
+}
+
+.prose-content ul {
+    @apply my-4 list-disc space-y-2 pl-6;
+}
+
+.prose-content ol {
+    @apply my-4 list-decimal space-y-2 pl-6;
+}
+
+.prose-content a {
+    @apply font-medium text-amber-700 underline;
+}
