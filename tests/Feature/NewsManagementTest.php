@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\ContentStatus;
+use App\Models\Media;
 use App\Models\News;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -34,5 +35,16 @@ class NewsManagementTest extends TestCase
         $second->translations()->where('locale', 'al')->update([
             'slug' => $first->translation('al', false)?->slug,
         ]);
+    }
+
+    public function test_news_gallery_keeps_the_selected_design_order(): void
+    {
+        $article = News::factory()->create();
+        $first = Media::factory()->create();
+        $second = Media::factory()->create();
+
+        $article->syncGallery([$second->id, $first->id]);
+
+        $this->assertSame([$second->id, $first->id], $article->gallery()->pluck('media.id')->all());
     }
 }

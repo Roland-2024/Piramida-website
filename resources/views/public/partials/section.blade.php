@@ -37,4 +37,28 @@
             @endforeach
         </div>
     @endif
+
+    @if ($section->video_url)
+        <div class="mt-8 overflow-hidden rounded-3xl bg-slate-950">
+            @if (preg_match('/\.(mp4|webm|ogg)(\?.*)?$/i', $section->video_url))
+                <video controls preload="metadata" @if($section->primaryMedia) poster="{{ $section->primaryMedia->url() }}" @endif class="aspect-video w-full">
+                    <source src="{{ $section->video_url }}">
+                </video>
+            @else
+                <a href="{{ $section->video_url }}" target="_blank" rel="noopener" class="flex aspect-video items-center justify-center bg-slate-900 text-lg font-semibold text-white">
+                    <span class="rounded-full bg-lime-300 px-6 py-4 text-slate-950">Play video</span>
+                </a>
+            @endif
+        </div>
+    @endif
+
+    @if ($section->gallery->isNotEmpty())
+        <div class="mt-8 grid gap-4 {{ $section->type === \App\Enums\SectionType::Partners ? 'grid-cols-2 items-center sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-3' }}">
+            @foreach ($section->gallery as $media)
+                <div class="{{ $section->type === \App\Enums\SectionType::Partners ? 'rounded-2xl border border-slate-200 bg-white p-6' : '' }}">
+                    <img src="{{ $media->url() }}" alt="{{ $imageAlt($media) }}" class="{{ $section->type === \App\Enums\SectionType::Partners ? 'mx-auto h-20 w-full object-contain' : 'h-64 w-full rounded-2xl object-cover' }}">
+                </div>
+            @endforeach
+        </div>
+    @endif
 </section>

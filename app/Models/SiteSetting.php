@@ -15,8 +15,10 @@ class SiteSetting extends Model
         'email',
         'phone',
         'facebook_url',
+        'x_url',
         'instagram_url',
         'linkedin_url',
+        'map_url',
     ];
 
     public function translations(): HasMany

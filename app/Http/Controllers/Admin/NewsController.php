@@ -59,7 +59,8 @@ class NewsController extends Controller
         $article = DB::transaction(function () use ($request): News {
             $data = $request->validated();
             $translations = $data['translations'];
-            unset($data['translations']);
+            $galleryMediaIds = $data['gallery_media_ids'] ?? [];
+            unset($data['translations'], $data['gallery_media_ids']);
 
             $article = News::query()->create([
                 ...$data,
@@ -67,6 +68,7 @@ class NewsController extends Controller
                 'updated_by' => $request->user()->id,
             ]);
             $article->syncTranslations($translations);
+            $article->syncGallery($galleryMediaIds);
 
             return $article;
         });
@@ -77,7 +79,7 @@ class NewsController extends Controller
     public function show(News $news): View
     {
         Gate::authorize('view', $news);
-        $news->load(['translations', 'featuredMedia', 'createdBy', 'updatedBy']);
+        $news->load(['translations', 'featuredMedia', 'gallery', 'createdBy', 'updatedBy']);
 
         return view('admin.news.show', ['article' => $news]);
     }
@@ -85,7 +87,7 @@ class NewsController extends Controller
     public function edit(News $news): View
     {
         Gate::authorize('update', $news);
-        $news->load('translations');
+        $news->load(['translations', 'gallery']);
 
         return view('admin.news.edit', [
             'article' => $news,
@@ -98,10 +100,12 @@ class NewsController extends Controller
         DB::transaction(function () use ($request, $news): void {
             $data = $request->validated();
             $translations = $data['translations'];
-            unset($data['translations']);
+            $galleryMediaIds = $data['gallery_media_ids'] ?? [];
+            unset($data['translations'], $data['gallery_media_ids']);
 
             $news->update([...$data, 'updated_by' => $request->user()->id]);
             $news->syncTranslations($translations);
+            $news->syncGallery($galleryMediaIds);
         });
 
         return redirect()->route('admin.news.show', $news)->with('success', 'News article updated.');

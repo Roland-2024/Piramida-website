@@ -7,6 +7,17 @@
     <div><label class="block text-sm font-medium" for="featured_media_id">Featured image</label><select id="featured_media_id" name="featured_media_id" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm"><option value="">No image</option>@foreach ($mediaItems as $media)<option value="{{ $media->id }}" @selected((string) old('featured_media_id', $article->featured_media_id ?? '') === (string) $media->id)>{{ $media->original_name }}</option>@endforeach</select></div>
 </div>
 
+<div class="mt-5">
+    <label for="gallery_media_ids" class="block text-sm font-medium">Article gallery</label>
+    <select id="gallery_media_ids" name="gallery_media_ids[]" multiple size="6" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
+        @foreach ($mediaItems as $media)
+            <option value="{{ $media->id }}" @selected(in_array((string) $media->id, array_map('strval', old('gallery_media_ids', isset($article) ? $article->gallery->pluck('id')->all() : [])), true))>{{ $media->original_name }}</option>
+        @endforeach
+    </select>
+    <p class="mt-2 text-xs text-slate-500">Select the images used by the designed news-detail gallery. Ctrl/Cmd-click to select several.</p>
+    @error('gallery_media_ids')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+</div>
+
 <div class="mt-8 space-y-5">
     @foreach ($locales as $locale => $localeName)
         @php $translation = isset($article) ? $article->translations->firstWhere('locale', $locale) : null; @endphp

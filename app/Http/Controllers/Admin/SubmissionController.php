@@ -7,6 +7,7 @@ use App\Enums\SubmissionType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateSubmissionRequest;
 use App\Models\Submission;
+use App\Models\SubmissionAttachment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,7 +15,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SubmissionController extends Controller
@@ -40,7 +40,7 @@ class SubmissionController extends Controller
     public function show(Submission $submission): View
     {
         Gate::authorize('manage-submissions');
-        $submission->load(['related', 'handledBy']);
+        $submission->load(['related', 'handledBy', 'attachments']);
 
         return view('admin.submissions.show', [
             'submission' => $submission,
@@ -62,13 +62,22 @@ class SubmissionController extends Controller
         return back()->with('success', 'Submission updated.');
     }
 
-    public function download(Submission $submission): BinaryFileResponse
+    public function download(Submission $submission): StreamedResponse
     {
         Gate::authorize('manage-submissions');
         abort_unless($submission->hasAttachment(), 404);
 
         return Storage::disk($submission->attachment_disk)
             ->download($submission->attachment_path, $submission->attachment_name);
+    }
+
+    public function downloadAttachment(Submission $submission, SubmissionAttachment $attachment): StreamedResponse
+    {
+        Gate::authorize('manage-submissions');
+        abort_unless($attachment->submission_id === $submission->id, 404);
+
+        return Storage::disk($attachment->disk)
+            ->download($attachment->path, $attachment->original_name);
     }
 
     public function export(Request $request): StreamedResponse

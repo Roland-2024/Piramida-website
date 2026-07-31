@@ -9,6 +9,11 @@
                 @if ($siteSettings?->email)<a href="mailto:{{ $siteSettings->email }}" class="mt-3 block text-lg font-semibold text-amber-300">{{ $siteSettings->email }}</a>@endif
                 @if ($siteSettings?->translation()?->address)<p class="mt-8 leading-7 text-slate-300">{{ $siteSettings->translation()->address }}</p>@endif
                 @if ($siteSettings?->translation()?->opening_hours)<p class="mt-5 whitespace-pre-line text-sm leading-6 text-slate-400">{{ $siteSettings->translation()->opening_hours }}</p>@endif
+                <div class="mt-8 flex flex-wrap gap-4 text-sm text-slate-300">
+                    @foreach ([['Facebook', $siteSettings?->facebook_url], ['X', $siteSettings?->x_url], ['LinkedIn', $siteSettings?->linkedin_url], ['Instagram', $siteSettings?->instagram_url]] as [$label, $url])
+                        @if ($url)<a href="{{ $url }}" target="_blank" rel="noopener" class="hover:text-white">{{ $label }}</a>@endif
+                    @endforeach
+                </div>
             </aside>
             <div class="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
                 @include('public.submissions._form', [
@@ -17,5 +22,8 @@
                 ])
             </div>
         </div>
+        @if ($siteSettings?->map_url)
+            <iframe src="{{ $siteSettings->map_url }}" title="Piramida location" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="mt-8 h-96 w-full rounded-3xl border-0"></iframe>
+        @endif
     </section>
 </x-layouts.public>

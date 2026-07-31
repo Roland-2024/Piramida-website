@@ -23,7 +23,7 @@ class HomeController extends Controller
                 'featuredMedia',
                 'sections' => fn (HasMany $query) => $query
                     ->active()
-                    ->with(['translations', 'primaryMedia', 'secondaryMedia']),
+                    ->with(['translations', 'primaryMedia', 'secondaryMedia', 'gallery']),
             ])
             ->orderBy('display_order')
             ->orderBy('id');

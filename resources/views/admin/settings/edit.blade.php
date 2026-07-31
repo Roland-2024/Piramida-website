@@ -13,8 +13,10 @@
                 ['email', 'Public email', 'email'],
                 ['phone', 'Public phone', 'text'],
                 ['facebook_url', 'Facebook URL', 'url'],
+                ['x_url', 'X URL', 'url'],
                 ['instagram_url', 'Instagram URL', 'url'],
                 ['linkedin_url', 'LinkedIn URL', 'url'],
+                ['map_url', 'Map embed URL', 'url'],
             ] as [$name, $label, $type])
                 <div><label for="{{ $name }}" class="block text-sm font-medium">{{ $label }}</label><input id="{{ $name }}" name="{{ $name }}" type="{{ $type }}" value="{{ old($name, $settings->{$name}) }}" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">@error($name)<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror</div>
             @endforeach

@@ -216,6 +216,7 @@ class DemoContentSeeder extends Seeder
             'type' => SectionType::TextImage,
             'primary_media_id' => $media['education_vr']->id,
             'secondary_media_id' => $media['education_workshop']->id,
+            'gallery_media_ids' => [$media['education_vr']->id, $media['education_workshop']->id, $media['tumo']->id],
             'display_order' => 10,
         ], [
             'al' => ['subtitle' => 'METRO RESEARCH', 'title' => 'Mësoni duke krijuar', 'description' => '<p>Programet dhe aktivitetet edukative përdorin teknologjinë, dizajnin dhe punën në grup për të ndërtuar aftësi reale. Kjo përmbajtje prezantuese mund të ndryshohet nga paneli si çdo faqe tjetër.</p>'],
@@ -271,6 +272,7 @@ class DemoContentSeeder extends Seeder
         $this->upsertSection($about, 'About - History', [
             'type' => SectionType::TextImage,
             'primary_media_id' => $media['aerial']->id,
+            'gallery_media_ids' => [$media['front']->id, $media['aerial']->id, $media['rooftop']->id],
             'display_order' => 30,
         ], [
             'al' => ['subtitle' => 'HISTORIA', 'title' => 'Nga monument në qendër të hapur', 'description' => '<p>E ndërtuar në vitin 1988 si muze, ndërtesa mori funksione të ndryshme pas rënies së komunizmit. Pas viteve të pasigurisë dhe degradimit, ajo u rimendua si një qendër e aksesueshme për qytetin.</p>'],
@@ -336,7 +338,8 @@ class DemoContentSeeder extends Seeder
         ];
 
         foreach ($items as $index => $item) {
-            $this->upsertTranslated(News::class, $item['slugs'], [
+            /** @var News $article */
+            $article = $this->upsertTranslated(News::class, $item['slugs'], [
                 'featured_media_id' => $media[$item['image']]->id,
                 'status' => ContentStatus::Published,
                 'published_at' => $item['published_at'],
@@ -346,6 +349,10 @@ class DemoContentSeeder extends Seeder
             ], [
                 'al' => $item['al'] + ['seo_title' => $item['al']['title'], 'seo_description' => $item['al']['excerpt']],
                 'en' => $item['en'] + ['seo_title' => $item['en']['title'], 'seo_description' => $item['en']['excerpt']],
+            ]);
+            $article->syncGallery([
+                $media[$item['image']]->id,
+                $media[$index === 1 ? 'education_workshop' : 'front']->id,
             ]);
         }
     }
@@ -537,6 +544,11 @@ class DemoContentSeeder extends Seeder
             'notification_email' => 'info@piramida.edu.al',
             'email' => 'info@piramida.edu.al',
             'phone' => '+355 69 000 0000',
+            'facebook_url' => null,
+            'x_url' => null,
+            'instagram_url' => null,
+            'linkedin_url' => null,
+            'map_url' => null,
         ]);
         $settings->syncTranslations([
             'al' => ['address' => 'Bulevardi Dëshmorët e Kombit 5, Tiranë, Shqipëri', 'opening_hours' => "E hënë – E diel\n08:00–22:00", 'footer_text' => 'Rimendojmë hapësirën. Frymëzojmë krijimtarinë.'],
@@ -587,6 +599,7 @@ class DemoContentSeeder extends Seeder
             'type' => $attributes['type'],
             'primary_media_id' => $attributes['primary_media_id'] ?? null,
             'secondary_media_id' => $attributes['secondary_media_id'] ?? null,
+            'video_url' => $attributes['video_url'] ?? null,
             'primary_button_url' => $attributes['primary_button_url'] ?? null,
             'secondary_button_url' => $attributes['secondary_button_url'] ?? null,
             'display_order' => $attributes['display_order'],
@@ -596,6 +609,7 @@ class DemoContentSeeder extends Seeder
             'updated_by' => $attributes['updated_by'] ?? $page->updated_by,
         ])->save();
         $section->syncTranslations($translations);
+        $section->syncGallery($attributes['gallery_media_ids'] ?? []);
 
         return $section;
     }

@@ -18,8 +18,10 @@ class SiteSettingRequest extends FormRequest
             'email' => ['nullable', 'email:rfc', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'facebook_url' => ['nullable', 'url:http,https', 'max:2048'],
+            'x_url' => ['nullable', 'url:http,https', 'max:2048'],
             'instagram_url' => ['nullable', 'url:http,https', 'max:2048'],
             'linkedin_url' => ['nullable', 'url:http,https', 'max:2048'],
+            'map_url' => ['nullable', 'url:http,https', 'max:2048'],
             'translations' => ['required', 'array'],
         ];
 

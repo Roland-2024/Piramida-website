@@ -35,6 +35,21 @@
         </label>
     </div>
     <div></div>
+    <div class="lg:col-span-2">
+        <label for="gallery_media_ids" class="block text-sm font-medium">Gallery / partner logos</label>
+        <select id="gallery_media_ids" name="gallery_media_ids[]" multiple size="6" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
+            @foreach ($mediaItems as $media)
+                <option value="{{ $media->id }}" @selected(in_array((string) $media->id, array_map('strval', old('gallery_media_ids', isset($section) ? $section->gallery->pluck('id')->all() : [])), true))>{{ $media->original_name }}</option>
+            @endforeach
+        </select>
+        <p class="mt-2 text-xs text-slate-500">Used for Gallery sections and the partner logos in the design.</p>
+    </div>
+    <div>
+        <label for="video_url" class="block text-sm font-medium">Video URL</label>
+        <input id="video_url" name="video_url" type="url" value="{{ old('video_url', $section->video_url ?? '') }}" placeholder="https://…" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+        <p class="mt-2 text-xs text-slate-500">For the About video section. Primary image is used as its poster.</p>
+        @error('video_url')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+    </div>
     <div>
         <label for="primary_media_id" class="block text-sm font-medium">Primary image</label>
         <select id="primary_media_id" name="primary_media_id" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">

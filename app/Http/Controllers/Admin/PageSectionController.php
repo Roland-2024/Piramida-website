@@ -67,7 +67,8 @@ class PageSectionController extends Controller
         $section = DB::transaction(function () use ($request): PageSection {
             $data = $this->normalize($request->validated());
             $translations = $data['translations'];
-            unset($data['translations']);
+            $galleryMediaIds = $data['gallery_media_ids'] ?? [];
+            unset($data['translations'], $data['gallery_media_ids']);
 
             $section = PageSection::query()->create([
                 ...$data,
@@ -75,6 +76,7 @@ class PageSectionController extends Controller
                 'updated_by' => $request->user()->id,
             ]);
             $section->syncTranslations($translations);
+            $section->syncGallery($galleryMediaIds);
 
             return $section;
         });
@@ -85,7 +87,7 @@ class PageSectionController extends Controller
     public function show(PageSection $section): View
     {
         Gate::authorize('view', $section);
-        $section->load(['translations', 'page.translations', 'primaryMedia', 'secondaryMedia', 'createdBy', 'updatedBy']);
+        $section->load(['translations', 'page.translations', 'primaryMedia', 'secondaryMedia', 'gallery', 'createdBy', 'updatedBy']);
 
         return view('admin.sections.show', compact('section'));
     }
@@ -93,7 +95,7 @@ class PageSectionController extends Controller
     public function edit(PageSection $section): View
     {
         Gate::authorize('update', $section);
-        $section->load('translations');
+        $section->load(['translations', 'gallery']);
 
         return view('admin.sections.edit', [
             'section' => $section,
@@ -106,10 +108,12 @@ class PageSectionController extends Controller
         DB::transaction(function () use ($request, $section): void {
             $data = $this->normalize($request->validated());
             $translations = $data['translations'];
-            unset($data['translations']);
+            $galleryMediaIds = $data['gallery_media_ids'] ?? [];
+            unset($data['translations'], $data['gallery_media_ids']);
 
             $section->update([...$data, 'updated_by' => $request->user()->id]);
             $section->syncTranslations($translations);
+            $section->syncGallery($galleryMediaIds);
         });
 
         return redirect()->route('admin.sections.show', $section)->with('success', 'Page section updated.');

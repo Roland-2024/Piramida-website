@@ -45,9 +45,7 @@ class SubmissionController extends Controller
         $event = $this->publishedBySlug(Event::class, $locale, $slug);
         abort_unless($event->booking_mode->allowsInternal(), 404);
 
-        return $this->store($request, SubmissionType::EventRegistration, $event, [
-            'attendees',
-        ]);
+        return $this->store($request, SubmissionType::EventRegistration, $event);
     }
 
     public function storeEventSpace(StoreSubmissionRequest $request, string $locale, string $slug): RedirectResponse
@@ -68,9 +66,7 @@ class SubmissionController extends Controller
         $space = $this->publishedBySlug(Space::class, $locale, $slug);
         abort_unless($space->type === SpaceType::Leasing && $space->booking_mode->allowsInternal(), 404);
 
-        return $this->store($request, SubmissionType::Leasing, $space, [
-            'organization',
-        ]);
+        return $this->storeLeasingApplication($request, $space);
     }
 
     public function storeCareer(StoreSubmissionRequest $request, string $locale, string $slug): RedirectResponse
@@ -112,7 +108,7 @@ class SubmissionController extends Controller
                 $file = $request->file('attachment');
                 $submission = new Submission([
                     'type' => $type,
-                    'name' => $validated['name'],
+                    'name' => $validated['name'] ?? trim(($validated['first_name'] ?? '').' '.($validated['last_name'] ?? '')),
                     'email' => $validated['email'],
                     'phone' => $validated['phone'] ?? null,
                     'subject' => $validated['subject'] ?? $this->relatedTitle($related),
@@ -137,17 +133,95 @@ class SubmissionController extends Controller
             throw $exception;
         }
 
-        $notificationEmail = SiteSetting::query()->value('notification_email');
-
-        if ($notificationEmail) {
-            try {
-                Mail::to($notificationEmail)->send(new SubmissionReceived($submission));
-            } catch (Throwable $exception) {
-                report($exception);
-            }
-        }
+        $this->notifyStaff($submission);
 
         return back()->with('success', __('cms.request_received'));
+    }
+
+    private function storeLeasingApplication(StoreSubmissionRequest $request, Space $space): RedirectResponse
+    {
+        $validated = $request->validated();
+        $storedFiles = [];
+
+        try {
+            foreach (array_keys(StoreSubmissionRequest::leasingDocumentLabels()) as $field) {
+                $file = $request->file($field);
+
+                if (! $file) {
+                    continue;
+                }
+
+                $path = $file->store('submissions/'.now()->format('Y/m'), 'local');
+                $storedFiles[] = [
+                    'document_type' => $field,
+                    'disk' => 'local',
+                    'path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize(),
+                ];
+            }
+
+            $submission = DB::transaction(function () use ($validated, $space, $storedFiles): Submission {
+                $detailKeys = [
+                    'company_name',
+                    'nipt',
+                    'entity_type',
+                    'established_year',
+                    'company_address',
+                    'city',
+                    'employee_count',
+                    'annual_turnover',
+                    'contact_position',
+                    'contact_phone',
+                    'contact_mobile',
+                    'offer_per_sqm',
+                ];
+
+                $details = collect($validated)->only($detailKeys)->all();
+                $details['area_sqm'] = $space->area_sqm;
+                $details['monthly_rent'] = round((float) $validated['offer_per_sqm'] * (float) $space->area_sqm, 2);
+
+                $submission = new Submission([
+                    'type' => SubmissionType::Leasing,
+                    'name' => trim($validated['contact_first_name'].' '.$validated['contact_last_name']),
+                    'email' => $validated['contact_email'],
+                    'phone' => $validated['contact_mobile'],
+                    'subject' => $this->relatedTitle($space),
+                    'details' => $details,
+                ]);
+                $submission->related()->associate($space);
+                $submission->save();
+                $submission->attachments()->createMany($storedFiles);
+
+                return $submission;
+            });
+        } catch (Throwable $exception) {
+            foreach ($storedFiles as $file) {
+                Storage::disk($file['disk'])->delete($file['path']);
+            }
+
+            throw $exception;
+        }
+
+        $this->notifyStaff($submission);
+
+        return back()->with('success', __('cms.request_received'));
+    }
+
+    private function notifyStaff(Submission $submission): void
+    {
+        $notificationEmail = SiteSetting::query()->value('notification_email');
+
+        if (! $notificationEmail) {
+            return;
+        }
+
+        try {
+            Mail::to($notificationEmail)->send(new SubmissionReceived($submission));
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 
     /**

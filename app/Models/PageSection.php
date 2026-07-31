@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\SectionType;
 use App\Models\Concerns\HasLocalizedContent;
+use App\Models\Concerns\HasMediaGallery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class PageSection extends Model
 {
-    use HasFactory, HasLocalizedContent, SoftDeletes;
+    use HasFactory, HasLocalizedContent, HasMediaGallery, SoftDeletes;
 
     protected $fillable = [
         'page_id',
@@ -21,6 +22,7 @@ class PageSection extends Model
         'type',
         'primary_media_id',
         'secondary_media_id',
+        'video_url',
         'primary_button_url',
         'secondary_button_url',
         'display_order',

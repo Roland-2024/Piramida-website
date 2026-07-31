@@ -25,7 +25,7 @@ The CMS manages:
 - Event and leasing spaces
 - Careers
 - Reusable media
-- Contact, registration, event-space request, leasing-enquiry, and career submissions
+- Contact, registration, event-space request, full leasing-application, and career submissions
 - Global contact, opening-hours, social, and footer settings
 - Admin and Editor dashboard users
 
@@ -33,9 +33,9 @@ Publishable modules store shared/queryable fields in their parent tables and bil
 
 Optional section-specific structured data is the only content stored as JSON. Public queries use model scopes and remain independent from Blade presentation.
 
-Pages and Page Sections manage static presentation templates without coupling their content to the temporary frontend. For example, About Us can be assembled from ordered image/text, feature, gallery, and other sections; staff can change the content while the final frontend template controls its appearance.
+Pages and Page Sections manage static presentation templates without coupling their content to the temporary frontend. For example, About Us can be assembled from ordered image/text, feature, gallery, video, and other sections; staff can change the content while the final frontend template controls its appearance. News and Page Sections support ordered reusable-media galleries.
 
-Events, spaces, and careers support internal request forms, external links, both actions, or no action. Event spaces collect event requirements and preferred timing. Leasing spaces collect a business enquiry without creating a calendar booking. All internal forms create a staff-reviewed request; they do not confirm availability, take payment, or create an automatic reservation. Uploaded CV files are validated and kept on private storage.
+Events, spaces, and careers support internal request forms, external links, both actions, or no action. Event spaces collect event requirements and preferred timing. Leasing spaces use the designed company, contact, offer, and named-document application; monthly rent is calculated from the unit area and offer per square metre. All internal forms create a staff-reviewed request; they do not confirm availability, take payment, or create an automatic reservation. Uploaded CV and leasing documents are validated and kept on private storage.
 
 The earlier Program tables remain in the database for reversibility but are not exposed in the dashboard or public routes. The Education, Innovation, Business, and Art & Culture cards seen in the design are presentation content managed through Pages and Page Sections, not a separate program catalogue.
 

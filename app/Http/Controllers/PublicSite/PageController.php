@@ -22,7 +22,7 @@ class PageController extends Controller
                 'featuredMedia',
                 'sections' => fn (HasMany $query) => $query
                     ->active()
-                    ->with(['translations', 'primaryMedia', 'secondaryMedia']),
+                    ->with(['translations', 'primaryMedia', 'secondaryMedia', 'gallery']),
             ])
             ->firstOrFail();
 

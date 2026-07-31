@@ -17,6 +17,19 @@
                 <div><p class="text-xs uppercase tracking-wide text-slate-400">Request details</p><dl class="mt-2 divide-y divide-slate-100 rounded-lg border border-slate-200">@foreach ($submission->details as $label => $value)<div class="grid grid-cols-2 gap-3 px-4 py-2 text-sm"><dt class="font-medium">{{ str($label)->replace('_', ' ')->title() }}</dt><dd>{{ is_array($value) ? implode(', ', $value) : $value }}</dd></div>@endforeach</dl></div>
             @endif
             @if ($submission->hasAttachment())<a href="{{ route('admin.submissions.download', $submission) }}" class="inline-flex rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium">Download {{ $submission->attachment_name }}</a>@endif
+            @if ($submission->attachments->isNotEmpty())
+                <div>
+                    <p class="text-xs uppercase tracking-wide text-slate-400">Application documents</p>
+                    <div class="mt-2 divide-y divide-slate-100 rounded-lg border border-slate-200">
+                        @foreach ($submission->attachments as $attachment)
+                            <div class="flex items-center justify-between gap-4 px-4 py-3 text-sm">
+                                <div><p class="font-medium">{{ __('cms.document_'.$attachment->document_type) }}</p><p class="text-xs text-slate-500">{{ $attachment->original_name }} · {{ number_format($attachment->size / 1024, 0) }} KB</p></div>
+                                <a href="{{ route('admin.submissions.attachments.download', [$submission, $attachment]) }}" class="font-semibold text-amber-700">Download</a>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
         </section>
 
         <form method="POST" action="{{ route('admin.submissions.update', $submission) }}" class="h-fit rounded-2xl border border-slate-200 bg-white p-5">

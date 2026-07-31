@@ -26,8 +26,10 @@ class SiteSettingTest extends TestCase
                 'email' => 'info@piramida.test',
                 'phone' => '+355 4 000 0000',
                 'facebook_url' => null,
+                'x_url' => 'https://x.com/piramida',
                 'instagram_url' => 'https://instagram.com/piramida',
                 'linkedin_url' => null,
+                'map_url' => 'https://maps.example.test/embed/piramida',
                 'translations' => [
                     'al' => [
                         'address' => 'Tirane',
@@ -45,6 +47,8 @@ class SiteSettingTest extends TestCase
 
         $settings = SiteSetting::current();
         $this->assertSame('requests@piramida.test', $settings->notification_email);
+        $this->assertSame('https://x.com/piramida', $settings->x_url);
+        $this->assertSame('https://maps.example.test/embed/piramida', $settings->map_url);
         $this->assertSame('Tirana', $settings->translation('en', false)?->address);
     }
 }

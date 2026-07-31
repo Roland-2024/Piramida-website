@@ -29,7 +29,7 @@ class NewsController extends Controller
             ->whereHas('translations', fn (Builder $query) => $query
                 ->where('locale', $locale)
                 ->where('slug', $slug))
-            ->with(['translations', 'featuredMedia'])
+            ->with(['translations', 'featuredMedia', 'gallery'])
             ->firstOrFail();
 
         return view('public.news.show', [

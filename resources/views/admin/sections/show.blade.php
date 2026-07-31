@@ -9,6 +9,8 @@
                 @php $translation = $section->translations->firstWhere('locale', $locale); @endphp
                 <div class="{{ ! $loop->first ? 'mt-6 border-t border-slate-200 pt-6' : '' }}"><h3 class="font-semibold">{{ $name }}: {{ $translation?->title ?: 'No title' }}</h3><p class="mt-2 text-sm text-slate-600">{{ $translation?->subtitle }}</p></div>
             @endforeach
+            @if ($section->video_url)<div class="mt-6 border-t border-slate-200 pt-6"><p class="text-xs uppercase tracking-wide text-slate-400">Video</p><a href="{{ $section->video_url }}" target="_blank" rel="noopener" class="mt-1 block break-all text-sm font-medium text-amber-700">{{ $section->video_url }}</a></div>@endif
+            @if ($section->gallery->isNotEmpty())<div class="mt-6 grid grid-cols-2 gap-3 border-t border-slate-200 pt-6 sm:grid-cols-3">@foreach($section->gallery as $media)<img src="{{ $media->url() }}" alt="" class="h-28 w-full rounded-lg object-cover">@endforeach</div>@endif
         </section>
         <aside class="rounded-2xl border border-slate-200 bg-white p-5 text-sm"><dl class="space-y-3"><div><dt class="text-slate-500">Status</dt><dd>{{ $section->is_active ? 'Active' : 'Inactive' }}</dd></div><div><dt class="text-slate-500">Display order</dt><dd>{{ $section->display_order }}</dd></div><div><dt class="text-slate-500">Updated by</dt><dd>{{ $section->updatedBy?->name ?? 'System' }}</dd></div></dl></aside>
     </div>

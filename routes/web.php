@@ -117,6 +117,7 @@ Route::prefix('admin')
 
         Route::get('submissions/export', [SubmissionController::class, 'export'])->name('submissions.export');
         Route::get('submissions/{submission}/attachment', [SubmissionController::class, 'download'])->name('submissions.download');
+        Route::get('submissions/{submission}/attachments/{attachment}', [SubmissionController::class, 'downloadAttachment'])->name('submissions.attachments.download');
         Route::resource('submissions', SubmissionController::class)->only(['index', 'show', 'update'])
             ->middleware('can:manage-submissions');
 

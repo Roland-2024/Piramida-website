@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\SectionType;
+use App\Models\Media;
 use App\Models\Page;
 use App\Models\PageSection;
 use App\Models\User;
@@ -102,5 +103,33 @@ class PageSectionManagementTest extends TestCase
                 ],
             ])
             ->assertSessionHasErrors(['primary_button_url', 'secondary_button_url']);
+    }
+
+    public function test_editor_can_manage_a_section_video_and_ordered_gallery(): void
+    {
+        $page = Page::factory()->create();
+        $editor = User::factory()->create();
+        $first = Media::factory()->create();
+        $second = Media::factory()->create();
+
+        $this->actingAs($editor)
+            ->post(route('admin.sections.store'), [
+                'page_id' => $page->id,
+                'internal_name' => 'About video and gallery',
+                'type' => SectionType::Gallery->value,
+                'display_order' => 3,
+                'is_active' => true,
+                'video_url' => 'https://video.example.test/about.mp4',
+                'gallery_media_ids' => [$second->id, $first->id],
+                'translations' => [
+                    'al' => ['title' => 'Historia'],
+                    'en' => ['title' => 'History'],
+                ],
+            ])
+            ->assertRedirect();
+
+        $section = PageSection::query()->where('internal_name', 'About video and gallery')->firstOrFail();
+        $this->assertSame('https://video.example.test/about.mp4', $section->video_url);
+        $this->assertSame([$second->id, $first->id], $section->gallery()->pluck('media.id')->all());
     }
 }
