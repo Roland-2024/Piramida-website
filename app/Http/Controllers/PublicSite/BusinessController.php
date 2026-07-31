@@ -14,5 +14,7 @@ class BusinessController extends TranslatedCatalogController
 
     protected string $translationTitleColumn = 'name';
 
-    protected array $with = ['translations', 'featuredMedia', 'gallery'];
+    protected string $indexView = 'public.businesses.index';
+
+    protected array $with = ['translations', 'featuredMedia', 'logoMedia', 'gallery'];
 }

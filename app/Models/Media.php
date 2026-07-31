@@ -57,7 +57,11 @@ class Media extends Model
             || Event::withTrashed()->where('featured_media_id', $this->id)->exists()
             || Program::withTrashed()->where('featured_media_id', $this->id)->exists()
             || Attraction::withTrashed()->where('featured_media_id', $this->id)->exists()
-            || Business::withTrashed()->where('featured_media_id', $this->id)->exists()
+            || Business::withTrashed()
+                ->where(fn ($query) => $query
+                    ->where('featured_media_id', $this->id)
+                    ->orWhere('logo_media_id', $this->id))
+                ->exists()
             || Space::withTrashed()->where('featured_media_id', $this->id)->exists()
             || DB::table('media_attachments')->where('media_id', $this->id)->exists();
     }

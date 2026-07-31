@@ -32,17 +32,4 @@
     <section class="bg-amber-100">
         <div class="mx-auto max-w-7xl px-5 py-14 lg:px-8"><div class="flex items-end justify-between gap-4"><h2 class="text-3xl font-semibold">{{ __('cms.events') }}</h2><a href="{{ route('public.events.index', app()->getLocale()) }}" class="text-sm font-semibold">{{ __('cms.read_more') }} →</a></div><div class="mt-7 grid gap-5 md:grid-cols-3">@forelse ($upcomingEvents as $event) @php $item = $event->translation(app()->getLocale()); @endphp<article class="rounded-2xl bg-white p-5"><p class="text-xs font-semibold uppercase text-amber-700">{{ $event->starts_at->format('d M Y · H:i') }}</p><h3 class="mt-3 text-xl font-semibold">{{ $item?->title }}</h3><p class="mt-2 text-sm text-slate-500">{{ $item?->location }}</p><a href="{{ route('public.events.show', [app()->getLocale(), $item?->slug]) }}" class="mt-5 inline-block text-sm font-semibold text-amber-700">{{ __('cms.read_more') }}</a></article>@empty<p class="text-sm text-slate-500">{{ __('cms.no_content') }}</p>@endforelse</div></div>
     </section>
-    <section class="mx-auto max-w-7xl px-5 py-14 lg:px-8">
-        <div class="flex items-end justify-between gap-4"><h2 class="text-3xl font-semibold">{{ __('cms.programs') }}</h2><a href="{{ route('public.programs.index', app()->getLocale()) }}" class="text-sm font-semibold text-amber-700">{{ __('cms.read_more') }} →</a></div>
-        <div class="mt-7 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            @forelse ($featuredPrograms as $program)
-                @php
-                    $item = $program->translation(app()->getLocale(), false);
-                @endphp
-                <article class="rounded-2xl border border-slate-200 bg-white p-5"><p class="text-xs font-semibold uppercase text-amber-700">{{ $program->category->label() }}</p><h3 class="mt-3 text-xl font-semibold">{{ $item?->title }}</h3><p class="mt-3 text-sm text-slate-600">{{ $item?->short_description }}</p><a href="{{ route('public.programs.show', [app()->getLocale(), $item?->slug]) }}" class="mt-5 inline-block text-sm font-semibold text-amber-700">{{ __('cms.read_more') }}</a></article>
-            @empty
-                <p class="text-sm text-slate-500">{{ __('cms.no_content') }}</p>
-            @endforelse
-        </div>
-    </section>
 </x-layouts.public>

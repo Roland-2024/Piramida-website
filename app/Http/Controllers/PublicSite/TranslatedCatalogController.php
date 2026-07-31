@@ -18,6 +18,10 @@ abstract class TranslatedCatalogController extends Controller
 
     protected string $translationTitleColumn = 'title';
 
+    protected string $indexView = 'public.catalog.index';
+
+    protected string $showView = 'public.catalog.show';
+
     /** @var array<int, string> */
     protected array $with = ['translations', 'featuredMedia'];
 
@@ -25,7 +29,7 @@ abstract class TranslatedCatalogController extends Controller
     {
         $modelClass = $this->modelClass;
 
-        return view('public.catalog.index', [
+        return view($this->indexView, [
             'items' => $this->indexQuery($modelClass::query())
                 ->published()
                 ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
@@ -51,7 +55,7 @@ abstract class TranslatedCatalogController extends Controller
             ->with($this->with)
             ->firstOrFail();
 
-        return view('public.catalog.show', [
+        return view($this->showView, [
             'item' => $item,
             'translation' => $item->translation($locale, false),
             'routePrefix' => $this->routePrefix,

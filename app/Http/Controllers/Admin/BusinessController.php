@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\BusinessCategory;
 use App\Http\Requests\Admin\BusinessRequest;
 use App\Models\Business;
+use App\Models\Media;
 use Illuminate\Http\RedirectResponse;
 
 class BusinessController extends TranslatedContentController
@@ -35,6 +36,7 @@ class BusinessController extends TranslatedContentController
     {
         return [
             ['name' => 'category', 'label' => 'Category', 'type' => 'select', 'required' => true, 'options' => collect(BusinessCategory::cases())->mapWithKeys(fn ($case) => [$case->value => $case->label()])->all()],
+            ['name' => 'logo_media_id', 'label' => 'Logo', 'type' => 'select', 'options' => Media::query()->latest()->pluck('original_name', 'id')->prepend('No logo', '')->all()],
             ['name' => 'website_url', 'label' => 'Website URL', 'type' => 'url'],
             ['name' => 'email', 'label' => 'Public email', 'type' => 'email'],
             ['name' => 'phone', 'label' => 'Public phone', 'type' => 'text'],

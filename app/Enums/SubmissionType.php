@@ -17,8 +17,8 @@ enum SubmissionType: string
             self::Contact => 'Contact',
             self::EventRegistration => 'Event registration',
             self::ProgramApplication => 'Program application',
-            self::SpaceBooking => 'Space booking',
-            self::Leasing => 'Leasing',
+            self::SpaceBooking => 'Event space request',
+            self::Leasing => 'Leasing enquiry',
             self::CareerApplication => 'Career application',
         };
     }

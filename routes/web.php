@@ -9,7 +9,6 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PageSectionController;
-use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SpaceController;
 use App\Http\Controllers\Admin\SubmissionController;
@@ -24,7 +23,6 @@ use App\Http\Controllers\PublicSite\EventController as PublicEventController;
 use App\Http\Controllers\PublicSite\HomeController;
 use App\Http\Controllers\PublicSite\NewsController as PublicNewsController;
 use App\Http\Controllers\PublicSite\PageController as PublicPageController;
-use App\Http\Controllers\PublicSite\ProgramController as PublicProgramController;
 use App\Http\Controllers\PublicSite\SpaceController as PublicSpaceController;
 use App\Http\Controllers\PublicSite\SubmissionController as PublicSubmissionController;
 use App\Http\Middleware\EnsureUserIsActive;
@@ -32,11 +30,9 @@ use App\Http\Middleware\SetLocale;
 use App\Models\Attraction;
 use App\Models\Business;
 use App\Models\Career;
-use App\Models\Program;
 use App\Models\Space;
 use Illuminate\Support\Facades\Route;
 
-Route::model('program', Program::class);
 Route::model('attraction', Attraction::class);
 Route::model('business', Business::class);
 Route::model('space', Space::class);
@@ -55,16 +51,14 @@ Route::prefix('{locale}')
         Route::get('/events', [PublicEventController::class, 'index'])->name('events.index');
         Route::get('/events/{slug}', [PublicEventController::class, 'show'])->name('events.show');
         Route::post('/events/{slug}/request', [PublicSubmissionController::class, 'storeEvent'])->middleware('throttle:10,1')->name('events.request');
-        Route::get('/programs', [PublicProgramController::class, 'index'])->name('programs.index');
-        Route::get('/programs/{slug}', [PublicProgramController::class, 'show'])->name('programs.show');
-        Route::post('/programs/{slug}/request', [PublicSubmissionController::class, 'storeProgram'])->middleware('throttle:10,1')->name('programs.request');
         Route::get('/attractions', [PublicAttractionController::class, 'index'])->name('attractions.index');
         Route::get('/attractions/{slug}', [PublicAttractionController::class, 'show'])->name('attractions.show');
         Route::get('/businesses', [PublicBusinessController::class, 'index'])->name('businesses.index');
         Route::get('/businesses/{slug}', [PublicBusinessController::class, 'show'])->name('businesses.show');
         Route::get('/spaces', [PublicSpaceController::class, 'index'])->name('spaces.index');
         Route::get('/spaces/{slug}', [PublicSpaceController::class, 'show'])->name('spaces.show');
-        Route::post('/spaces/{slug}/request', [PublicSubmissionController::class, 'storeSpace'])->middleware('throttle:10,1')->name('spaces.request');
+        Route::post('/spaces/{slug}/event-request', [PublicSubmissionController::class, 'storeEventSpace'])->middleware('throttle:10,1')->name('spaces.event-request');
+        Route::post('/spaces/{slug}/leasing-request', [PublicSubmissionController::class, 'storeLeasing'])->middleware('throttle:10,1')->name('spaces.leasing-request');
         Route::get('/careers', [PublicCareerController::class, 'index'])->name('careers.index');
         Route::get('/careers/{slug}', [PublicCareerController::class, 'show'])->name('careers.show');
         Route::post('/careers/{slug}/apply', [PublicSubmissionController::class, 'storeCareer'])->middleware('throttle:10,1')->name('careers.apply');
@@ -108,9 +102,6 @@ Route::prefix('admin')
 
         Route::post('events/{event}/restore', [EventController::class, 'restore'])->name('events.restore');
         Route::resource('events', EventController::class);
-
-        Route::post('programs/{id}/restore', [ProgramController::class, 'restore'])->name('programs.restore');
-        Route::resource('programs', ProgramController::class)->except('show');
 
         Route::post('attractions/{id}/restore', [AttractionController::class, 'restore'])->name('attractions.restore');
         Route::resource('attractions', AttractionController::class)->except('show');

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\News;
 use App\Models\Page;
-use App\Models\Program;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\View\View;
@@ -46,14 +45,6 @@ class HomeController extends Controller
                 ->with(['translations', 'featuredMedia'])
                 ->orderBy('starts_at')
                 ->limit(3)
-                ->get(),
-            'featuredPrograms' => Program::query()
-                ->published()
-                ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
-                ->with(['translations', 'featuredMedia'])
-                ->orderByDesc('is_featured')
-                ->orderBy('display_order')
-                ->limit(8)
                 ->get(),
             'languageUrls' => $this->languageUrls(),
         ]);

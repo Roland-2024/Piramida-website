@@ -19,6 +19,7 @@ class Business extends Model
 
     protected $fillable = [
         'featured_media_id',
+        'logo_media_id',
         'category',
         'status',
         'published_at',
@@ -39,6 +40,11 @@ class Business extends Model
     public function featuredMedia(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'featured_media_id');
+    }
+
+    public function logoMedia(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'logo_media_id');
     }
 
     public function createdBy(): BelongsTo

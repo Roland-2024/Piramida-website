@@ -19,16 +19,23 @@
         @endif
 
         @if ($bookingMode?->allowsInternal())
+            @php
+                $isCareer = $item instanceof \App\Models\Career;
+                $isLeasing = $item instanceof \App\Models\Space && $item->type === \App\Enums\SpaceType::Leasing;
+                $action = $isCareer
+                    ? route('public.careers.apply', [app()->getLocale(), $translation->slug])
+                    : route(
+                        $isLeasing ? 'public.spaces.leasing-request' : 'public.spaces.event-request',
+                        [app()->getLocale(), $translation->slug],
+                    );
+                $formType = $isCareer ? 'career' : ($isLeasing ? 'leasing' : 'event_space');
+            @endphp
             <section class="mt-12 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
-                <h2 class="text-2xl font-semibold">{{ $item instanceof \App\Models\Career ? __('cms.apply') : __('cms.send_request') }}</h2>
+                <h2 class="text-2xl font-semibold">{{ $isCareer ? __('cms.apply') : __('cms.send_request') }}</h2>
                 <p class="mt-2 text-sm text-slate-500">{{ __('cms.request_confirmation_notice') }}</p>
                 @include('public.submissions._form', [
-                    'action' => $item instanceof \App\Models\Program
-                        ? route('public.programs.request', [app()->getLocale(), $translation->slug])
-                        : ($item instanceof \App\Models\Space
-                            ? route('public.spaces.request', [app()->getLocale(), $translation->slug])
-                            : route('public.careers.apply', [app()->getLocale(), $translation->slug])),
-                    'formType' => $item instanceof \App\Models\Career ? 'career' : ($item instanceof \App\Models\Space ? 'space' : 'program'),
+                    'action' => $action,
+                    'formType' => $formType,
                 ])
             </section>
         @endif

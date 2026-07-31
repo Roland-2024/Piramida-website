@@ -18,7 +18,6 @@
                 <a href="{{ route('public.home', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.home') }}</a>
                 <a href="{{ route('public.news.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.news') }}</a>
                 <a href="{{ route('public.events.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.events') }}</a>
-                <a href="{{ route('public.programs.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.programs') }}</a>
                 <a href="{{ route('public.attractions.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.attractions') }}</a>
                 <a href="{{ route('public.businesses.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.businesses') }}</a>
                 <a href="{{ route('public.spaces.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.spaces') }}</a>

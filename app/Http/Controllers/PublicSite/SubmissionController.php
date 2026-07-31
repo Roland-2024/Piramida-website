@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\PublicSite;
 
+use App\Enums\SpaceType;
 use App\Enums\SubmissionType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PublicSite\StoreSubmissionRequest;
 use App\Mail\SubmissionReceived;
 use App\Models\Career;
 use App\Models\Event;
-use App\Models\Program;
 use App\Models\SiteSetting;
 use App\Models\Space;
 use App\Models\Submission;
@@ -49,28 +49,26 @@ class SubmissionController extends Controller
         ]);
     }
 
-    public function storeProgram(StoreSubmissionRequest $request, string $locale, string $slug): RedirectResponse
+    public function storeEventSpace(StoreSubmissionRequest $request, string $locale, string $slug): RedirectResponse
     {
-        $program = $this->publishedBySlug(Program::class, $locale, $slug);
-        abort_unless($program->booking_mode->allowsInternal(), 404);
+        $space = $this->publishedBySlug(Space::class, $locale, $slug);
+        abort_unless($space->type === SpaceType::EventSpace && $space->booking_mode->allowsInternal(), 404);
 
-        return $this->store($request, SubmissionType::ProgramApplication, $program, [
-            'organization',
-            'participant_age',
+        return $this->store($request, SubmissionType::SpaceBooking, $space, [
+            'event_type',
+            'preferred_date',
+            'preferred_time',
+            'attendees',
         ]);
     }
 
-    public function storeSpace(StoreSubmissionRequest $request, string $locale, string $slug): RedirectResponse
+    public function storeLeasing(StoreSubmissionRequest $request, string $locale, string $slug): RedirectResponse
     {
         $space = $this->publishedBySlug(Space::class, $locale, $slug);
-        abort_unless($space->booking_mode->allowsInternal(), 404);
-        $type = $space->type->value === 'leasing' ? SubmissionType::Leasing : SubmissionType::SpaceBooking;
+        abort_unless($space->type === SpaceType::Leasing && $space->booking_mode->allowsInternal(), 404);
 
-        return $this->store($request, $type, $space, [
+        return $this->store($request, SubmissionType::Leasing, $space, [
             'organization',
-            'requested_start_at',
-            'requested_end_at',
-            'attendees',
         ]);
     }
 

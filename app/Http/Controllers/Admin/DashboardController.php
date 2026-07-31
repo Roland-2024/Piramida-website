@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\SpaceType;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Attraction;
@@ -10,7 +11,6 @@ use App\Models\Career;
 use App\Models\Event;
 use App\Models\News;
 use App\Models\Page;
-use App\Models\Program;
 use App\Models\Space;
 use App\Models\Submission;
 use App\Models\User;
@@ -25,10 +25,10 @@ class DashboardController extends Controller
                 'pages' => Page::query()->count(),
                 'news' => News::query()->count(),
                 'events' => Event::query()->count(),
-                'programs' => Program::query()->count(),
                 'attractions' => Attraction::query()->count(),
                 'businesses' => Business::query()->count(),
-                'spaces' => Space::query()->count(),
+                'event_spaces' => Space::query()->where('type', SpaceType::EventSpace)->count(),
+                'leasing_spaces' => Space::query()->where('type', SpaceType::Leasing)->count(),
                 'careers' => Career::query()->count(),
                 'new_submissions' => auth()->user()->isAdmin()
                     ? Submission::query()->where('status', 'new')->count()
@@ -39,7 +39,6 @@ class DashboardController extends Controller
                 'published' => Page::query()->published()->count()
                     + News::query()->published()->count()
                     + Event::query()->published()->count()
-                    + Program::query()->published()->count()
                     + Attraction::query()->published()->count()
                     + Business::query()->published()->count()
                     + Space::query()->published()->count()
@@ -47,7 +46,6 @@ class DashboardController extends Controller
                 'drafts' => Page::query()->where('status', 'draft')->count()
                     + News::query()->where('status', 'draft')->count()
                     + Event::query()->where('status', 'draft')->count()
-                    + Program::query()->where('status', 'draft')->count()
                     + Attraction::query()->where('status', 'draft')->count()
                     + Business::query()->where('status', 'draft')->count()
                     + Space::query()->where('status', 'draft')->count()

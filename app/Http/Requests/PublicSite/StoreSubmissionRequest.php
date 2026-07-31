@@ -32,17 +32,19 @@ class StoreSubmissionRequest extends FormRequest
                 ...$rules,
                 'attendees' => ['required', 'integer', 'min:1', 'max:20'],
             ],
-            'public.programs.request' => [
+            'public.spaces.event-request' => [
                 ...$rules,
-                'organization' => ['nullable', 'string', 'max:255'],
-                'participant_age' => ['nullable', 'integer', 'min:1', 'max:120'],
+                'phone' => ['required', 'string', 'max:50'],
+                'event_type' => ['required', 'string', 'max:255'],
+                'preferred_date' => ['required', 'date', 'after_or_equal:today'],
+                'preferred_time' => ['required', 'date_format:H:i'],
+                'attendees' => ['required', 'integer', 'min:1', 'max:100000'],
             ],
-            'public.spaces.request' => [
+            'public.spaces.leasing-request' => [
                 ...$rules,
-                'organization' => ['nullable', 'string', 'max:255'],
-                'requested_start_at' => ['required', 'date', 'after_or_equal:today'],
-                'requested_end_at' => ['required', 'date', 'after_or_equal:requested_start_at'],
-                'attendees' => ['nullable', 'integer', 'min:1', 'max:100000'],
+                'phone' => ['required', 'string', 'max:50'],
+                'organization' => ['required', 'string', 'max:255'],
+                'message' => ['required', 'string', 'max:10000'],
             ],
             'public.careers.apply' => [
                 ...$rules,

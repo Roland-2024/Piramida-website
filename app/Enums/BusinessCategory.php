@@ -6,6 +6,7 @@ enum BusinessCategory: string
 {
     case Cafe = 'cafe';
     case Restaurant = 'restaurant';
+    case Shop = 'shop';
     case Technology = 'technology';
     case Art = 'art';
 
@@ -14,6 +15,7 @@ enum BusinessCategory: string
         return match ($this) {
             self::Cafe => 'Café',
             self::Restaurant => 'Restaurant',
+            self::Shop => 'Shop',
             self::Technology => 'Technology',
             self::Art => 'Art',
         };

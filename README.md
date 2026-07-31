@@ -17,16 +17,15 @@ Redis and a JavaScript framework are intentionally omitted because the current C
 
 The CMS manages:
 
-- Pages and ordered page sections
+- Editable presentation pages and ordered page sections, including About Us
 - News
 - Events, exhibitions, and guided tours
-- Programs in Education, Innovation, Business, and Art & Culture
 - Attractions
-- On-site businesses
+- On-site businesses with logos, galleries, and public information dialogs
 - Event and leasing spaces
 - Careers
 - Reusable media
-- Contact, registration, application, booking, and leasing submissions
+- Contact, registration, event-space request, leasing-enquiry, and career submissions
 - Global contact, opening-hours, social, and footer settings
 - Admin and Editor dashboard users
 
@@ -34,7 +33,11 @@ Publishable modules store shared/queryable fields in their parent tables and bil
 
 Optional section-specific structured data is the only content stored as JSON. Public queries use model scopes and remain independent from Blade presentation.
 
-Events, programs, spaces, and careers support internal request forms, external links, both actions, or no action. Internal forms create a staff-reviewed request; they do not confirm availability, take payment, or create an automatic reservation. Uploaded CV files are validated and kept on private storage.
+Pages and Page Sections manage static presentation templates without coupling their content to the temporary frontend. For example, About Us can be assembled from ordered image/text, feature, gallery, and other sections; staff can change the content while the final frontend template controls its appearance.
+
+Events, spaces, and careers support internal request forms, external links, both actions, or no action. Event spaces collect event requirements and preferred timing. Leasing spaces collect a business enquiry without creating a calendar booking. All internal forms create a staff-reviewed request; they do not confirm availability, take payment, or create an automatic reservation. Uploaded CV files are validated and kept on private storage.
+
+The earlier Program tables remain in the database for reversibility but are not exposed in the dashboard or public routes. The Education, Innovation, Business, and Art & Culture cards seen in the design are presentation content managed through Pages and Page Sections, not a separate program catalogue.
 
 ## Requirements
 
@@ -187,14 +190,15 @@ Admins may access all content and media modules, manage dashboard users, assign 
 
 Editors may access the dashboard and create or update pages, sections, news, events, and media. Editors cannot access user management or delete/restore content and media.
 
-Editors may also manage programs, attractions, businesses, spaces, and careers. Submissions and global site settings remain Admin-only.
+Editors may also manage attractions, businesses, spaces, and careers. Submissions and global site settings remain Admin-only.
 
 ## Request workflow
 
-1. Configure the public action on an event, program, space, or career as `Internal request form`, `External link`, `Internal form and external link`, or `No booking`.
-2. Set the submission notification address under **Dashboard → Site settings**.
-3. New internal requests appear under **Dashboard → Submissions** with status `New`.
-4. Staff can move a request through `In review`, `Replied`, and `Closed`, add private notes, download permitted attachments, and export the filtered inbox as CSV.
+1. Configure the public action on an event, space, or career as `Internal request form`, `External link`, `Internal form and external link`, or `No booking`.
+2. Set each space type to `Event space` or `Leasing`. The type determines which request form and staff submission category is used.
+3. Set the submission notification address under **Dashboard → Site settings**.
+4. New internal requests appear under **Dashboard → Submissions** with status `New`.
+5. Staff can move a request through `In review`, `Replied`, and `Closed`, add private notes, download permitted attachments, and export the filtered inbox as CSV.
 
 Email delivery uses Laravel's configured mailer. A mail failure is reported to the application log but does not discard a successfully stored request.
 
