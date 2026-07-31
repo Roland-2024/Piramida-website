@@ -15,6 +15,7 @@ class EventTranslation extends Model
         'short_description',
         'description',
         'location',
+        'price_label',
         'seo_title',
         'seo_description',
     ];

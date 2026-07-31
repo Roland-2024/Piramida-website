@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class Media extends Model
@@ -53,7 +54,12 @@ class Media extends Model
                     ->orWhere('secondary_media_id', $this->id))
                 ->exists()
             || News::withTrashed()->where('featured_media_id', $this->id)->exists()
-            || Event::withTrashed()->where('featured_media_id', $this->id)->exists();
+            || Event::withTrashed()->where('featured_media_id', $this->id)->exists()
+            || Program::withTrashed()->where('featured_media_id', $this->id)->exists()
+            || Attraction::withTrashed()->where('featured_media_id', $this->id)->exists()
+            || Business::withTrashed()->where('featured_media_id', $this->id)->exists()
+            || Space::withTrashed()->where('featured_media_id', $this->id)->exists()
+            || DB::table('media_attachments')->where('media_id', $this->id)->exists();
     }
 
     protected function casts(): array

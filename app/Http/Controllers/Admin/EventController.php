@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\BookingMode;
 use App\Enums\ContentStatus;
+use App\Enums\EventCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\EventRequest;
 use App\Models\Event;
@@ -57,7 +59,8 @@ class EventController extends Controller
         $event = DB::transaction(function () use ($request): Event {
             $data = $request->validated();
             $translations = $data['translations'];
-            unset($data['translations']);
+            $galleryMediaIds = $data['gallery_media_ids'] ?? [];
+            unset($data['translations'], $data['gallery_media_ids']);
 
             $event = Event::query()->create([
                 ...$data,
@@ -65,6 +68,7 @@ class EventController extends Controller
                 'updated_by' => $request->user()->id,
             ]);
             $event->syncTranslations($translations);
+            $event->syncGallery($galleryMediaIds);
 
             return $event;
         });
@@ -75,7 +79,7 @@ class EventController extends Controller
     public function show(Event $event): View
     {
         Gate::authorize('view', $event);
-        $event->load(['translations', 'featuredMedia', 'createdBy', 'updatedBy']);
+        $event->load(['translations', 'featuredMedia', 'gallery', 'createdBy', 'updatedBy']);
 
         return view('admin.events.show', compact('event'));
     }
@@ -83,7 +87,7 @@ class EventController extends Controller
     public function edit(Event $event): View
     {
         Gate::authorize('update', $event);
-        $event->load('translations');
+        $event->load(['translations', 'gallery']);
 
         return view('admin.events.edit', [
             'event' => $event,
@@ -96,10 +100,12 @@ class EventController extends Controller
         DB::transaction(function () use ($request, $event): void {
             $data = $request->validated();
             $translations = $data['translations'];
-            unset($data['translations']);
+            $galleryMediaIds = $data['gallery_media_ids'] ?? [];
+            unset($data['translations'], $data['gallery_media_ids']);
 
             $event->update([...$data, 'updated_by' => $request->user()->id]);
             $event->syncTranslations($translations);
+            $event->syncGallery($galleryMediaIds);
         });
 
         return redirect()->route('admin.events.show', $event)->with('success', 'Event updated.');
@@ -129,6 +135,8 @@ class EventController extends Controller
     {
         return [
             'statuses' => ContentStatus::cases(),
+            'categories' => EventCategory::cases(),
+            'bookingModes' => BookingMode::cases(),
             'mediaItems' => Media::query()->latest()->get(),
             'locales' => config('cms.locales'),
         ];

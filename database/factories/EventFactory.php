@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\BookingMode;
 use App\Enums\ContentStatus;
+use App\Enums\EventCategory;
 use App\Models\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -16,11 +18,14 @@ class EventFactory extends Factory
         $startsAt = fake()->dateTimeBetween('+1 day', '+2 months');
 
         return [
+            'category' => EventCategory::Event,
             'status' => ContentStatus::Draft,
+            'booking_mode' => BookingMode::None,
             'published_at' => null,
             'starts_at' => $startsAt,
             'ends_at' => (clone $startsAt)->modify('+2 hours'),
             'external_url' => fake()->optional()->url(),
+            'display_order' => fake()->numberBetween(0, 20),
         ];
     }
 

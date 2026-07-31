@@ -1,22 +1,46 @@
 <?php
 
+use App\Http\Controllers\Admin\AttractionController;
+use App\Http\Controllers\Admin\BusinessController;
+use App\Http\Controllers\Admin\CareerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PageSectionController;
+use App\Http\Controllers\Admin\ProgramController;
+use App\Http\Controllers\Admin\SiteSettingController;
+use App\Http\Controllers\Admin\SpaceController;
+use App\Http\Controllers\Admin\SubmissionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\PublicSite\AttractionController as PublicAttractionController;
+use App\Http\Controllers\PublicSite\BusinessController as PublicBusinessController;
+use App\Http\Controllers\PublicSite\CareerController as PublicCareerController;
 use App\Http\Controllers\PublicSite\EventController as PublicEventController;
 use App\Http\Controllers\PublicSite\HomeController;
 use App\Http\Controllers\PublicSite\NewsController as PublicNewsController;
 use App\Http\Controllers\PublicSite\PageController as PublicPageController;
+use App\Http\Controllers\PublicSite\ProgramController as PublicProgramController;
+use App\Http\Controllers\PublicSite\SpaceController as PublicSpaceController;
+use App\Http\Controllers\PublicSite\SubmissionController as PublicSubmissionController;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\SetLocale;
+use App\Models\Attraction;
+use App\Models\Business;
+use App\Models\Career;
+use App\Models\Program;
+use App\Models\Space;
 use Illuminate\Support\Facades\Route;
+
+Route::model('program', Program::class);
+Route::model('attraction', Attraction::class);
+Route::model('business', Business::class);
+Route::model('space', Space::class);
+Route::model('career', Career::class);
 
 Route::redirect('/', '/al');
 
@@ -30,6 +54,22 @@ Route::prefix('{locale}')
         Route::get('/news/{slug}', [PublicNewsController::class, 'show'])->name('news.show');
         Route::get('/events', [PublicEventController::class, 'index'])->name('events.index');
         Route::get('/events/{slug}', [PublicEventController::class, 'show'])->name('events.show');
+        Route::post('/events/{slug}/request', [PublicSubmissionController::class, 'storeEvent'])->middleware('throttle:10,1')->name('events.request');
+        Route::get('/programs', [PublicProgramController::class, 'index'])->name('programs.index');
+        Route::get('/programs/{slug}', [PublicProgramController::class, 'show'])->name('programs.show');
+        Route::post('/programs/{slug}/request', [PublicSubmissionController::class, 'storeProgram'])->middleware('throttle:10,1')->name('programs.request');
+        Route::get('/attractions', [PublicAttractionController::class, 'index'])->name('attractions.index');
+        Route::get('/attractions/{slug}', [PublicAttractionController::class, 'show'])->name('attractions.show');
+        Route::get('/businesses', [PublicBusinessController::class, 'index'])->name('businesses.index');
+        Route::get('/businesses/{slug}', [PublicBusinessController::class, 'show'])->name('businesses.show');
+        Route::get('/spaces', [PublicSpaceController::class, 'index'])->name('spaces.index');
+        Route::get('/spaces/{slug}', [PublicSpaceController::class, 'show'])->name('spaces.show');
+        Route::post('/spaces/{slug}/request', [PublicSubmissionController::class, 'storeSpace'])->middleware('throttle:10,1')->name('spaces.request');
+        Route::get('/careers', [PublicCareerController::class, 'index'])->name('careers.index');
+        Route::get('/careers/{slug}', [PublicCareerController::class, 'show'])->name('careers.show');
+        Route::post('/careers/{slug}/apply', [PublicSubmissionController::class, 'storeCareer'])->middleware('throttle:10,1')->name('careers.apply');
+        Route::get('/contact', [PublicSubmissionController::class, 'contact'])->name('contact');
+        Route::post('/contact', [PublicSubmissionController::class, 'storeContact'])->middleware('throttle:10,1')->name('contact.store');
         Route::get('/{slug}', [PublicPageController::class, 'show'])->name('pages.show');
     });
 
@@ -68,6 +108,29 @@ Route::prefix('admin')
 
         Route::post('events/{event}/restore', [EventController::class, 'restore'])->name('events.restore');
         Route::resource('events', EventController::class);
+
+        Route::post('programs/{id}/restore', [ProgramController::class, 'restore'])->name('programs.restore');
+        Route::resource('programs', ProgramController::class)->except('show');
+
+        Route::post('attractions/{id}/restore', [AttractionController::class, 'restore'])->name('attractions.restore');
+        Route::resource('attractions', AttractionController::class)->except('show');
+
+        Route::post('businesses/{id}/restore', [BusinessController::class, 'restore'])->name('businesses.restore');
+        Route::resource('businesses', BusinessController::class)->except('show');
+
+        Route::post('spaces/{id}/restore', [SpaceController::class, 'restore'])->name('spaces.restore');
+        Route::resource('spaces', SpaceController::class)->except('show');
+
+        Route::post('careers/{id}/restore', [CareerController::class, 'restore'])->name('careers.restore');
+        Route::resource('careers', CareerController::class)->except('show');
+
+        Route::get('submissions/export', [SubmissionController::class, 'export'])->name('submissions.export');
+        Route::get('submissions/{submission}/attachment', [SubmissionController::class, 'download'])->name('submissions.download');
+        Route::resource('submissions', SubmissionController::class)->only(['index', 'show', 'update'])
+            ->middleware('can:manage-submissions');
+
+        Route::get('settings', [SiteSettingController::class, 'edit'])->name('settings.edit');
+        Route::put('settings', [SiteSettingController::class, 'update'])->name('settings.update');
 
         Route::post('media/{medium}/restore', [MediaController::class, 'restore'])->name('media.restore');
         Route::delete('media/{medium}/force', [MediaController::class, 'forceDestroy'])->name('media.force-destroy');

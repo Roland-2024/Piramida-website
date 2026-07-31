@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Enums\BookingMode;
 use App\Enums\ContentStatus;
+use App\Enums\EventCategory;
 use App\Models\Event;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
@@ -28,6 +30,9 @@ class EventRequest extends FormRequest
 
         $rules = [
             'featured_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
+            'gallery_media_ids' => ['nullable', 'array', 'max:30'],
+            'gallery_media_ids.*' => ['integer', 'distinct', Rule::exists('media', 'id')->whereNull('deleted_at')],
+            'category' => ['required', Rule::enum(EventCategory::class)],
             'status' => ['required', Rule::enum(ContentStatus::class)],
             'published_at' => [
                 Rule::requiredIf($this->input('status') === ContentStatus::Published->value),
@@ -36,7 +41,16 @@ class EventRequest extends FormRequest
             ],
             'starts_at' => ['required', 'date'],
             'ends_at' => ['required', 'date', 'after_or_equal:starts_at'],
-            'external_url' => ['nullable', 'url:http,https', 'max:2048'],
+            'booking_mode' => ['required', Rule::enum(BookingMode::class)],
+            'external_url' => [
+                Rule::requiredIf(in_array($this->input('booking_mode'), ['external', 'both'], true)),
+                'nullable',
+                'url:http,https',
+                'max:2048',
+            ],
+            'is_featured' => ['required', 'boolean'],
+            'capacity' => ['nullable', 'integer', 'min:1', 'max:100000'],
+            'display_order' => ['required', 'integer', 'min:0', 'max:100000'],
             'translations' => ['required', 'array'],
         ];
 
@@ -57,6 +71,7 @@ class EventRequest extends FormRequest
             $rules["translations.{$locale}.short_description"] = ['nullable', 'string', 'max:2000'];
             $rules["translations.{$locale}.description"] = ['nullable', 'string'];
             $rules["translations.{$locale}.location"] = ['nullable', 'string', 'max:255'];
+            $rules["translations.{$locale}.price_label"] = ['nullable', 'string', 'max:255'];
             $rules["translations.{$locale}.seo_title"] = ['nullable', 'string', 'max:255'];
             $rules["translations.{$locale}.seo_description"] = ['nullable', 'string', 'max:2000'];
         }
@@ -74,6 +89,9 @@ class EventRequest extends FormRequest
             );
         }
 
-        $this->merge(['translations' => $translations]);
+        $this->merge([
+            'translations' => $translations,
+            'is_featured' => $this->boolean('is_featured'),
+        ]);
     }
 }

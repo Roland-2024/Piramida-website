@@ -18,6 +18,12 @@
                 <a href="{{ route('public.home', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.home') }}</a>
                 <a href="{{ route('public.news.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.news') }}</a>
                 <a href="{{ route('public.events.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.events') }}</a>
+                <a href="{{ route('public.programs.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.programs') }}</a>
+                <a href="{{ route('public.attractions.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.attractions') }}</a>
+                <a href="{{ route('public.businesses.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.businesses') }}</a>
+                <a href="{{ route('public.spaces.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.spaces') }}</a>
+                <a href="{{ route('public.careers.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.careers') }}</a>
+                <a href="{{ route('public.contact', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.contact') }}</a>
             </nav>
             <div class="flex rounded-lg border border-slate-200 p-1 text-xs font-semibold uppercase">
                 @foreach (config('cms.locales') as $locale => $name)
@@ -32,7 +38,12 @@
     <footer class="mt-20 border-t border-slate-200 bg-white">
         <div class="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-5 py-8 text-sm text-slate-500 lg:px-8">
             <p>© {{ now()->year }} Piramida</p>
-            <a href="{{ route('login') }}" class="hover:text-slate-900">Administration</a>
+            <div class="text-right">
+                @if ($siteSettings?->translation()?->footer_text)<p>{{ $siteSettings->translation()->footer_text }}</p>@endif
+                @if ($siteSettings?->email)<a href="mailto:{{ $siteSettings->email }}" class="block hover:text-slate-900">{{ $siteSettings->email }}</a>@endif
+                @if ($siteSettings?->phone)<a href="tel:{{ $siteSettings->phone }}" class="block hover:text-slate-900">{{ $siteSettings->phone }}</a>@endif
+                <a href="{{ route('login') }}" class="mt-1 block hover:text-slate-900">Administration</a>
+            </div>
         </div>
     </footer>
 </body>

@@ -19,13 +19,22 @@ The CMS manages:
 
 - Pages and ordered page sections
 - News
-- Events
+- Events, exhibitions, and guided tours
+- Programs in Education, Innovation, Business, and Art & Culture
+- Attractions
+- On-site businesses
+- Event and leasing spaces
+- Careers
 - Reusable media
+- Contact, registration, application, booking, and leasing submissions
+- Global contact, opening-hours, social, and footer settings
 - Admin and Editor dashboard users
 
-Pages, sections, news, and events store shared/queryable fields in their parent tables and bilingual content in separate translation tables. Translation tables enforce one translation per locale and database-level slug uniqueness per content type and locale.
+Publishable modules store shared/queryable fields in their parent tables and bilingual content in separate translation tables. Translation tables enforce one translation per locale and database-level slug uniqueness per content type and locale.
 
 Optional section-specific structured data is the only content stored as JSON. Public queries use model scopes and remain independent from Blade presentation.
+
+Events, programs, spaces, and careers support internal request forms, external links, both actions, or no action. Internal forms create a staff-reviewed request; they do not confirm availability, take payment, or create an automatic reservation. Uploaded CV files are validated and kept on private storage.
 
 ## Requirements
 
@@ -177,6 +186,34 @@ Admins may access all content and media modules, manage dashboard users, assign 
 ### Editor
 
 Editors may access the dashboard and create or update pages, sections, news, events, and media. Editors cannot access user management or delete/restore content and media.
+
+Editors may also manage programs, attractions, businesses, spaces, and careers. Submissions and global site settings remain Admin-only.
+
+## Request workflow
+
+1. Configure the public action on an event, program, space, or career as `Internal request form`, `External link`, `Internal form and external link`, or `No booking`.
+2. Set the submission notification address under **Dashboard → Site settings**.
+3. New internal requests appear under **Dashboard → Submissions** with status `New`.
+4. Staff can move a request through `In review`, `Replied`, and `Closed`, add private notes, download permitted attachments, and export the filtered inbox as CSV.
+
+Email delivery uses Laravel's configured mailer. A mail failure is reported to the application log but does not discard a successfully stored request.
+
+## Production deployment without Docker
+
+Docker Compose is for local development only; the live server does not need Docker. The production host needs PHP 8.4.1 or newer with Laravel's required extensions, MySQL 8, Composer, a web server whose document root is `public/`, and either Node.js for the asset build or a prebuilt `public/build` directory.
+
+Typical production commands:
+
+```bash
+composer install --no-dev --optimize-autoloader
+npm ci
+npm run build
+php artisan migrate --force
+php artisan storage:link
+php artisan optimize
+```
+
+Create the production `.env` directly on the server, set `APP_ENV=production`, `APP_DEBUG=false`, a real `APP_KEY`, database credentials, and the production mail transport. Keep `.env`, private uploads, and server credentials out of Git. Ensure the web-server user can write to `storage/` and `bootstrap/cache/`.
 
 Dashboard users are deactivated rather than deleted so content attribution remains intact.
 
