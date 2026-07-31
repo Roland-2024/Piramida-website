@@ -16,6 +16,11 @@
             </a>
             <nav class="flex flex-wrap items-center gap-5 text-sm font-medium" aria-label="Public navigation">
                 <a href="{{ route('public.home', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.home') }}</a>
+                @foreach ($headerPages as $headerPage)
+                    @if ($headerTranslation = $headerPage->translation(app()->getLocale(), false))
+                        <a href="{{ route('public.pages.show', [app()->getLocale(), $headerTranslation->slug]) }}" class="hover:text-amber-700">{{ $headerTranslation->title }}</a>
+                    @endif
+                @endforeach
                 <a href="{{ route('public.news.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.news') }}</a>
                 <a href="{{ route('public.events.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.events') }}</a>
                 <a href="{{ route('public.attractions.index', app()->getLocale()) }}" class="hover:text-amber-700">{{ __('cms.attractions') }}</a>
@@ -35,10 +40,21 @@
     <main>{{ $slot }}</main>
 
     <footer class="mt-20 border-t border-slate-200 bg-white">
-        <div class="mx-auto flex max-w-7xl flex-wrap justify-between gap-4 px-5 py-8 text-sm text-slate-500 lg:px-8">
-            <p>© {{ now()->year }} Piramida</p>
+        <div class="mx-auto grid max-w-7xl gap-8 px-5 py-10 text-sm text-slate-500 sm:grid-cols-3 lg:px-8">
+            <div>
+                <p class="font-semibold text-slate-950">Piramida</p>
+                @if ($siteSettings?->translation()?->footer_text)<p class="mt-2">{{ $siteSettings->translation()->footer_text }}</p>@endif
+                <p class="mt-3">© {{ now()->year }} Piramida</p>
+            </div>
+            <nav class="space-y-2" aria-label="Footer navigation">
+                @foreach ($footerPages as $footerPage)
+                    @if ($footerTranslation = $footerPage->translation(app()->getLocale(), false))
+                        <a href="{{ route('public.pages.show', [app()->getLocale(), $footerTranslation->slug]) }}" class="block hover:text-slate-900">{{ $footerTranslation->title }}</a>
+                    @endif
+                @endforeach
+            </nav>
             <div class="text-right">
-                @if ($siteSettings?->translation()?->footer_text)<p>{{ $siteSettings->translation()->footer_text }}</p>@endif
+                @if ($siteSettings?->translation()?->address)<p>{{ $siteSettings->translation()->address }}</p>@endif
                 @if ($siteSettings?->email)<a href="mailto:{{ $siteSettings->email }}" class="block hover:text-slate-900">{{ $siteSettings->email }}</a>@endif
                 @if ($siteSettings?->phone)<a href="tel:{{ $siteSettings->phone }}" class="block hover:text-slate-900">{{ $siteSettings->phone }}</a>@endif
                 <a href="{{ route('login') }}" class="mt-1 block hover:text-slate-900">Administration</a>

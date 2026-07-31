@@ -26,6 +26,7 @@ class SubmissionController extends Controller
     public function contact(string $locale): View
     {
         return view('public.contact', [
+            'siteSettings' => SiteSetting::query()->with('translations')->first(),
             'languageUrls' => collect(config('cms.locales'))
                 ->mapWithKeys(fn (string $name, string $targetLocale) => [
                     $targetLocale => route('public.contact', $targetLocale),

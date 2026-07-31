@@ -64,6 +64,18 @@ docker compose run --rm node npm run build
 
 Before seeding, set `INITIAL_ADMIN_NAME`, `INITIAL_ADMIN_EMAIL`, and `INITIAL_ADMIN_PASSWORD` in `.env`. Keep `SEED_DEMO_CONTENT=false` unless local bilingual examples are wanted.
 
+## Prototype demo content
+
+The idempotent `DemoContentSeeder` creates a complete Albanian/English demonstration based on the approved Figma prototype: Home, Education, About, legal pages, ordered page sections, news, events, attractions, business experience cards, four event spaces, two leasing units, careers, site settings, and reusable prototype imagery. It updates only records identified by its stable demo slugs or internal section names and does not remove other CMS content.
+
+Run it explicitly in an existing local database:
+
+```bash
+docker compose exec app php artisan db:seed --class=DemoContentSeeder
+```
+
+Alternatively set `SEED_DEMO_CONTENT=true` before `migrate --seed` for a fresh local installation. Keep it disabled in production unless this demonstration content is intentionally required.
+
 ## Local URLs and ports
 
 | Service | Default URL or host port | Environment variable |

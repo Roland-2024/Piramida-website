@@ -1,4 +1,8 @@
-@php $sectionTranslation = $section->translation(app()->getLocale()); @endphp
+@php
+    $sectionTranslation = $section->translation(app()->getLocale());
+    $items = data_get($section->structured_data, app()->getLocale().'.items', []);
+    $imageAlt = fn ($media) => app()->getLocale() === 'en' ? $media->alt_text_en : $media->alt_text_al;
+@endphp
 
 <section class="py-10">
     <div class="grid items-center gap-8 {{ $section->primaryMedia ? 'lg:grid-cols-2' : '' }}">
@@ -14,7 +18,23 @@
             @endif
         </div>
         @if ($section->primaryMedia)
-            <img src="{{ $section->primaryMedia->url() }}" alt="{{ app()->getLocale() === 'en' ? $section->primaryMedia->alt_text_en : $section->primaryMedia->alt_text_al }}" class="max-h-[30rem] w-full rounded-3xl object-cover">
+            <div class="grid gap-4 {{ $section->secondaryMedia ? 'sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2' : '' }}">
+                <img src="{{ $section->primaryMedia->url() }}" alt="{{ $imageAlt($section->primaryMedia) }}" class="h-full max-h-[30rem] w-full rounded-3xl object-cover">
+                @if ($section->secondaryMedia)
+                    <img src="{{ $section->secondaryMedia->url() }}" alt="{{ $imageAlt($section->secondaryMedia) }}" class="h-full max-h-[30rem] w-full rounded-3xl object-cover">
+                @endif
+            </div>
         @endif
     </div>
+
+    @if ($items)
+        <div class="mt-8 grid gap-4 {{ $section->type === \App\Enums\SectionType::Partners ? 'sm:grid-cols-3' : 'sm:grid-cols-2 lg:grid-cols-4' }}">
+            @foreach ($items as $item)
+                <article class="rounded-2xl border border-slate-200 bg-white p-5">
+                    <h3 class="font-semibold text-slate-950">{{ data_get($item, 'title') }}</h3>
+                    @if (data_get($item, 'text'))<p class="mt-2 text-sm leading-6 text-slate-600">{{ data_get($item, 'text') }}</p>@endif
+                </article>
+            @endforeach
+        </div>
+    @endif
 </section>

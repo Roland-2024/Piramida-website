@@ -50,7 +50,19 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Media::class, ContentPolicy::class);
 
         View::composer('layouts.public', function ($view): void {
-            $view->with('siteSettings', SiteSetting::query()->with('translations')->first());
+            $pages = Page::query()
+                ->published()
+                ->where('is_homepage', false)
+                ->with('translations')
+                ->orderBy('display_order')
+                ->orderBy('id')
+                ->get();
+
+            $view->with([
+                'siteSettings' => SiteSetting::query()->with('translations')->first(),
+                'headerPages' => $pages->where('display_order', '<', 100),
+                'footerPages' => $pages->where('display_order', '>=', 100),
+            ]);
         });
     }
 }

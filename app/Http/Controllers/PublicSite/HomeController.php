@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\PublicSite;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attraction;
+use App\Models\Business;
 use App\Models\Event;
 use App\Models\News;
 use App\Models\Page;
@@ -44,6 +46,22 @@ class HomeController extends Controller
                 ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
                 ->with(['translations', 'featuredMedia'])
                 ->orderBy('starts_at')
+                ->limit(3)
+                ->get(),
+            'featuredAttractions' => Attraction::query()
+                ->published()
+                ->where('is_featured', true)
+                ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
+                ->with(['translations', 'featuredMedia'])
+                ->orderBy('display_order')
+                ->limit(2)
+                ->get(),
+            'featuredBusinesses' => Business::query()
+                ->published()
+                ->where('is_featured', true)
+                ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
+                ->with(['translations', 'featuredMedia'])
+                ->orderBy('display_order')
                 ->limit(3)
                 ->get(),
             'languageUrls' => $this->languageUrls(),
