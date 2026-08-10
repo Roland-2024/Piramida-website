@@ -100,6 +100,7 @@ Route::prefix('admin')
         Route::post('news/{news}/restore', [NewsController::class, 'restore'])->name('news.restore');
         Route::resource('news', NewsController::class);
 
+        Route::post('events/sync-wordpress', [EventController::class, 'syncWordPress'])->name('events.sync-wordpress');
         Route::post('events/{event}/restore', [EventController::class, 'restore'])->name('events.restore');
         Route::resource('events', EventController::class);
 

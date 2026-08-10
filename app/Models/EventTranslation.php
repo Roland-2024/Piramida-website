@@ -10,6 +10,7 @@ class EventTranslation extends Model
 {
     protected $fillable = [
         'locale',
+        'wordpress_id',
         'title',
         'slug',
         'short_description',
@@ -27,6 +28,9 @@ class EventTranslation extends Model
 
     protected function casts(): array
     {
-        return ['description' => SanitizedHtml::class];
+        return [
+            'wordpress_id' => 'integer',
+            'description' => SanitizedHtml::class,
+        ];
     }
 }

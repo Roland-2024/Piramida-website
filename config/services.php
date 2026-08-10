@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'wordpress_events' => [
+        'url' => env('WORDPRESS_EVENTS_URL', 'https://piramidaime.al/wp-json'),
+        'api_key' => env('WORDPRESS_EVENTS_API_KEY'),
+    ],
+
 ];

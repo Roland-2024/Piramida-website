@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\SynchronizeWordPressEvents;
 use App\Enums\BookingMode;
 use App\Enums\ContentStatus;
 use App\Enums\EventCategory;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Throwable;
 
 class EventController extends Controller
 {
@@ -44,7 +46,29 @@ class EventController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return view('admin.events.index', compact('events', 'filters'));
+        $lastWordPressSync = Event::query()->max('wordpress_synced_at');
+        $wordPressEventCount = Event::query()
+            ->whereHas('translations', fn (Builder $query) => $query->whereNotNull('wordpress_id'))
+            ->count();
+
+        return view('admin.events.index', compact('events', 'filters', 'lastWordPressSync', 'wordPressEventCount'));
+    }
+
+    public function syncWordPress(SynchronizeWordPressEvents $synchronizer): RedirectResponse
+    {
+        Gate::authorize('create', Event::class);
+
+        try {
+            $result = $synchronizer->handle();
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()->with('error', 'WordPress synchronization failed. Check the API configuration and application log.');
+        }
+
+        $message = "WordPress synchronized: {$result['created']} created, {$result['updated']} updated, {$result['drafted']} drafted, {$result['skipped']} skipped.";
+
+        return back()->with($result['skipped'] ? 'warning' : 'success', $message);
     }
 
     public function create(): View

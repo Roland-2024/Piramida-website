@@ -1,5 +1,23 @@
 <x-layouts.admin title="Events">
-    <div class="mb-6 flex flex-wrap justify-between gap-4"><div><h2 class="text-2xl font-semibold">Events</h2><p class="mt-1 text-sm text-slate-500">Upcoming and past bilingual events.</p></div><a href="{{ route('admin.events.create') }}" class="rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Create event</a></div>
+    <div class="mb-6 flex flex-wrap justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-semibold">Events</h2>
+            <p class="mt-1 text-sm text-slate-500">Upcoming and past bilingual events.</p>
+            <p class="mt-1 text-xs text-slate-400">
+                {{ $wordPressEventCount }} imported from WordPress
+                @if ($lastWordPressSync)
+                    · last synchronized {{ \Illuminate\Support\Carbon::parse($lastWordPressSync)->diffForHumans() }}
+                @endif
+            </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <form method="POST" action="{{ route('admin.events.sync-wordpress') }}">
+                @csrf
+                <button class="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700" type="submit">Sync WordPress</button>
+            </form>
+            <a href="{{ route('admin.events.create') }}" class="rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Create event</a>
+        </div>
+    </div>
     <form method="GET" class="mb-5 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-5">
         <input name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search title" class="rounded-lg border border-slate-300 px-3 py-2.5 text-sm sm:col-span-2">
         <select name="status" class="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm"><option value="">All statuses</option><option value="draft" @selected(($filters['status'] ?? '') === 'draft')>Draft</option><option value="published" @selected(($filters['status'] ?? '') === 'published')>Published</option></select>

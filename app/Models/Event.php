@@ -30,6 +30,7 @@ class Event extends Model
         'is_featured',
         'capacity',
         'display_order',
+        'wordpress_synced_at',
         'created_by',
         'updated_by',
     ];
@@ -84,6 +85,7 @@ class Event extends Model
             'is_featured' => 'boolean',
             'capacity' => 'integer',
             'display_order' => 'integer',
+            'wordpress_synced_at' => 'datetime',
         ];
     }
 }

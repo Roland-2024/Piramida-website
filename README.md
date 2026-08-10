@@ -37,6 +37,8 @@ Pages and Page Sections manage static presentation templates without coupling th
 
 Events, spaces, and careers support internal request forms, external links, both actions, or no action. Event spaces collect event requirements and preferred timing. Leasing spaces use the designed company, contact, offer, and named-document application; monthly rent is calculated from the unit area and offer per square metre. All internal forms create a staff-reviewed request; they do not confirm availability, take payment, or create an automatic reservation. Uploaded CV and leasing documents are validated and kept on private storage.
 
+Events can also be synchronized from Piramida Ime's bilingual WordPress API. Imported translations keep their WordPress IDs, while manually created dashboard events remain independent and are never overwritten by the importer. The initial import pairs Albanian and English records only when their featured image provides an unambiguous match; subsequent runs use the stored WordPress IDs. Events removed from the complete upstream response are moved to draft rather than deleted.
+
 The earlier Program tables remain in the database for reversibility but are not exposed in the dashboard or public routes. The Education, Innovation, Business, and Art & Culture cards seen in the design are presentation content managed through Pages and Page Sections, not a separate program catalogue.
 
 ## Requirements
@@ -178,9 +180,30 @@ INITIAL_ADMIN_NAME=
 INITIAL_ADMIN_EMAIL=
 INITIAL_ADMIN_PASSWORD=
 SEED_DEMO_CONTENT=false
+
+WORDPRESS_EVENTS_URL=https://piramidaime.al/wp-json
+WORDPRESS_EVENTS_API_KEY=
 ```
 
 The Docker defaults are for local development only. Use deployment-specific secrets outside source control.
+
+Set `WORDPRESS_EVENTS_API_KEY` to the header value supplied by the WordPress owner. Store only the value, without an `api_key=` prefix. The key shown in development screenshots should be rotated before production use.
+
+## WordPress event synchronization
+
+Run a synchronization manually from **Dashboard → Events → Sync WordPress** or from the command line:
+
+```bash
+docker compose exec app php artisan events:sync-wordpress
+```
+
+Laravel schedules the same command daily at 06:00 and 18:00 in the application timezone. On the live server, run Laravel's scheduler every minute:
+
+```cron
+* * * * * cd /path/to/piramida && php artisan schedule:run >> /dev/null 2>&1
+```
+
+The API key remains server-side and is never exposed to the browser. A failed or incomplete API request does not draft existing imported events; events are drafted only after both language feeds have been retrieved successfully.
 
 ## Creating the first Admin
 
