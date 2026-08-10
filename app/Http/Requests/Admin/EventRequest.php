@@ -30,8 +30,6 @@ class EventRequest extends FormRequest
 
         $rules = [
             'featured_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
-            'gallery_media_ids' => ['nullable', 'array', 'max:30'],
-            'gallery_media_ids.*' => ['integer', 'distinct', Rule::exists('media', 'id')->whereNull('deleted_at')],
             'category' => ['required', Rule::enum(EventCategory::class)],
             'status' => ['required', Rule::enum(ContentStatus::class)],
             'published_at' => [

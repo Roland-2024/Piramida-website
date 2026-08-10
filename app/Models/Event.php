@@ -6,7 +6,6 @@ use App\Enums\BookingMode;
 use App\Enums\ContentStatus;
 use App\Enums\EventCategory;
 use App\Models\Concerns\HasLocalizedContent;
-use App\Models\Concerns\HasMediaGallery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
 {
-    use HasFactory, HasLocalizedContent, HasMediaGallery, SoftDeletes;
+    use HasFactory, HasLocalizedContent, SoftDeletes;
 
     protected $fillable = [
         'featured_media_id',

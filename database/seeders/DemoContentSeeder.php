@@ -382,8 +382,7 @@ class DemoContentSeeder extends Seeder
         ];
 
         foreach ($items as $index => $item) {
-            /** @var Event $event */
-            $event = $this->upsertTranslated(Event::class, $item['slugs'], [
+            $this->upsertTranslated(Event::class, $item['slugs'], [
                 'featured_media_id' => $media[$item['image']]->id,
                 'category' => $item['category'],
                 'status' => ContentStatus::Published,
@@ -401,7 +400,6 @@ class DemoContentSeeder extends Seeder
                 'al' => $item['al'] + ['seo_title' => $item['al']['title'], 'seo_description' => $item['al']['short_description']],
                 'en' => $item['en'] + ['seo_title' => $item['en']['title'], 'seo_description' => $item['en']['short_description']],
             ]);
-            $event->syncGallery([$media[$item['image']]->id]);
         }
     }
 

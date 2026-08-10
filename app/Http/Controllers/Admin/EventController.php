@@ -83,8 +83,7 @@ class EventController extends Controller
         $event = DB::transaction(function () use ($request): Event {
             $data = $request->validated();
             $translations = $data['translations'];
-            $galleryMediaIds = $data['gallery_media_ids'] ?? [];
-            unset($data['translations'], $data['gallery_media_ids']);
+            unset($data['translations']);
 
             $event = Event::query()->create([
                 ...$data,
@@ -92,7 +91,6 @@ class EventController extends Controller
                 'updated_by' => $request->user()->id,
             ]);
             $event->syncTranslations($translations);
-            $event->syncGallery($galleryMediaIds);
 
             return $event;
         });
@@ -103,7 +101,7 @@ class EventController extends Controller
     public function show(Event $event): View
     {
         Gate::authorize('view', $event);
-        $event->load(['translations', 'featuredMedia', 'gallery', 'createdBy', 'updatedBy']);
+        $event->load(['translations', 'featuredMedia', 'createdBy', 'updatedBy']);
 
         return view('admin.events.show', compact('event'));
     }
@@ -111,7 +109,7 @@ class EventController extends Controller
     public function edit(Event $event): View
     {
         Gate::authorize('update', $event);
-        $event->load(['translations', 'gallery']);
+        $event->load('translations');
 
         return view('admin.events.edit', [
             'event' => $event,
@@ -124,12 +122,10 @@ class EventController extends Controller
         DB::transaction(function () use ($request, $event): void {
             $data = $request->validated();
             $translations = $data['translations'];
-            $galleryMediaIds = $data['gallery_media_ids'] ?? [];
-            unset($data['translations'], $data['gallery_media_ids']);
+            unset($data['translations']);
 
             $event->update([...$data, 'updated_by' => $request->user()->id]);
             $event->syncTranslations($translations);
-            $event->syncGallery($galleryMediaIds);
         });
 
         return redirect()->route('admin.events.show', $event)->with('success', 'Event updated.');
