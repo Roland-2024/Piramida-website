@@ -1,5 +1,5 @@
 <x-layouts.admin title="Events">
-    <div class="mb-6 flex flex-wrap justify-between gap-4">
+    <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
             <h2 class="text-2xl font-semibold">Events</h2>
             <p class="mt-1 text-sm text-slate-500">Upcoming and past bilingual events.</p>
