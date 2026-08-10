@@ -15,13 +15,33 @@
 </div>
 
 <div class="mt-5">
-    <label for="gallery_media_ids" class="block text-sm font-medium">Gallery images</label>
     @php
         $selectedGallery = collect(old('gallery_media_ids', isset($event) ? $event->gallery->modelKeys() : []))
             ->map(fn ($id) => (string) $id)
             ->all();
     @endphp
-    <select id="gallery_media_ids" name="gallery_media_ids[]" multiple size="5" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">@foreach ($mediaItems as $media)<option value="{{ $media->id }}" @selected(in_array((string) $media->id, $selectedGallery, true))>{{ $media->original_name }}</option>@endforeach</select>
+    <details @if ($selectedGallery !== []) open @endif class="rounded-xl border border-slate-200 bg-white">
+        <summary class="flex cursor-pointer items-center justify-between gap-4 px-4 py-3">
+            <span class="text-sm font-medium">Gallery images</span>
+            <span class="text-xs font-normal text-slate-500">{{ count($selectedGallery) }} selected · click to choose</span>
+        </summary>
+        <div class="border-t border-slate-200 p-4">
+            <p class="mb-3 text-xs text-slate-500">Only checked images will be attached to this event.</p>
+            <div class="grid max-h-72 gap-2 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3">
+                @forelse ($mediaItems as $media)
+                    <label class="flex cursor-pointer items-center gap-3 rounded-lg border border-slate-200 p-2 hover:bg-slate-50">
+                        <input name="gallery_media_ids[]" type="checkbox" value="{{ $media->id }}" @checked(in_array((string) $media->id, $selectedGallery, true)) class="rounded border-slate-300 text-amber-500">
+                        <img src="{{ $media->url() }}" alt="" loading="lazy" class="size-12 shrink-0 rounded-md object-cover">
+                        <span class="min-w-0 truncate text-sm" title="{{ $media->original_name }}">{{ $media->original_name }}</span>
+                    </label>
+                @empty
+                    <p class="text-sm text-slate-500">No images are available in the Media Library.</p>
+                @endforelse
+            </div>
+        </div>
+    </details>
+    @error('gallery_media_ids')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
+    @error('gallery_media_ids.*')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
 </div>
 
 <div class="mt-8 space-y-5">

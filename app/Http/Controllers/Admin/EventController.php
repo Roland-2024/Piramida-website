@@ -161,7 +161,7 @@ class EventController extends Controller
             'statuses' => ContentStatus::cases(),
             'categories' => EventCategory::cases(),
             'bookingModes' => BookingMode::cases(),
-            'mediaItems' => Media::query()->latest()->get(),
+            'mediaItems' => Media::query()->where('mime_type', 'like', 'image/%')->latest()->get(),
             'locales' => config('cms.locales'),
         ];
     }
