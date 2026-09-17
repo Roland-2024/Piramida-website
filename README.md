@@ -311,6 +311,10 @@ Do not point PHPUnit at a shared or production database.
 
 ## Integrating the final frontend template
 
+The draft `Piramida.zip` template is integrated through the public Blade views, `resources/css/public.css`, and `resources/js/public.js`. Its selected local images and fonts live under `public/template` (font licenses included). Build these with the existing `npm run build` command; Admin continues using its separate `app.css` / `app.js` bundle.
+
+`/{locale}/rent-space` links to event-space and leasing catalogues. The animated homepage has a skip control and respects reduced motion. About/Education use existing editable Page Sections, businesses retain native information dialogs, and forms retain the existing staff-reviewed submission workflow. Museum is disabled pending the PM's destination. Template sample video and broken placeholder assets were not imported; use a Page Section video URL for real media.
+
 The frontend team can replace:
 
 - `resources/views/layouts/public.blade.php`
@@ -321,7 +325,7 @@ Keep public route names and controller inputs stable, or update links consistent
 
 ## Current limitations
 
-- The public frontend is a functional test interface, not the final Figma implementation.
+- The public frontend uses the supplied draft template, not yet the final signed-off design. Managed content comes from the CMS; About/Education have provisional fixed layout mappings documented in `docs/PROJECT_DECISIONS.md`. Static presentation copy remains where the draft has no managed content equivalent.
 - Section ordering uses a numeric field rather than drag-and-drop.
 - The native rich-text toolbar intentionally supports only basic formatting.
 - There is no automated queue worker because the current workflows are synchronous.

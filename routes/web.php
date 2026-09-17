@@ -56,6 +56,7 @@ Route::prefix('{locale}')
         Route::get('/businesses', [PublicBusinessController::class, 'index'])->name('businesses.index');
         Route::get('/businesses/{slug}', [PublicBusinessController::class, 'show'])->name('businesses.show');
         Route::get('/spaces', [PublicSpaceController::class, 'index'])->name('spaces.index');
+        Route::get('/rent-space', [PublicSpaceController::class, 'overview'])->name('spaces.overview');
         Route::get('/spaces/{slug}', [PublicSpaceController::class, 'show'])->name('spaces.show');
         Route::post('/spaces/{slug}/event-request', [PublicSubmissionController::class, 'storeEventSpace'])->middleware('throttle:10,1')->name('spaces.event-request');
         Route::post('/spaces/{slug}/leasing-request', [PublicSubmissionController::class, 'storeLeasing'])->middleware('throttle:10,1')->name('spaces.leasing-request');

@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 class CareerController extends TranslatedCatalogController
 {
+    protected string $indexView = 'public.careers.index';
+
+    protected string $showView = 'public.careers.show';
+
     protected string $modelClass = Career::class;
 
     protected string $routePrefix = 'public.careers';

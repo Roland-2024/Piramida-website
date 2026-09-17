@@ -1,0 +1,64 @@
+/* Laravel integration: preserve the supplied layout; add native dialog/accessibility behavior. */
+#mobileMenu { max-width:none; max-height:none; padding:0; border:0; color:white; }
+#mobileMenu:not([open]) { display:none; }
+#mobileMenu[open] { display:block; }
+body:has(dialog[open]) { overflow:hidden; }
+.header-inner { position:relative; }
+.site-header { position:absolute; top:0; left:0; width:100%; }
+#mobileMenu .menu-left,#mobileMenu .menu-right { overflow-y:auto; }
+.template-languages { position:absolute; right:calc(8% + 58px); top:28px; display:flex; gap:12px; font-size:12px; }
+.template-languages [aria-current] { color:#cbff00; }
+[aria-disabled=true] { cursor:default; }
+.mobile-main-link[aria-disabled] { opacity:.6; }
+.request-panel,.request-panel p { color:#14182a; }
+.request-panel [class*="text-red-"] { color:#b91c1c; }
+.request-panel [class*="text-emerald-"] { color:#065f46; }
+.request-panel :focus-visible { outline-color:#3735e2; }
+.template-empty { padding:40px; text-align:center; color:white; }
+.template-pagination { position:relative; padding:24px; z-index:20; }
+[hidden] { display:none !important; }
+.template-dialog { position:fixed; inset:0; width:100%; height:100%; max-width:none; max-height:none; margin:0; padding:0; border:0; background:transparent; color:#111; overflow:auto; }
+.template-dialog::backdrop { background:#000929e8 url('/template/images/BG.png') center / cover; }
+.template-dialog .registration-section { min-height:100svh; }
+.template-request-notice { font-size:12px; margin:12px 0; color:#555; }
+.template-consent { display:flex !important; align-items:flex-start; gap:8px; font-size:12px; margin-top:12px; }
+.template-consent input { width:auto !important; height:auto !important; margin-top:4px; flex:none; }
+.template-consent span { position:static !important; width:auto !important; height:auto !important; overflow:visible !important; clip:auto !important; white-space:normal !important; font-size:12px; }
+.template-success { color:#065f46; padding:12px; background:#ecfdf5; font-size:14px; }
+.template-errors { color:#991b1b; padding:12px; background:#fef2f2; font-size:14px; }
+.place-popup-card { height:auto; min-height:504px; }
+.place-popup-description { display:block; overflow:visible; }
+.place-popup-header h1 { font-family:var(--font-body); text-transform:none; }
+.job-application-title { font-family:var(--font-body); }
+.template-business-links { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; font-size:12px; }
+.template-business-links p { width:100%; font-size:12px; }
+.place-popup-logo img { border-radius:50%; width:100%; height:100%; object-fit:cover; }
+#attractions .attraction-card { padding:0; background:transparent; }
+#attractions .attraction-card img { border-radius:0; }
+#attractions [data-cards]:has(.attraction-card:only-child) { justify-content:center; }
+.template-event-filters { position:absolute; top:72px; left:8%; z-index:30; display:flex; gap:18px; font-size:12px; }
+.template-event-filters [aria-current] { color:#cbff00; }
+.template-event-controls { position:absolute; bottom:30px; left:6%; z-index:30; display:flex; gap:16px; }
+.template-event-controls button { border:1px solid #ffffff50; border-radius:50%; width:40px; height:40px; }
+#eventsSection,#eventsMobile { background-image:url('/template/images/BG.png'); }
+@media(max-width:767px) { .template-languages { right:80px; top:30px; } }
+@media(max-width:767px) { #mobileMenu .menu-left,#mobileMenu .menu-right { overflow:visible; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; } .intro,.intro-swipe { display:none !important; } }
+
+.leasing-field-label,.leasing-document-field > label { color:#ffffff70; font-size:14px; margin-bottom:6px; }
+.leasing-documents-grid > .leasing-document-field { grid-column:span 3; min-width:0; }
+.leasing-application-form input[type=file] { padding:12px; font-size:12px; }
+.leasing-application-form output { display:block; padding:15px 0; }
+.template-errors,.template-errors p { color:#991b1b !important; }
+@media(max-width:767px) { .leasing-documents-grid > .leasing-document-field { grid-column:auto; } }
+
+.leasing-submit-button::before { content:none !important; }
+.leasing-submit-button { font-size:14px; }
+.leasing-back-button { display:none; }
+.leasing-form-gallery:has(img:only-child) { justify-content:center; }
+.leasing-form-carousel:has(img:only-child) .leasing-form-carousel-arrow { display:none; }
+
+.contact-layout > * { min-width:0; }
+.template-news-hero { min-height:320px; }
+@media(max-width:767px) { .template-news-hero { display:grid; align-items:end; } .template-news-hero > img { position:absolute; width:100%; height:100%; object-fit:cover; } .template-news-hero-copy { position:relative; padding:32px 12px; } }
+@media(max-width:768px) { .contact-form button { min-width:0; width:100%; } }

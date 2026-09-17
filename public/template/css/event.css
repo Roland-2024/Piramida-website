@@ -1,0 +1,243 @@
+/* ===== Hover-to-grey + info panel behavior ===== */
+.slot-diagonal img {
+    transition: filter 0.45s ease, opacity 0.45s ease;
+}
+
+/* when a slide has an active hover, dim every card except the hovered one */
+.events-slide.has-hover .slot-diagonal:not(.is-hovered) img {
+    filter: grayscale(1) brightness(0.55);
+    opacity: 0.85;
+}
+
+.events-slide.has-hover .slot-diagonal.is-hovered img {
+    filter: grayscale(0);
+}
+
+.slot-diagonal {
+    cursor: pointer;
+}
+
+.slot-diagonal a {
+    display: block;
+    position: absolute;
+    inset: 0;
+}
+
+/* hidden data holders — text lives in real divs now instead of data-* attributes */
+.slot-title,
+.slot-date {
+    display: none;
+}
+
+/* shared card dimensions — every diagonal card position is derived from these,
+   so corners always line up exactly regardless of viewport size */
+.events-slide {
+    --card-w: min(485px, 38vw);
+    --card-h: min(360px, 34vh);
+}
+
+/* left-side info panel */
+.events-info {
+    position: absolute;
+    left: 6%;
+    bottom: 12%;
+    max-width: 420px;
+    z-index: 20;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    pointer-events: none;
+}
+
+.events-info.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.events-info-title {
+    color: #D6FF3F;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+    line-height: 1.15;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+}
+
+.events-info-date {
+    margin-top: 0.85rem;
+    color: #ffffff;
+    font-size: 0.95rem;
+    opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+    .events-info {
+        left: 5%;
+        right: 5%;
+        bottom: 8%;
+        max-width: none;
+    }
+}
+
+#eventsSection {
+    background: url(/template/images/BG.png) no-repeat center center;
+    background-size: cover;
+}
+
+/* only what Tailwind's default utility set genuinely can't express */
+.events-slide {
+    transition: transform .85s cubic-bezier(.22, .9, .25, 1), opacity .6s ease;
+}
+
+.events-slide.is-active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    z-index: 10;
+}
+
+.events-slide.is-prev {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6%);
+    z-index: 5;
+}
+
+.events-slide.is-next {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6%);
+    z-index: 5;
+}
+
+@keyframes bob {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(4px);
+    }
+}
+
+.animate-bob {
+    animation: bob 1.6s ease-in-out infinite;
+}
+
+@media (max-width:768px) {
+    .slot-diagonal {
+        position: relative !important;
+        inset: auto !important;
+        left: auto !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        width: 78vw !important;
+        height: 28vh !important;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media (max-width: 767px) {
+    #cardTrack {
+        --visible-cards: 1;
+    }
+}
+
+/* ===== Mobile "reel" view — one event per full-screen swipe (Instagram/TikTok style) ===== */
+/* Separate markup from the desktop diagonal layout; hidden on desktop entirely. */
+#eventsMobile {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    #eventsSection {
+        display: none;
+    }
+
+    #eventsMobile {
+        display: block;
+        height: 100svh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        -webkit-overflow-scrolling: touch;
+        background: url(/template/images/BG.png) no-repeat center center;
+        background-size: cover;
+    }
+
+    .reel-item {
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        height: 100svh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 0 0 3rem;
+        box-sizing: border-box;
+    }
+
+    .reel-image-wrap {
+        position: relative;
+        width: 100%;
+        height: 75vh;
+        overflow: hidden;
+        flex-shrink: 0;
+        margin: 0;
+        width: 100%;
+        border-radius: 0;
+    }
+
+    .reel-image-wrap a {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .reel-image-wrap img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .reel-date {
+        padding: 0 1rem;
+        margin: 20px 0 20px 20px;
+        color: #ffffff;
+        opacity: 0.85;
+        font-size: 0.95rem;
+        border: solid 1px #ffffff;
+        width: fit-content;
+    }
+
+    .reel-title {
+        margin-top: 0.5rem;
+        padding: 0 1rem 0.25rem;
+        color: #D6FF3F;
+        font-weight: 400;
+        font-size: 32px;
+        line-height: 1.15;
+        text-transform: uppercase;
+        letter-spacing: 0.01em;
+        font-family: 'Albert-Sans', Arial, sans-serif;
+    }
+}
+
+/* Tablets & smaller laptops (e.g. 1280x800, 1366x768, iPad landscape): the desktop
+   card size (38vw/34vh) is too large for these widths, so the top card — offset by
+   2x the card width from the right edge — runs off the left edge and looks "shrunk"
+   when it's actually just clipped. Scaling the shared variable down here keeps all
+   three cards proportional and fully on-screen. Full desktop (>1600px) is untouched. */
+@media (min-width: 769px) and (max-width: 1600px) {
+    .events-slide {
+        --card-w: min(420px, 30vw);
+        --card-h: min(300px, 27vh);
+    }
+}

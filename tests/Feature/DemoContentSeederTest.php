@@ -15,6 +15,7 @@ use App\Models\PageSection;
 use App\Models\Space;
 use Database\Seeders\DemoContentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -24,6 +25,8 @@ class DemoContentSeederTest extends TestCase
 
     public function test_demo_content_is_complete_bilingual_and_idempotent(): void
     {
+        // Seeded events have fixed dates; keep this assertion independent of today's date.
+        $this->travelTo(Carbon::parse('2026-08-01 12:00:00'));
         Storage::fake('public');
 
         $this->seed(DemoContentSeeder::class);
@@ -62,5 +65,28 @@ class DemoContentSeederTest extends TestCase
             ->assertOk()
             ->assertSee('Mix Digital')
             ->assertSee('Request information');
+    }
+
+    public function test_draft_template_renders_every_content_type_in_both_languages(): void
+    {
+        Storage::fake('public');
+        $this->seed(DemoContentSeeder::class);
+
+        foreach (['al', 'en'] as $locale) {
+            foreach (['', '/news', '/events', '/events?period=past', '/attractions', '/businesses', '/rent-space', '/spaces', '/spaces?type=leasing', '/careers', '/contact'] as $path) {
+                $this->get('/'.$locale.$path)->assertOk()->assertSee('id="mobileMenu"', false);
+            }
+
+            foreach ([Page::class => 'pages', News::class => 'news', Event::class => 'events', Attraction::class => 'attractions', Business::class => 'businesses', Space::class => 'spaces', Career::class => 'careers'] as $model => $module) {
+                foreach ($model::query()->published()->with('translations')->get() as $record) {
+                    $slug = $record->translation($locale, false)->slug;
+                    $this->get(route("public.{$module}.show", [$locale, $slug]))->assertOk();
+                }
+            }
+
+            $this->get(route('public.spaces.overview', $locale))
+                ->assertSee(route('public.spaces.index', [$locale, 'type' => 'event_space']), false)
+                ->assertSee(route('public.spaces.index', [$locale, 'type' => 'leasing']), false);
+        }
     }
 }

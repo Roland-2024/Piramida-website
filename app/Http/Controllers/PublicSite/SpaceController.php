@@ -16,7 +16,18 @@ class SpaceController extends TranslatedCatalogController
 
     protected string $plural = 'Spaces';
 
+    protected string $showView = 'public.spaces.show';
+
     protected array $with = ['translations', 'featuredMedia', 'gallery'];
+
+    public function overview(): View
+    {
+        return view('public.spaces.overview', [
+            'languageUrls' => collect(config('cms.locales'))
+                ->mapWithKeys(fn (string $name, string $locale) => [$locale => route('public.spaces.overview', $locale)])
+                ->all(),
+        ]);
+    }
 
     public function index(string $locale): View
     {

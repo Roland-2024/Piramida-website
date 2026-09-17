@@ -34,6 +34,9 @@ class NewsController extends Controller
 
         return view('public.news.show', [
             'article' => $article,
+            'relatedNews' => News::query()->published()->whereKeyNot($article->id)
+                ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
+                ->with(['translations', 'featuredMedia'])->latest('published_at')->orderByDesc('id')->limit(3)->get(),
             'translation' => $article->translation($locale, false),
             'languageUrls' => collect(config('cms.locales'))
                 ->mapWithKeys(function (string $name, string $targetLocale) use ($article): array {

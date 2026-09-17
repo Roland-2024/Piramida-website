@@ -32,6 +32,9 @@ class HomeController extends Controller
             ?? $pageQuery->first();
 
         return view('public.home', [
+            'aboutUrl' => ($about = Page::query()->published()->whereHas('translations', fn (Builder $query) => $query->where('slug', 'about-us'))->with('translations')->first())?->translation($locale, false)
+                ? route('public.pages.show', [$locale, $about->translation($locale, false)->slug])
+                : route('public.home', $locale),
             'page' => $page,
             'latestNews' => News::query()
                 ->published()

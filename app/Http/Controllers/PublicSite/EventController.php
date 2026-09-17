@@ -49,6 +49,9 @@ class EventController extends Controller
         return view('public.events.show', [
             'event' => $event,
             'translation' => $event->translation($locale, false),
+            'latestEvents' => Event::query()->published()->upcoming()->whereKeyNot($event->id)
+                ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
+                ->with(['translations', 'featuredMedia'])->orderBy('starts_at')->orderBy('id')->limit(6)->get(),
             'languageUrls' => collect(config('cms.locales'))
                 ->mapWithKeys(function (string $name, string $targetLocale) use ($event): array {
                     $translation = $event->translation($targetLocale, false);

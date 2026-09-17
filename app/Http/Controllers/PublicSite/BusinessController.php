@@ -16,5 +16,7 @@ class BusinessController extends TranslatedCatalogController
 
     protected string $indexView = 'public.businesses.index';
 
+    protected string $showView = 'public.businesses.show';
+
     protected array $with = ['translations', 'featuredMedia', 'logoMedia', 'gallery'];
 }

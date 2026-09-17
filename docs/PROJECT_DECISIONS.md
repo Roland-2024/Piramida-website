@@ -60,5 +60,10 @@ This file records durable decisions that future tasks should preserve. Implement
 ## Current boundary
 
 - The dashboard and content architecture are close to completion.
-- The public frontend remains a functional demonstration until the final static templates arrive.
+- The public frontend now adapts the draft `Piramida.zip` template, using `animation.html` as the homepage direction. It remains provisional until the final templates arrive.
+- The Museum menu entry remains visible but disabled until the PM confirms its destination; it is not mapped to About Us or an attraction by assumption.
+- Template presentation assets and interface copy may remain static. Managed records, page sections, publication rules, languages and request forms continue to use the existing CMS.
+- Public styles and scripts have their own Vite entry points, isolated from Admin. No Tailwind CDN or additional frontend dependencies are needed.
+- The provisional About and Education layouts are selected by the existing English page slugs (`about-us`, `education`). About uses the seeded Overview, Mission, History and Timeline section names; other pages keep the generic section renderer. Preserve these identifiers until the final template mapping is agreed.
+- The unrelated sample video from the draft is not published. Configure a real CMS section video URL when supplied; otherwise the homepage uses the template image and links to About.
 - New fields or modules should be added only when required by those templates, an approved business workflow, or a stable API contract.

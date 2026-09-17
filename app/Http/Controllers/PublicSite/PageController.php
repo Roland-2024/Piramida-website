@@ -26,7 +26,14 @@ class PageController extends Controller
             ])
             ->firstOrFail();
 
-        return view('public.pages.show', [
+        // Draft template mapping; keep other CMS pages on the generic section renderer.
+        $view = match (true) {
+            $page->translations->contains('slug', 'about-us') => 'public.pages.about',
+            $page->translations->contains('slug', 'education') => 'public.pages.education',
+            default => 'public.pages.show',
+        };
+
+        return view($view, [
             'page' => $page,
             'translation' => $page->translation($locale, false),
             'languageUrls' => $this->languageUrls($page),

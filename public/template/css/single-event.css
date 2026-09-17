@@ -1,0 +1,164 @@
+/* ===== Cross-browser viewport reset =====
+   Windows browsers (Edge, Chrome, Firefox) reserve visible space for
+   the scrollbar by default, while Mac/mobile browsers use an overlay
+   scrollbar that takes no layout space. Anything sized or centered
+   off the viewport (max-width containers, mx-auto, vw units) can
+   therefore land a few pixels off between platforms, showing up as
+   uneven left/right padding. scrollbar-gutter: stable reserves that
+   space up front so layout math is consistent everywhere, and
+   overflow-x: hidden is a safety net against any accidental
+   horizontal scrollbar. */
+html {
+    scrollbar-gutter: stable;
+}
+
+.page-top-bg {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 500px;
+        background-image:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 58%,
+      rgba(0, 9, 41, 0.58) 74%,
+      #000929 84%,
+      #000929 100%
+    ),
+    url("../images/BG.png");
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
+    z-index: -1;
+    pointer-events: none;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* ---- event section: prism / pyramid visual ---- */
+
+.prism-visual {
+    position: relative;
+    width: 100%;
+    max-width: 620px;
+    /* match the SVG's own 768x653 proportions so the math below
+       (percent offsets) lines up exactly */
+    aspect-ratio: 768 / 653;
+    overflow: visible;
+}
+
+/* Coded (no longer an <img>) green gradient "fold" shape.
+   Fills the box exactly — no offset needed, since the photo
+   itself is what reveals the wedge (see .prism-photo below). */
+.prism-shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Plain rectangular photo, positioned to exactly cover the
+   top-right block of the SVG polygon's bounding box:
+     left = 99.3433 / 768  = 12.94%
+     top  = 1        / 653 =  0.15%
+     right = 768     / 768 = 100%   -> width  = 87.06%
+     bottom = 497.398/ 653 = 76.17% -> height = 76.02%
+   That leaves the bottom-left triangular wedge and a thin
+   sliver along the left edge showing the green shape behind,
+   same as the reference image — no clip-path or rotation
+   needed. */
+.prism-photo {
+    position: absolute;
+    left: 12.94%;
+    top: 0.15%;
+    width: 87.06%;
+    height: 76.02%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    z-index: 1;
+}
+
+.event-track {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.event-track::-webkit-scrollbar {
+    display: none;
+}
+
+.event-card {
+    scroll-snap-align: start;
+}
+
+.event-poster {
+    height: 380px;
+}
+
+.nav-btn {
+    transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+.event-card {
+    flex: 0 0 275px;
+    min-width: 0;
+    transition: flex-basis 500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Mobile: one full-width slide per view. The left/right inset
+   now comes from the outer section wrapper (see the px-5
+   Tailwind classes on that container in the markup) so the
+   header, carousel, and dots all share the same padding. */
+@media (max-width: 767px) {
+    .event-card {
+        flex: 0 0 100%;
+    }
+}
+
+/* Dot indicators, shown only on mobile (see md:hidden on the
+   markup). Active dot is toggled via JS as the track scrolls. */
+.event-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.3);
+    transition: background-color 200ms ease, width 200ms ease;
+    padding: 0;
+    border: none;
+}
+
+.event-dot.is-active {
+    background-color: #bef264;
+    width: 20px;
+}
+
+/* Expand-on-hover only applies on devices that actually support
+   real hovering with a precise pointer (mouse/trackpad). On
+   touch devices this rule is skipped entirely, so tapping a
+   card on mobile won't trigger or get "stuck" in the expanded
+   state. */
+@media (hover: hover) and (pointer: fine) {
+    .event-card:hover {
+        flex: 0 0 450px;
+    }
+}

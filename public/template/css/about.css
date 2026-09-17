@@ -1,0 +1,35 @@
+
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Full-width banner image at the top of the hero, behind hero content but above the section's own background */
+.page-top-bg {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    height: 700px;
+     background-image:
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0) 58%,
+      rgba(0, 9, 41, 0.58) 74%,
+      #000929 84%,
+      #000929 100%
+    ),
+    url("../images/BG.png");
+    background-size: cover, cover;
+    background-position: top center, top center;
+    background-repeat: no-repeat, no-repeat;
+    z-index: -1;
+    pointer-events: none;
+}

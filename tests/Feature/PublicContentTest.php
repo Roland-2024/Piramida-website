@@ -103,4 +103,19 @@ class PublicContentTest extends TestCase
             ->assertOk()
             ->assertSee(route('public.pages.show', ['al', "faqja-{$page->id}"]), false);
     }
+
+    public function test_event_recommendations_exclude_unpublished_past_and_untranslated_records(): void
+    {
+        $event = Event::factory()->published()->create();
+        $next = Event::factory()->published()->create();
+        Event::factory()->published()->past()->create();
+        Event::factory()->create();
+        Event::factory()->published()->create(['published_at' => now()->addDay()]);
+        $untranslated = Event::factory()->published()->create();
+        $untranslated->translations()->where('locale', 'en')->delete();
+
+        $this->get(route('public.events.show', ['en', "event-{$event->id}"]))
+            ->assertOk()
+            ->assertViewHas('latestEvents', fn ($events) => $events->modelKeys() === [$next->id]);
+    }
 }
