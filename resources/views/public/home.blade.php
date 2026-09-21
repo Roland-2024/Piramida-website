@@ -10,7 +10,7 @@
             <img src="{{ asset('template/images/logo piramida.svg') }}" alt="" class="mx-auto mb-6 w-[97px]">
             <p>PIRAMIDA</p>
             <h2>{{ __('cms.space_to') }}<br><span class="intro-word">{{ __('cms.learn') }}</span> <span class="intro-word">{{ __('cms.build') }}</span> <span class="intro-word">{{ __('cms.connect') }}</span></h2>
-            <p class="mx-auto mt-5 max-w-md text-white/60">{{ $translation?->short_description }}</p>
+            <p class="mx-auto mt-5 max-w-2xl text-[16px] text-white/60">{{ $translation?->short_description }}</p>
         </div>
         <div class="intro-stripes" aria-hidden="true"></div>
         <button class="skip-intro outline-button" type="button">{{ __('cms.skip_intro') }} ↓</button>
@@ -53,8 +53,8 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-7xl mx-auto">
 
       <!-- Card: Education -->
-      <div
-        id="education" class="group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
+      <a @if($presentationUrls['education']) href="{{ $presentationUrls['education'] }}" @else aria-disabled="true" @endif
+        id="education" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
         <img src="/template/images/education.png" alt="Education spaces at Piramida"
           class="w-full h-full object-cover object-center" />
 
@@ -66,11 +66,11 @@
             <p class="text-white/80 text-sm leading-snug max-w-[85%] sm:max-w-[70%]">{{ data_get($pillarItems, '0.text', '') }}</p>
           </div>
         </div>
-      </div>
+      </a>
 
       <!-- Card: Innovation -->
-      <div
-        id="innovation" class="group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
+      <a @if($presentationUrls['innovation']) href="{{ $presentationUrls['innovation'] }}" @else aria-disabled="true" @endif
+        id="innovation" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
         <img src="/template/images/innovation.png" alt="Innovation spaces at Piramida"
           class="w-full h-full object-cover object-center" />
 
@@ -82,11 +82,11 @@
             <p class="text-white/80 text-sm leading-snug max-w-[85%] sm:max-w-[70%]">{{ data_get($pillarItems, '1.text', '') }}</p>
           </div>
         </div>
-      </div>
+      </a>
 
       <!-- Card: Business -->
-      <div
-        id="business" class="group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
+      <a @if($presentationUrls['business']) href="{{ $presentationUrls['business'] }}" @else aria-disabled="true" @endif
+        id="business" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
         <img src="/template/images/innovation.png" alt="Innovation spaces at Piramida"
           class="w-full h-full object-cover object-center" />
 
@@ -100,11 +100,11 @@
             <p class="text-white/80 text-sm leading-snug max-w-[85%] sm:max-w-[70%]">{{ data_get($pillarItems, '2.text', '') }}</p>
           </div>
         </div>
-      </div>
+      </a>
 
       <!-- Card: Art & Culture -->
-      <div
-        id="art" class="group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
+      <a @if($presentationUrls['art']) href="{{ $presentationUrls['art'] }}" @else aria-disabled="true" @endif
+        id="art" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
         <img src="/template/images/innovation.png" alt="Innovation spaces at Piramida"
           class="w-full h-full object-cover object-center" />
 
@@ -115,7 +115,7 @@
             <p class="text-white/80 text-sm leading-snug max-w-[85%] sm:max-w-[70%]">{{ data_get($pillarItems, '3.text', '') }}</p>
           </div>
         </div>
-      </div>
+      </a>
 
     </div>
   </section>

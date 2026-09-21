@@ -1,50 +1,32 @@
-@php
-$presentation = $page->sections->firstWhere('type', \App\Enums\SectionType::TextImage);
-$slides = $presentation?->gallery->map(fn ($media) => ['label' => (app()->getLocale() === 'en' ? $media->alt_text_en : $media->alt_text_al) ?: $translation->title, 'img' => $media->url()])->values()->all() ?? [];
-@endphp
-<x-layouts.public :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['education']">
-<div class="education-main">
-      <div>
-        <div class="flex justify-center px-6 pt-12 md:pt-24">
-          <h1
-            class="font-anton uppercase text-[38px] leading-none text-[#CBFF00] md:text-[50px] lg:text-[60px]"
-          >
-            {{ $translation->title }}
-          </h1>
+<x-layouts.public :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['education', 'education-carousel-enhanced']">
+    <div class="education-main">
+        <div class="flex justify-center px-6 pt-12 md:pt-72">
+            <h1 class="max-md:mt-14 font-anton uppercase text-[38px] leading-none text-[#CBFF00] md:text-[50px] lg:text-[60px]">{{ $translation->title }}</h1>
         </div>
-
-        <section class="relative mt-10 overflow-hidden pb-1 md:mt-1">
-          <div class="slider-outer" id="sliderOuter">
-            <div class="slider-viewport" id="viewport" tabindex="0" role="region" aria-label="{{ $translation->title }}">
-              <div class="slider-track" id="track"></div>
+        <section class="relative mt-10 overflow-hidden pb-1 md:-mt-24">
+            <div class="slider-outer" id="sliderOuter">
+                <div class="slider-viewport" id="viewport" tabindex="0" role="region" aria-label="{{ $translation->title }}">
+                    <div class="slider-track" id="track">
+                        @foreach ($slides as $slide)
+                            <article class="card">
+                                <img src="{{ $slide['url'] }}" alt="{{ $slide['title'] }}" draggable="false">
+                                <div class="sr-only">
+                                    <h2 data-slide-title>{{ $slide['title'] }}</h2>
+                                    <p data-slide-description>{{ $slide['description'] }}</p>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="mt-2 max-md:mt-4 flex items-center justify-center px-6 text-center md:mt-8">
+                <div class="max-w-4xl">
+                    <h2 id="activeSlideTitle" class="text-[24px] font-normal text-[#CBFF00] md:text-[20px] lg:text-[24px]">{{ $slides->first()['title'] ?? $translation->title }}</h2>
+                    <p id="activeSlideDescription" class="text-[14px] md:pb-12 font-normal leading-relaxed text-white/75 md:text-[16px]">{{ $slides->first()['description'] ?? strip_tags($translation->content ?? '') }}</p>
+                </div>
+            </div>
         </section>
-
-        <div class="mt-2 flex items-center justify-center px-6 text-center">
-          <div class="max-w-4xl">
-            <h2
-              id="activeSlideTitle"
-              class="text-[24px] font-normal text-[#CBFF00] md:text-[20px] lg:text-[24px]"
-            >
-              {{ $presentation?->translation()?->subtitle }}
-            </h2>
-
-            <p
-              class="pb-6 text-[14px] font-normal leading-relaxed text-white/75 md:text-[16px]"
-            >
-              {{ strip_tags($presentation?->translation()?->description ?? $translation->content ?? '') }}
-            </p>
-          </div>
-        </div>
-
-        <div
-          id="carouselDots"
-          class="flex items-center justify-center gap-3 pb-12 pt-2 md:hidden"
-          aria-label="Carousel navigation"
-        ></div>
-      </div>
+        <div id="carouselDots" class="flex items-center justify-center gap-3 pb-12 pt-2 md:hidden" aria-label="{{ __('cms.navigation') }}"></div>
     </div>
-<script type="application/json" id="education-slides">{!! json_encode($slides, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
-<noscript><div class="carousel-track">@foreach($presentation?->gallery ?? [] as $image)<img src="{{ $image->url() }}" alt="{{ $translation->title }}">@endforeach</div></noscript>
+    <noscript><style>#track {display:flex;overflow-x:auto;gap:14px}.card {position:relative;flex:0 0 280px;height:360px}</style></noscript>
 </x-layouts.public>

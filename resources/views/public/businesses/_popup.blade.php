@@ -24,7 +24,9 @@ $images = collect([$business->featuredMedia])->filter()->merge($business->galler
             </header>
 
             <div class="place-popup-gallery" data-gallery>
+              <div class="place-popup-gallery-frame">
               @foreach($images as $image)<img data-gallery-image @if(!$loop->first) hidden @endif src="{{ $image->url() }}" alt="{{ app()->getLocale() === 'en' ? $image->alt_text_en : $image->alt_text_al }}" loading="lazy">@endforeach
+              </div>
 
               <div
                 data-gallery-dots

@@ -313,7 +313,17 @@ Do not point PHPUnit at a shared or production database.
 
 The draft `Piramida.zip` template is integrated through the public Blade views, `resources/css/public.css`, and `resources/js/public.js`. Its selected local images and fonts live under `public/template` (font licenses included). Build these with the existing `npm run build` command; Admin continues using its separate `app.css` / `app.js` bundle.
 
-`/{locale}/rent-space` links to event-space and leasing catalogues. The animated homepage has a skip control and respects reduced motion. About/Education use existing editable Page Sections, businesses retain native information dialogs, and forms retain the existing staff-reviewed submission workflow. Museum is disabled pending the PM's destination. Template sample video and broken placeholder assets were not imported; use a Page Section video URL for real media.
+`/{locale}/rent-space` links to event-space and leasing catalogues. The animated homepage has a skip control and respects reduced motion. About and the shared Education/Innovation/Business/Art template use existing editable Page Sections, businesses retain native information dialogs, and forms retain the existing staff-reviewed submission workflow. Museum is disabled pending the PM's destination. Template sample video and broken placeholder assets were not imported; use a Page Section video URL for real media.
+
+After deploying the revised templates, add missing presentation pages once with:
+
+```bash
+php artisan db:seed --class=PresentationPageSeeder --force
+# Local Docker equivalent:
+docker compose exec -T app php artisan db:seed --class=PresentationPageSeeder --force
+```
+
+This additive seeder does not change existing pages. New pages start with the supplied shared-template placeholders; customize each page’s slides in Page Sections. Business directory records remain separate. No schema migration or environment changes are required.
 
 The frontend team can replace:
 
@@ -325,7 +335,7 @@ Keep public route names and controller inputs stable, or update links consistent
 
 ## Current limitations
 
-- The public frontend uses the supplied draft template, not yet the final signed-off design. Managed content comes from the CMS; About/Education have provisional fixed layout mappings documented in `docs/PROJECT_DECISIONS.md`. Static presentation copy remains where the draft has no managed content equivalent.
+- The public frontend uses the supplied draft template, not yet the final signed-off design. Managed content comes from the CMS; About and the four presentation pages have provisional fixed layout mappings documented in `docs/PROJECT_DECISIONS.md`. Static presentation copy remains where the draft has no managed content equivalent.
 - Section ordering uses a numeric field rather than drag-and-drop.
 - The native rich-text toolbar intentionally supports only basic formatting.
 - There is no automated queue worker because the current workflows are synchronous.

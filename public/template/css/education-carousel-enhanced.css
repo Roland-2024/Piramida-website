@@ -1,0 +1,19 @@
+#track {
+  transform: translate3d(0, 0, 0);
+}
+
+.card {
+  backface-visibility: hidden;
+  contain: layout paint;
+  will-change: height, opacity;
+}
+
+.card img {
+  transform: translateZ(0);
+}
+
+@media (max-width: 767px) {
+  .card {
+    will-change: auto;
+  }
+}

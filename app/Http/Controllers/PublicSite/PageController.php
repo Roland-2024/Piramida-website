@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\PublicSite;
 
+use App\Enums\SectionType;
 use App\Http\Controllers\Controller;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,7 +30,7 @@ class PageController extends Controller
         // Draft template mapping; keep other CMS pages on the generic section renderer.
         $view = match (true) {
             $page->translations->contains('slug', 'about-us') => 'public.pages.about',
-            $page->translations->contains('slug', 'education') => 'public.pages.education',
+            $page->translations->whereIn('slug', ['education', 'innovation', 'business', 'art'])->isNotEmpty() => 'public.pages.education',
             default => 'public.pages.show',
         };
 
@@ -37,6 +38,21 @@ class PageController extends Controller
             'page' => $page,
             'translation' => $page->translation($locale, false),
             'languageUrls' => $this->languageUrls($page),
+            'slides' => $page->sections
+                ->whereIn('type', [SectionType::TextImage, SectionType::Gallery])
+                ->flatMap(function ($section) use ($locale, $page) {
+                    $content = $section->translation($locale);
+                    $images = $section->gallery->isNotEmpty()
+                        ? $section->gallery
+                        : collect([$section->primaryMedia])->filter();
+
+                    return $images->map(fn ($image) => [
+                        'url' => $image->url(),
+                        'title' => ($images->count() > 1 ? ($locale === 'en' ? $image->alt_text_en : $image->alt_text_al) : null)
+                            ?: $content?->subtitle ?: $content?->title ?: $page->translation($locale)->title,
+                        'description' => strip_tags($content?->description ?? ''),
+                    ]);
+                })->values(),
         ]);
     }
 

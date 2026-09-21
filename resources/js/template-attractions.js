@@ -1,6 +1,6 @@
 (function () {
     const root = document.getElementById("attractions");
-if (!root?.querySelector("[data-cards]")?.children.length) return;
+    if (!root?.querySelector("[data-cards]")?.children.length) return;
     const cards = root.querySelector("[data-cards]");
     const prevBtn = root.querySelector("[data-prev]");
     const nextBtn = root.querySelector("[data-next]");
@@ -95,8 +95,10 @@ if (!root?.querySelector("[data-cards]")?.children.length) return;
     }
 
     buildDots();
-    root.addEventListener('keydown', e => { if(e.key === 'ArrowLeft') prev(); if(e.key === 'ArrowRight') next(); });
 
+    root.addEventListener('keydown', event => {
+        if (['ArrowLeft', 'ArrowRight'].includes(event.key)) { event.preventDefault(); event.key === 'ArrowLeft' ? prev() : next(); }
+    });
     prevBtn.addEventListener("click", prev);
     nextBtn.addEventListener("click", next);
 
@@ -124,7 +126,7 @@ if (!root?.querySelector("[data-cards]")?.children.length) return;
 
 (function () {
     const root = document.getElementById("experiences");
-if (!root?.querySelector("[data-exp-track]")?.children.length) return;
+    if (!root?.querySelector("[data-exp-track]")?.children.length) return;
     const track = root.querySelector("[data-exp-track]");
     const prevBtn = root.querySelector("[data-exp-prev]");
     const nextBtn = root.querySelector("[data-exp-next]");
@@ -200,30 +202,46 @@ if (!root?.querySelector("[data-exp-track]")?.children.length) return;
     // This only adds mouse-drag support on desktop (pointerType
     // "mouse"), so it never fights the browser's own touch handling.
     let dragging = false;
+    let dragArmed = false; // mouse is down, mouse type, waiting to see if it turns into a drag
     let dragStartX = 0;
     let dragStartScroll = 0;
     let dragMoved = false;
+    let activePointerId = null;
+    const DRAG_THRESHOLD = 8; // px of mouse movement before we treat it as a drag, not a click
 
     track.addEventListener("pointerdown", (e) => {
         if (e.pointerType !== "mouse") return;
         if (e.target.closest("[data-exp-prev],[data-exp-next]")) return;
-        dragging = true;
+        dragArmed = true;
+        dragging = false;
         dragMoved = false;
         dragStartX = e.clientX;
         dragStartScroll = track.scrollLeft;
-        track.style.scrollSnapType = "none";
-        track.style.scrollBehavior = "auto";
-        // Preserve anchor clicks; window pointer handlers finish a drag.
+        activePointerId = e.pointerId;
+        // Note: pointer capture is deferred to pointermove, once real
+        // dragging is confirmed — capturing immediately here would swallow
+        // ordinary clicks, since almost every click involves a couple of
+        // pixels of incidental mouse movement between down and up.
     });
 
     track.addEventListener("pointermove", (e) => {
-        if (!dragging || e.pointerType !== "mouse") return;
+        if (!dragArmed || e.pointerType !== "mouse") return;
         const dx = e.clientX - dragStartX;
-        if (Math.abs(dx) > 5) dragMoved = true;
-        track.scrollLeft = dragStartScroll - dx;
+        if (!dragging && Math.abs(dx) > DRAG_THRESHOLD) {
+            dragging = true;
+            dragMoved = true;
+            track.style.scrollSnapType = "none";
+            track.style.scrollBehavior = "auto";
+            if (activePointerId !== null) track.setPointerCapture(activePointerId);
+        }
+        if (dragging) {
+            track.scrollLeft = dragStartScroll - dx;
+        }
     });
 
     function endDrag(e) {
+        if (!dragArmed) return;
+        dragArmed = false;
         if (!dragging) return;
         dragging = false;
         track.style.scrollSnapType = "";
@@ -248,14 +266,14 @@ if (!root?.querySelector("[data-exp-track]")?.children.length) return;
         if (e.pointerType === "mouse") endDrag(e);
     });
     track.addEventListener("pointerleave", (e) => {
-        if (dragging && e.pointerType === "mouse") endDrag(e);
+        if (dragArmed && e.pointerType === "mouse") endDrag(e);
     });
 
     // Prevent an accidental click firing on a card right after a drag.
     track.addEventListener("click", (e) => {
         if (dragMoved) {
             e.preventDefault();
-            e.stopPropagation();
+            dragMoved = false;
         }
     }, true);
 

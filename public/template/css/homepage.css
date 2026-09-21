@@ -25,8 +25,6 @@
   background-size: cover;
 }
 
-
-
 /* only what Tailwind's default utility set genuinely can't express */
 .events-slide {
   transition: transform .85s cubic-bezier(.22, .9, .25, 1), opacity .6s ease;
@@ -52,7 +50,6 @@
   transform: translateY(6%);
   z-index: 5;
 }
-
 
 .video-clip {
   -webkit-mask-image: url(#piramidaMask);
@@ -157,7 +154,6 @@
     width: 18px;
 }
 
-
 @keyframes badgeSpin {
   from {
     transform: rotate(0deg);
@@ -209,3 +205,19 @@
     --visible-cards: 1;
   }
 }
+
+@media (max-width: 1024px) {
+  #intro,
+  #swipe {
+    display: none !important;
+  }
+
+  .site-header {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+
+/* The existing accessible intro uses these classes instead of the static IDs. */
+body:has([data-intro]) { background:#050a1c; font-family:'Inter',sans-serif; }

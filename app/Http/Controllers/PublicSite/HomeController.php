@@ -31,7 +31,18 @@ class HomeController extends Controller
         $page = (clone $pageQuery)->where('is_homepage', true)->first()
             ?? $pageQuery->first();
 
+        $presentationPages = Page::query()->published()
+            ->whereHas('translations', fn (Builder $query) => $query->whereIn('slug', ['education', 'innovation', 'business', 'art']))
+            ->with('translations')->get();
+        $presentationUrls = collect(['education', 'innovation', 'business', 'art'])
+            ->mapWithKeys(function ($slug) use ($presentationPages, $locale) {
+                $translation = $presentationPages->first(fn ($page) => $page->translations->contains('slug', $slug))?->translation($locale, false);
+
+                return [$slug => $translation ? route('public.pages.show', [$locale, $translation->slug]) : null];
+            });
+
         return view('public.home', [
+            'presentationUrls' => $presentationUrls,
             'aboutUrl' => ($about = Page::query()->published()->whereHas('translations', fn (Builder $query) => $query->where('slug', 'about-us'))->with('translations')->first())?->translation($locale, false)
                 ? route('public.pages.show', [$locale, $about->translation($locale, false)->slug])
                 : route('public.home', $locale),

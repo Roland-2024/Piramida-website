@@ -1,4 +1,4 @@
-<x-layouts.public :title="__('cms.attractions')" :language-urls="$languageUrls" :styles="['attraction', 'piramida-popup']">
+<x-layouts.public :title="__('cms.attractions')" :language-urls="$languageUrls" :styles="['piramida-popup', 'attraction']">
 @if($items->isNotEmpty())<section id="attractions" tabindex="0" class="relative overflow-hidden md:py-20 py-[5rem]">
 
         <div class="page-top-bg hidden sm:block" aria-hidden="true"></div>

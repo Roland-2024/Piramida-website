@@ -1,4 +1,4 @@
-<x-layouts.public :title="__('cms.careers')" :language-urls="$languageUrls" :styles="['careers']" :footer="false">
+<x-layouts.public :title="__('cms.careers')" :language-urls="$languageUrls" :styles="['careers', 'job-application']" :footer="false">
     <div class="mx-auto px-6 pt-[100px] pb-24 bg-[#081434] relative z-0">
         <div class="page-top-bg hidden sm:block" aria-hidden="true"></div>
 
@@ -55,6 +55,7 @@
 
         <!-- Open roles -->
 <span id="open-roles"></span>
+@if(session('success'))<div class="template-success">{{ session('success') }}</div>@endif
         <div class="mt-16 text-center title-50 text-white">OPEN ROLES</div>
         <div class="mt-6 h-px bg-white/10 max-w-6xl mx-auto"></div>
         <div class="md:mt-[100px] mt-[50px] max-w-6xl mx-auto">
@@ -65,8 +66,13 @@
 <summary class="flex items-center justify-between px-5 py-4"><span class="role-title title-26 py-3">{{ $translation->title }}</span><svg class="chev w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
 <div class="panel"><div class="px-5 pb-5"><div class="role-body title-18 space-y-3 prose-content">{!! $translation->description !!}</div>
 @if($translation->requirements)<div class="role-body title-18 prose-content mt-4">{!! $translation->requirements !!}</div>@endif
-<div class="mt-5 flex items-center justify-between"><span class="title-16">{{ $translation->location }}</span><a href="{{ route('public.careers.show',[app()->getLocale(), $translation->slug]) }}" class="bg-[#c6f135] text-[#05070f] text-sm font-semibold px-5 py-2 rounded-full">{{ __('cms.apply') }}</a></div>
+<div class="mt-5 flex items-center justify-between"><span class="title-16">{{ $translation->location }}</span><a href="{{ route('public.careers.show',[app()->getLocale(), $translation->slug]) }}" @if($item->booking_mode->allowsInternal()) data-dialog-open="career-{{ $item->id }}" @endif class="bg-[#c6f135] text-[#05070f] text-sm font-semibold px-5 py-2 rounded-full">{{ __('cms.apply') }}</a></div>
 </div></div></details>
+@if($item->booking_mode->allowsInternal())
+<dialog id="career-{{ $item->id }}" class="template-dialog" aria-label="{{ $translation->title }}" data-feedback="{{ $errors->any() && (string) old('_career_id') === (string) $item->id ? 'true' : 'false' }}">
+@include('public.careers._application', ['dialog' => true])
+</dialog>
+@endif
 @empty <p class="template-empty">{{ __('cms.no_content') }}</p> @endforelse
 <div class="template-pagination">{{ $items->links() }}</div>
         </div>

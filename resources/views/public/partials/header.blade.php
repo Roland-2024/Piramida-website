@@ -53,15 +53,15 @@
               </li>
 
               <li>
-                <a href="{{ route('public.home', app()->getLocale()).'#innovation' }}" class="mobile-main-link">{{ __('cms.innovation') }}</a>
+                <a href="{{ $pageUrl('innovation') }}" class="mobile-main-link">{{ __('cms.innovation') }}</a>
               </li>
 
               <li>
-                <a href="{{ route('public.businesses.index', app()->getLocale()) }}" class="mobile-main-link">{{ __('cms.business') }}</a>
+                <a href="{{ $pageUrl('business') }}" class="mobile-main-link">{{ __('cms.business') }}</a>
               </li>
 
               <li>
-                <a href="{{ route('public.home', app()->getLocale()).'#art' }}" class="mobile-main-link">{{ __('cms.art') }}</a>
+                <a href="{{ $pageUrl('art') }}" class="mobile-main-link">{{ __('cms.art') }}</a>
               </li>
 
               <li>

@@ -63,10 +63,10 @@
         </div>
     </section>
 @if($latestEvents->isNotEmpty())
-<section class="max-w-7xl mx-auto py-14 px-5 md:px-0" data-carousel>
-    <div class="flex items-center justify-between mb-7">
-        <div class="flex items-center gap-3"><img src="/template/images/calendar-3d-icon.svg" alt="" class="hidden md:block"><h2 class="text-2xl md:text-3xl font-extrabold tracking-wide text-lime-400">{{ __('cms.latest_events') }}</h2></div>
-        <div class="flex gap-3"><button type="button" data-scroll="-1" class="nav-btn w-10 h-10" aria-label="{{ __('cms.previous') }}">←</button><button type="button" data-scroll="1" class="nav-btn w-10 h-10" aria-label="{{ __('cms.next') }}">→</button></div>
+<section class="max-w-7xl mx-auto py-14 px-5 md:px-0" data-carousel data-scroll-amount="300">
+    <div class="flex items-center justify-center md:justify-between mb-7">
+        <div class="flex items-center gap-3"><img src="/template/images/calendar-3d-icon.svg" alt="" class="hidden md:block"><h2 class="text-2xl md:text-3xl font-extrabold tracking-wide text-white md:text-lime-400 text-center md:text-left">{{ __('cms.latest_events') }}</h2></div>
+        <div class="hidden md:flex gap-3"><button type="button" data-scroll="-1" class="nav-btn w-10 h-10 flex items-center justify-center" aria-label="{{ __('cms.previous') }}"><img src="/template/images/arrow right.svg" alt="" class="rotate-180"></button><button type="button" data-scroll="1" class="nav-btn w-10 h-10 flex items-center justify-center" aria-label="{{ __('cms.next') }}"><img src="/template/images/arrow right.svg" alt=""></button></div>
     </div>
     <div class="event-track carousel-track">
         @foreach($latestEvents as $latestEvent)
@@ -77,6 +77,7 @@
         </a>
         @endforeach
     </div>
+    <div data-carousel-dots class="flex md:hidden justify-center gap-2 mt-5" aria-label="{{ __('cms.navigation') }}"></div>
 </section>
 @endif
 @if ($event->booking_mode->allowsInternal())

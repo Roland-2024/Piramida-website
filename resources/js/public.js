@@ -16,7 +16,7 @@ document.querySelectorAll('[data-gallery]').forEach(gallery => {
     };
     images.forEach((image, i) => {
         const dot = document.createElement('button');
-        dot.type = 'button'; dot.setAttribute('aria-label', image.alt || String(i + 1));
+        dot.type = 'button'; dot.className = 'place-gallery-dot'; dot.setAttribute('aria-label', image.alt || String(i + 1));
         dot.addEventListener('click', () => show(i));
         gallery.querySelector('[data-gallery-dots]')?.append(dot); dots.push(dot);
     });
@@ -24,18 +24,38 @@ document.querySelectorAll('[data-gallery]').forEach(gallery => {
         button.hidden = images.length < 2;
         button.addEventListener('click', () => show(index + Number(button.dataset.galleryStep)));
     });
-    let startX = 0;
-    gallery.addEventListener('touchstart', event => startX = event.touches[0].clientX, { passive: true });
-    gallery.addEventListener('touchend', event => { const dx = event.changedTouches[0].clientX - startX; if(Math.abs(dx) > 40) show(index + (dx < 0 ? 1 : -1)); }, { passive: true });
+    let startX = 0, startY = 0, lastWheel = 0;
+    gallery.addEventListener('touchstart', event => { startX = event.touches[0].clientX; startY = event.touches[0].clientY; }, { passive: true });
+    gallery.addEventListener('touchend', event => {
+        const dx = event.changedTouches[0].clientX - startX;
+        const dy = event.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) show(index + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+    gallery.addEventListener('wheel', event => {
+        const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+        if (images.length < 2 || !delta) return;
+        event.preventDefault();
+        if (Date.now() - lastWheel > 450) { show(index + Math.sign(delta)); lastWheel = Date.now(); }
+    }, { passive: false });
+    gallery.addEventListener('gallery:reset', () => show(0));
     show(0);
 });
 // Native dialogs provide keyboard focus trapping and Escape-to-close behavior.
 document.querySelectorAll('[data-dialog-open]').forEach(button => {
-    button.addEventListener('click', event => { event.preventDefault(); document.getElementById(button.dataset.dialogOpen)?.showModal(); });
+    button.addEventListener('click', event => {
+        if (event.defaultPrevented) return;
+        const dialog = document.getElementById(button.dataset.dialogOpen);
+        if (!dialog) return;
+        event.preventDefault();
+        dialog.querySelectorAll('[data-gallery]').forEach(gallery => gallery.dispatchEvent(new Event('gallery:reset')));
+        dialog.showModal();
+    });
 });
 document.querySelectorAll('[data-dialog-close]').forEach(button => {
     button.addEventListener('click', () => document.getElementById(button.dataset.dialogClose)?.close());
 });
+document.querySelector('dialog[data-feedback="true"]')?.showModal();
+
 document.querySelectorAll('#mobileMenu a[href]').forEach(link => {
     link.addEventListener('click', () => document.getElementById('mobileMenu').close());
 });
@@ -43,15 +63,35 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
     const track = carousel.querySelector('.carousel-track');
     carousel.querySelectorAll('[data-scroll]').forEach(button => {
         button.addEventListener('click', () => track.scrollBy({
-            left: Number(button.dataset.scroll) * track.clientWidth,
+            left: Number(button.dataset.scroll) * (Number(carousel.dataset.scrollAmount) || track.clientWidth),
             behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
         }));
     });
+    const dotsWrap = carousel.querySelector('[data-carousel-dots]');
+    if (dotsWrap) {
+        const cards = [...track.children];
+        const dots = cards.map((card, index) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'event-dot';
+            dot.setAttribute('aria-label', card.textContent.trim() || String(index + 1));
+            dot.addEventListener('click', () => track.scrollTo({ left: card.offsetLeft - cards[0].offsetLeft, behavior: 'smooth' }));
+            dotsWrap.append(dot);
+            return dot;
+        });
+        const updateDots = () => {
+            const nearest = cards.reduce((best, card, index) => Math.abs(card.offsetLeft - cards[0].offsetLeft - track.scrollLeft) < Math.abs(cards[best].offsetLeft - cards[0].offsetLeft - track.scrollLeft) ? index : best, 0);
+            dots.forEach((dot, index) => { dot.classList.toggle('is-active', index === nearest); dot.setAttribute('aria-current', String(index === nearest)); });
+        };
+        track.addEventListener('scroll', updateDots, { passive: true });
+        updateDots();
+    }
 });
 
 const intro = document.querySelector('[data-intro]');
-if (intro && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if (intro && window.innerWidth > 1024 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     intro.hidden = false;
+    window.scrollTo(0, 0);
     const swipe = document.querySelector('[data-intro-swipe]');
     const stripes = intro.querySelector('.intro-stripes');
     const words = [...intro.querySelectorAll('.intro-word')];
@@ -107,6 +147,12 @@ document.querySelectorAll('[data-request-panel]').forEach(panel => {
     });
     panel.querySelectorAll('[data-request-close]').forEach(button => button.addEventListener('click', () => dialog.close()));
     if (panel.dataset.feedback === 'true') dialog.showModal();
+});
+
+document.querySelectorAll('.template-dialog').forEach(dialog => {
+    dialog.addEventListener('click', event => {
+        if (event.target === dialog || event.target.matches('.place-popup-section, .job-application-section, .registration-section')) dialog.close();
+    });
 });
 
 const video = document.querySelector('#piramidaVideo');
@@ -207,3 +253,39 @@ if (leasingForm) {
     mobile.addEventListener('change', render);
     render();
 }
+
+(function () {
+    var carousel = document.getElementById('photoCarousel');
+    var dotsWrap = document.getElementById('carouselDots');
+    if (!carousel || !dotsWrap) return;
+
+    var dots = dotsWrap.querySelectorAll('[data-dot]');
+    var slides = carousel.children;
+
+    function setActive(index) {
+        for (var i = 0; i < dots.length; i++) {
+            if (i === index) {
+                dots[i].classList.add('bg-[#c6f135]');
+                dots[i].classList.remove('bg-white/20');
+            } else {
+                dots[i].classList.remove('bg-[#c6f135]');
+                dots[i].classList.add('bg-white/20');
+            }
+        }
+    }
+
+    function updateActiveDot() {
+        if (!slides.length) return;
+        var gap = 12; // matches gap-3
+        var slideWidth = slides[0].getBoundingClientRect().width + gap;
+        var index = Math.round(carousel.scrollLeft / slideWidth);
+        index = Math.max(0, Math.min(index, dots.length - 1));
+        setActive(index);
+    }
+
+    carousel.addEventListener('scroll', function () {
+        window.requestAnimationFrame(updateActiveDot);
+    }, { passive: true });
+
+    updateActiveDot();
+})();

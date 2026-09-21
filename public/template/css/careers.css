@@ -8,10 +8,6 @@
     transition: transform 0.25s ease;
 }
 
-details[open] .chev {
-    transform: rotate(180deg);
-}
-
 details>summary {
     list-style: none;
     cursor: pointer;
@@ -56,16 +52,16 @@ details[open] .panel {
     transform: translateX(-50%);
     width: 100vw;
     height: 700px;
-     background-image:
-    linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0) 0%,
-      rgba(0, 0, 0, 0) 58%,
-      rgba(0, 9, 41, 0.58) 74%,
-      #000929 84%,
-      #000929 100%
-    ),
-    url("../images/BG.png");
+    background-image:
+        linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0) 0%,
+            rgba(0, 0, 0, 0) 58%,
+            rgba(0, 9, 41, 0.58) 74%,
+            #000929 84%,
+            #000929 100%
+        ),
+        url("/template/images/BG.png");
     background-size: cover, cover;
     background-position: top center, top center;
     background-repeat: no-repeat, no-repeat;
@@ -161,10 +157,50 @@ details[open] .chev {
 }
 
 #newsScroll {
-    scrollbar-width: none;       /* Firefox */
-    -ms-overflow-style: none;    /* IE/Edge legacy */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE/Edge legacy */
 }
 
 #newsScroll::-webkit-scrollbar {
-    display: none;               /* Chrome, Safari, newer Edge */
+    display: none;
+    /* Chrome, Safari, newer Edge */
+}
+
+/* ===== Job Application Modal ===== */
+/* Hidden by default (explicit, not just via aria-hidden attribute selectors) —
+   opened only by adding the .is-open class from JS when Apply is clicked.
+   Backdrop uses the same BG.jpg background as the Join Us popup. */
+.job-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.job-modal.is-open {
+    display: flex;
+}
+
+.job-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    background-image: url("/template/images/BG.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.job-modal-panel {
+    position: relative;
+    z-index: 1;
 }
