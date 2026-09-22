@@ -47,7 +47,8 @@ body:has(dialog[open]) { overflow:hidden; }
 .leasing-field-label,.leasing-document-field > label { color:#ffffff70; font-size:14px; margin-bottom:6px; }
 .leasing-documents-grid > .leasing-document-field { grid-column:span 3; min-width:0; }
 .leasing-application-form input[type=file] { padding:12px; font-size:12px; }
-.leasing-application-form output { display:block; padding:15px 0; }
+.leasing-application-form output { display:block; padding:15px 18px; min-height:51px; border-radius:8px; background:rgba(44,57,91,.78); color:rgba(255,255,255,.92); font-size:14px; }
+.leasing-application-form .leasing-offer-error { margin-top:6px; color:#fca5a5; font-size:14px; }
 .template-errors,.template-errors p { color:#991b1b !important; }
 @media(max-width:767px) { .leasing-documents-grid > .leasing-document-field { grid-column:auto; } }
 

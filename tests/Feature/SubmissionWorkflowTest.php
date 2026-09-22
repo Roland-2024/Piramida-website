@@ -129,7 +129,7 @@ class SubmissionWorkflowTest extends TestCase
             'contact_phone' => '+355 4 222 2222',
             'contact_mobile' => '+355 69 222 2222',
             'contact_email' => 'owner@example.test',
-            'offer_per_sqm' => 25,
+            'offer_per_sqm' => 22,
             ...$documents,
             'privacy' => '1',
             'website' => '',
@@ -141,7 +141,7 @@ class SubmissionWorkflowTest extends TestCase
         $this->assertSame(SubmissionType::Leasing, $submission->type);
         $this->assertSame('Business Owner', $submission->name);
         $this->assertSame('Example Studio', $submission->details['company_name']);
-        $this->assertSame(2755, $submission->details['monthly_rent']);
+        $this->assertSame(2424.4, $submission->details['monthly_rent']);
         $this->assertCount(10, $submission->attachments);
         $submission->attachments->each(fn ($attachment) => Storage::disk('local')->assertExists($attachment->path));
 
@@ -163,6 +163,20 @@ class SubmissionWorkflowTest extends TestCase
             'attendees' => 20,
             'privacy' => '1',
         ])->assertNotFound();
+    }
+
+    public function test_leasing_rejects_offers_below_the_minimum(): void
+    {
+        $space = Space::factory()->published()->create([
+            'type' => SpaceType::Leasing,
+            'booking_mode' => BookingMode::Internal,
+        ]);
+
+        $this->post(route('public.spaces.leasing-request', ['en', "space-{$space->id}"]), [
+            'offer_per_sqm' => 21.99,
+        ])->assertRedirect()->assertSessionHasErrors('offer_per_sqm');
+
+        $this->assertDatabaseCount('submissions', 0);
     }
 
     public function test_career_attachment_is_private_and_admin_can_review_submission(): void

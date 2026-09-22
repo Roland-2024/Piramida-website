@@ -7,12 +7,12 @@
             @foreach ([
                 ['company_name', 'company_name', 'text'],
                 ['nipt', 'nipt', 'text'],
-                ['entity_type', 'entity_type', 'select'],
-                ['established_year', 'established_year', 'number'],
                 ['company_address', 'address', 'text'],
                 ['city', 'city', 'text'],
-                ['employee_count', 'employee_count', 'number'],
+                ['entity_type', 'entity_type', 'select'],
+                ['established_year', 'established_year', 'number'],
                 ['annual_turnover', 'annual_turnover', 'number'],
+                ['employee_count', 'employee_count', 'number'],
             ] as [$name, $label, $type])
                 <div>
                     <label for="leasing_{{ $name }}" class="leasing-field-label">{{ __('cms.'.$label) }} *</label>
@@ -56,7 +56,8 @@
         <div class="leasing-form-grid leasing-form-grid-3">
             <div>
                 <label for="leasing_offer_per_sqm" class="leasing-field-label">{{ __('cms.offer_per_sqm') }} * <span class="font-normal text-slate-500">({{ __('cms.minimum') }} 22.00 EUR)</span></label>
-                <input id="leasing_offer_per_sqm" name="offer_per_sqm" type="number" min="22" step="0.01" value="{{ old('offer_per_sqm', 22) }}" required>
+                <input id="leasing_offer_per_sqm" name="offer_per_sqm" type="number" min="22" max="999999.99" step="0.01" value="{{ old('offer_per_sqm', 22) }}" aria-describedby="leasing_offer_error" required>
+                <p id="leasing_offer_error" class="leasing-offer-error" aria-live="polite" hidden></p>
                 @error('offer_per_sqm')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
             <div>
@@ -94,7 +95,14 @@
         const offer = form.querySelector('#leasing_offer_per_sqm');
         const output = form.querySelector('#leasing_monthly_rent');
         const area = Number(form.dataset.area || 0);
-        const update = () => output.textContent = `${(Number(offer.value || 0) * area).toFixed(2)} EUR`;
+        const error = form.querySelector('#leasing_offer_error');
+        const update = () => {
+            const valid = offer.validity.valid;
+            offer.setAttribute('aria-invalid', String(!valid));
+            error.hidden = valid;
+            error.textContent = valid ? '' : offer.validationMessage;
+            output.textContent = valid ? `${(offer.valueAsNumber * area).toFixed(2)} EUR` : '—';
+        };
         offer.addEventListener('input', update);
         update();
     })();
