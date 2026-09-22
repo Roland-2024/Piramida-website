@@ -1,4 +1,4 @@
-<x-layouts.public :title="__('cms.attractions')" :language-urls="$languageUrls" :styles="['piramida-popup', 'attraction']">
+<x-layouts.public :title="__('cms.attractions')" :language-urls="$languageUrls" :styles="['piramida-popup', 'attraction']" body-class="attractions-page">
 @if($items->isNotEmpty())<section id="attractions" tabindex="0" class="relative overflow-hidden md:py-20 py-[5rem]">
 
         <div class="page-top-bg hidden sm:block" aria-hidden="true"></div>
@@ -46,6 +46,6 @@
     </section>
 
     @else<p class="template-empty">{{ __('cms.no_content') }}</p>@endif
-<div class="template-pagination">{{ $items->links() }}</div>
+@if($items->hasPages())<div class="template-pagination">{{ $items->links() }}</div>@endif
 @include('public.businesses._experiences', ['businesses' => $businesses])
 </x-layouts.public>

@@ -175,6 +175,20 @@
 }
 
 @media (min-width: 768px) {
+    /* Keep the active card centered even when the CMS has fewer than five items. */
+    #attractions [data-cards] {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) calc(2 * var(--half-center)) repeat(2, minmax(0, 1fr));
+        justify-items: center;
+    }
+
+    #attractions .attraction-card { grid-row: 1; }
+    #attractions .attraction-card.is-far-left { grid-column: 1; }
+    #attractions .attraction-card.is-near-left { grid-column: 2; }
+    #attractions .attraction-card.is-center { grid-column: 3; width: calc(2 * var(--half-center)); }
+    #attractions .attraction-card.is-near-right { grid-column: 4; }
+    #attractions .attraction-card.is-far-right { grid-column: 5; }
+
     #attractions [data-track] {
         height: 370px;
         --half-center: 148px;
