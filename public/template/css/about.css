@@ -1,5 +1,14 @@
 
 
+.about-page .prose-content.title-18 p {
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.about-page .prose-content p + p {
+    margin-top: 1rem;
+}
+
 .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
