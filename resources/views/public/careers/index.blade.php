@@ -1,4 +1,4 @@
-<x-layouts.public :title="__('cms.careers')" :language-urls="$languageUrls" :styles="['careers', 'job-application']" :footer="false">
+<x-layouts.public :title="__('cms.careers')" :language-urls="$languageUrls" :styles="['careers', 'job-application']">
     <div class="mx-auto px-6 pt-[100px] pb-24 bg-[#081434] relative z-0">
         <div class="page-top-bg hidden sm:block" aria-hidden="true"></div>
 
