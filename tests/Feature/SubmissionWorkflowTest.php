@@ -10,6 +10,7 @@ use App\Http\Requests\PublicSite\StoreSubmissionRequest;
 use App\Mail\SubmissionReceived;
 use App\Models\Career;
 use App\Models\Event;
+use App\Models\LeasingUnit;
 use App\Models\SiteSetting;
 use App\Models\Space;
 use App\Models\Submission;
@@ -103,6 +104,8 @@ class SubmissionWorkflowTest extends TestCase
         Storage::fake('local');
         $space = Space::factory()->published()->create([
             'type' => SpaceType::Leasing,
+            'leasing_unit_id' => LeasingUnit::where('code', 'A1')->value('id'),
+            'is_available' => true,
             'booking_mode' => BookingMode::Internal,
             'area_sqm' => 110.2,
         ]);
@@ -142,6 +145,8 @@ class SubmissionWorkflowTest extends TestCase
         $this->assertSame('Business Owner', $submission->name);
         $this->assertSame('Example Studio', $submission->details['company_name']);
         $this->assertSame(2424.4, $submission->details['monthly_rent']);
+        $this->assertSame('A1', $submission->details['unit_code']);
+        $this->assertSame('ground', $submission->details['floor']);
         $this->assertCount(10, $submission->attachments);
         $submission->attachments->each(fn ($attachment) => Storage::disk('local')->assertExists($attachment->path));
 
@@ -169,6 +174,8 @@ class SubmissionWorkflowTest extends TestCase
     {
         $space = Space::factory()->published()->create([
             'type' => SpaceType::Leasing,
+            'leasing_unit_id' => LeasingUnit::where('code', 'A1')->value('id'),
+            'is_available' => true,
             'booking_mode' => BookingMode::Internal,
         ]);
 

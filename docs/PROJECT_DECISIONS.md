@@ -36,7 +36,11 @@ This file records durable decisions that future tasks should preserve. Implement
 
 ## Spaces and requests
 
-- Spaces have two business types: event spaces and leasing units.
+- Event Spaces and Leasing Spaces are separate dashboard modules with server-fixed types, not an editor-selectable type field. They retain the existing shared space/translation storage and IDs so galleries, localized URLs and historical submissions stay intact.
+- Leasing posts select one predefined physical unit from the supplied SVG inventory. The unit defines its floor; a database unique constraint prevents duplicate assignments (including trashed posts).
+- The four supplied floor templates contain 40 units: Ground A1–A15 and A17–A20; Third D1/D3; Roof E1/E2; Exterior BE1, BE1/1 and BE2–BE16. Do not invent A16, D2, an unprovided floor template, or unit dimensions from pixels. Areas remain editable on the post.
+- PNG renders are the plan backgrounds; supplied SVG paths are the interactive overlays. Available, published and locale-translated leasing posts are green/clickable; every other unit is red/non-clickable. Unavailable direct detail/application URLs are blocked server-side.
+- Existing leasing posts remain unassigned/unavailable until staff select their real units. No demo name-to-map association is guessed.
 - Event-space requests collect event requirements and preferred timing.
 - Leasing applications collect company, contact, offer, and required-document information.
 - Event registration, event-space booking, leasing, and career forms are request-based. Staff review and confirm them manually.

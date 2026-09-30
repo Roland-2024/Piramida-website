@@ -63,8 +63,8 @@ class DemoContentSeederTest extends TestCase
 
         $this->get('/en/spaces?type=leasing')
             ->assertOk()
-            ->assertSee('Mix Digital')
-            ->assertSee('Request information');
+            ->assertSee('Ground Floor')
+            ->assertDontSee('Mix Digital');
     }
 
     public function test_draft_template_renders_every_content_type_in_both_languages(): void
@@ -80,7 +80,12 @@ class DemoContentSeederTest extends TestCase
             foreach ([Page::class => 'pages', News::class => 'news', Event::class => 'events', Attraction::class => 'attractions', Business::class => 'businesses', Space::class => 'spaces', Career::class => 'careers'] as $model => $module) {
                 foreach ($model::query()->published()->with('translations')->get() as $record) {
                     $slug = $record->translation($locale, false)->slug;
-                    $this->get(route("public.{$module}.show", [$locale, $slug]))->assertOk();
+                    $response = $this->get(route("public.{$module}.show", [$locale, $slug]));
+                    if ($record instanceof Space && $record->type === SpaceType::Leasing) {
+                        $response->assertNotFound(); // Existing demo posts are not guessed onto real units.
+                    } else {
+                        $response->assertOk();
+                    }
                 }
             }
 

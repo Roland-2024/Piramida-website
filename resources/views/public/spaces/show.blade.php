@@ -40,7 +40,7 @@
               </div>
               <div class="position">
                 <span>{{ __('cms.location') }}</span>
-                <strong>{{ $translation->location }}</strong>
+                <strong>{{ $item->leasingUnit?->label(app()->getLocale()) ?? $translation->location }}</strong>
               </div>
 
               <div class="area">

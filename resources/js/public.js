@@ -1,6 +1,7 @@
 import { initHome } from './template-home';
 import { initEducation } from './template-education';
 import './template-attractions';
+import './template-leasing';
 initHome();
 initEducation();
 

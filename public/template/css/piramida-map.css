@@ -1,0 +1,178 @@
+/* Piramida map page */
+
+.piramida-map-section {
+  position: relative;
+  padding: 140px var(--page-padding-desktop) 120px;
+}
+
+.piramida-map-stage {
+  position: relative;
+  z-index: 1;
+}
+
+/* Lime-to-green wedge behind the image's bottom-left corner (same as floor-plan.css) */
+.piramida-map-stage::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -44px;
+  /* Puts the wedge's horizontal line (91% down its 72% height) flush with the image's bottom edge */
+  bottom: -6.48%;
+  width: 80%;
+  height: 72%;
+  background: linear-gradient(90deg, #7fa31a 0%, var(--color-lime) 35%, #3bdc6a 100%);
+  clip-path: polygon(0 100%, 6% 0, 12% 0, 8% 91%, 100% 91%, 100% 92%);
+  filter: blur(1px);
+  pointer-events: none;
+}
+
+.piramida-map-frame {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  aspect-ratio: 1000 / 576;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.piramida-map-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Dark tint over the photo; the lines and floor buttons render above it */
+.piramida-map-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #00000066;
+  pointer-events: none;
+}
+
+.piramida-map-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.piramida-map-lines path {
+  fill: none;
+  stroke: var(--color-lime);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  opacity: 0.75;
+  transition: opacity 200ms ease, stroke-width 200ms ease;
+}
+
+.piramida-map-lines circle {
+  fill: var(--color-navy);
+  stroke: var(--color-lime);
+  stroke-width: 2;
+  transition: fill 200ms ease;
+}
+
+.piramida-map-lines .is-active path {
+  opacity: 1;
+  stroke-width: 2.5;
+}
+
+.piramida-map-lines .is-active circle {
+  fill: var(--color-lime);
+}
+
+/* Floor links: positions match the SVG viewBox (1000 x 576) so the
+   connector lines start exactly at each pill's edge */
+.piramida-map-floors {
+  position: absolute;
+  inset: 0;
+}
+
+.piramida-map-floor {
+  position: absolute;
+  left: 42.6%;
+  width: 14.8%;
+  height: 5.7%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--color-white);
+  color: var(--color-black);
+  font-size: clamp(10px, 1vw, 16px);
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  transform: translateY(-50%);
+  transition: background-color 200ms ease, transform 200ms ease;
+}
+
+.piramida-map-floor[data-floor="roof"] { top: 34.4%; }
+.piramida-map-floor[data-floor="third"] { top: 44.3%; }
+.piramida-map-floor[data-floor="ground"] { top: 53.6%; }
+.piramida-map-floor[data-floor="minus-one"] { top: 62.8%; }
+.piramida-map-floor[data-floor="exterior"] { top: 71.9%; }
+
+.piramida-map-floor.is-active {
+  background: var(--color-lime);
+}
+
+.piramida-map-floor:hover {
+  transform: translateY(-50%) scale(1.04);
+}
+
+/* Mobile: portrait image with the buttons stacked over it,
+   connector lines hidden since the crop changes */
+@media (max-width: 767px) {
+  .piramida-map-section {
+    padding: 100px var(--page-padding-mobile) 64px;
+  }
+
+  .piramida-map-frame {
+    aspect-ratio: 4 / 5;
+  }
+
+  /* Mobile wedge sits under the image, as on the floor pages */
+  .piramida-map-stage {
+    padding-bottom: 20px;
+  }
+
+  .piramida-map-stage::before {
+    left: 12px;
+    right: 16px;
+    bottom: 0;
+    width: auto;
+    height: 20px;
+    background: linear-gradient(90deg, #8fbf00 0%, var(--color-lime) 60%, #b8f000 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 10%, 12% 100%, 0 100%);
+    filter: none;
+  }
+
+  .piramida-map-lines {
+    display: none;
+  }
+
+  .piramida-map-floors {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .piramida-map-floor {
+    position: static;
+    width: 58%;
+    max-width: 220px;
+    height: 36px;
+    font-size: 13px;
+    transform: none;
+  }
+
+  .piramida-map-floor:hover {
+    transform: scale(1.04);
+  }
+}

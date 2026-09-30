@@ -39,6 +39,9 @@
                                 <td class="px-5 py-4">
                                     <p class="font-medium">{{ data_get($item->translation('al'), $translationTitleColumn) ?? 'Untitled' }}</p>
                                     <p class="text-xs text-slate-500">{{ data_get($item->translation('en'), $translationTitleColumn) }}</p>
+                                    @if ($routePrefix === 'admin.leasing')
+                                        <p class="mt-1 text-xs text-slate-600">{{ $item->leasingUnit?->label() ?? 'No map unit assigned' }} · {{ $item->is_available ? 'Available (when published)' : 'Unavailable' }}</p>
+                                    @endif
                                 </td>
                                 <td class="px-5 py-4"><span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $item->status->value === 'published' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">{{ $item->status->label() }}</span></td>
                                 <td class="px-5 py-4">{{ $item->display_order }}</td>

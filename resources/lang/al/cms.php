@@ -139,4 +139,10 @@ return [
     'opening_hours' => 'Orari',
     'website' => 'Faqja zyrtare',
     'full_page' => 'Shiko faqen e plotë',
+    'leasing_map' => 'Hapësirat me qira — Harta e Piramidës',
+    'floor' => 'Kati',
+    'back_to_map' => 'Kthehu te harta e Piramidës',
+    'availability' => 'Disponueshmëria',
+    'unit_available' => 'E disponueshme',
+    'unit_unavailable' => 'E padisponueshme',
 ];

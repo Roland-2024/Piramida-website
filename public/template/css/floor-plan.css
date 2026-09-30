@@ -1,0 +1,230 @@
+/* Floor plan page */
+
+.floor-plan-section {
+  position: relative;
+  padding: 140px var(--page-padding-desktop) 120px;
+}
+
+.floor-plan-card {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Lime-to-green glow sitting behind the card's bottom-left corner */
+.floor-plan-card::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -44px;
+  /* Puts the wedge's horizontal line (91% down its 72% height) flush with the image's bottom edge */
+  bottom: -6.48%;
+  width: 80%;
+  height: 72%;
+  background: linear-gradient(90deg, #7fa31a 0%, var(--color-lime) 35%, #3bdc6a 100%);
+  clip-path: polygon(0 100%, 6% 0, 12% 0, 8% 91%, 100% 91%, 100% 92%);
+  filter: blur(1px);
+  pointer-events: none;
+}
+
+.floor-plan-back {
+  position: absolute;
+  z-index: 2;
+  top: 32px;
+  left: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-lime);
+  color: var(--color-black);
+  transition: transform 200ms ease;
+}
+
+.floor-plan-back svg {
+  width: 20px;
+  height: 20px;
+}
+
+.floor-plan-back:hover {
+  transform: translateX(-3px);
+}
+
+.floor-plan-level {
+  position: absolute;
+  z-index: 2;
+  top: 24px;
+  right: 32px;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  margin: 0;
+  color: var(--color-lime);
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.floor-plan-level-number {
+  font-size: 64px;
+}
+
+.floor-plan-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1600 / 920;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.floor-plan-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Units */
+.floor-plan-unit-shape {
+  fill: transparent;
+}
+
+/* Hover transition only once statuses are set, so the colours don't
+   animate in from full opacity on page load */
+.floor-plan-svg.is-ready .floor-plan-unit-shape {
+  transition: fill-opacity 200ms ease;
+}
+
+.floor-plan-unit-label {
+  fill: var(--color-white);
+  pointer-events: none;
+}
+
+.floor-plan-unit[data-status="available"] .floor-plan-unit-shape {
+  fill: var(--color-lime);
+  fill-opacity: 0.6;
+}
+
+.floor-plan-unit[data-status="unavailable"] .floor-plan-unit-shape {
+  fill: #ff0000;
+  fill-opacity: 0.3;
+}
+
+.floor-plan-unit[data-status="available"] {
+  cursor: pointer;
+}
+
+.floor-plan-unit[data-status="available"]:hover .floor-plan-unit-shape,
+.floor-plan-unit[data-status="available"]:focus-within .floor-plan-unit-shape {
+  fill-opacity: 0.85;
+}
+
+.floor-plan-unit a:focus-visible {
+  outline: none;
+}
+
+.floor-plan-unit[data-status="available"]:focus-within .floor-plan-unit-shape {
+  stroke: var(--color-white);
+  stroke-width: 3;
+}
+
+/* Legend */
+.floor-plan-legend {
+  display: flex;
+  gap: 24px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.floor-plan-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.floor-plan-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.floor-plan-swatch.is-available {
+  background: var(--color-lime);
+}
+
+.floor-plan-swatch.is-unavailable {
+  background: rgba(255, 0, 0, 0.45);
+}
+
+/* Mobile: no card — back button and floor label on one row, the plan
+   full-bleed (cropped via viewBox in floor-plan.js), lime wedge below */
+@media (max-width: 767px) {
+  .floor-plan-legend {
+    margin-inline: 16px;
+    flex-wrap: wrap;
+  }
+
+  .floor-plan-section {
+    padding: 88px 0 48px;
+  }
+
+  .floor-plan-card {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 20px;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .floor-plan-card::before {
+    left: 12px;
+    right: 16px;
+    bottom: 0;
+    width: auto;
+    height: 20px;
+    background: linear-gradient(90deg, #8fbf00 0%, var(--color-lime) 60%, #b8f000 100%);
+    clip-path: polygon(0 0, 100% 0, 100% 10%, 12% 100%, 0 100%);
+    filter: none;
+  }
+
+  .floor-plan-back {
+    position: static;
+    width: 32px;
+    height: 32px;
+    margin-left: 16px;
+  }
+
+  .floor-plan-back svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .floor-plan-level {
+    position: static;
+    align-items: baseline;
+    gap: 8px;
+    margin-right: 16px;
+    font-size: 28px;
+  }
+
+  .floor-plan-level-number {
+    font-size: inherit;
+  }
+
+  .floor-plan-scroll {
+    flex: 0 0 100%;
+    margin-top: 24px;
+  }
+
+  /* Matches the mobile viewBox (1440 x 920) */
+  .floor-plan-frame {
+    aspect-ratio: 1440 / 920;
+  }
+}

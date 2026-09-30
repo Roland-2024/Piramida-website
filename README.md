@@ -22,7 +22,7 @@ The CMS manages:
 - Events, exhibitions, and guided tours
 - Attractions
 - On-site businesses with logos, galleries, and public information dialogs
-- Event and leasing spaces
+- Separate Event Spaces and Leasing Spaces dashboard modules, with interactive leasing floor plans
 - Careers
 - Reusable media
 - Contact, registration, event-space request, full leasing-application, and career submissions
@@ -230,12 +230,20 @@ Editors may also manage attractions, businesses, spaces, and careers. Submission
 ## Request workflow
 
 1. Configure the public action on an event, space, or career as `Internal request form`, `External link`, `Internal form and external link`, or `No booking`.
-2. Set each space type to `Event space` or `Leasing`. The type determines which request form and staff submission category is used.
+2. Create event spaces in **Event spaces** and rental posts in **Leasing spaces**. For leasing, select **Floor / map unit** and enable **Available for applications** when appropriate; publish the post with both translations. The floor follows the selected unit automatically.
 3. Set the submission notification address under **Dashboard → Site settings**.
 4. New internal requests appear under **Dashboard → Submissions** with status `New`.
 5. Staff can move a request through `In review`, `Replied`, and `Closed`, add private notes, download permitted attachments, and export the filtered inbox as CSV.
 
 Email delivery uses Laravel's configured mailer. A mail failure is reported to the application log but does not discard a successfully stored request.
+
+## Leasing floor plans
+
+Run `php artisan migrate --force` and rebuild assets when deploying the interactive plans. The additive migration installs 40 real SVG units across Ground, Third, Roof L+4 and Exterior. It preserves existing space IDs, translations, media and submissions. Existing leasing posts start unassigned and unavailable: assign each to its actual map unit in **Leasing spaces** rather than guessing from demo names.
+
+The public map is at `/{locale}/leasing`; existing `/{locale}/spaces?type=leasing` links also show it. Available, published and translated units are green links to the existing application template. All other units are red and not clickable; unavailable detail URLs and application endpoints return 404. A unit can belong to only one post, including trashed posts; restore and unassign that post before reusing its unit.
+
+The supplied PNG backgrounds and SVG paths are local assets. Unit geometry and floor inventory are fixed to the supplied plans, not uploaded by editors. No new environment variables or services are needed.
 
 ## Production deployment without Docker
 

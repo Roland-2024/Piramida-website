@@ -21,6 +21,8 @@ class Space extends Model
     protected $fillable = [
         'featured_media_id',
         'type',
+        'leasing_unit_id',
+        'is_available',
         'status',
         'published_at',
         'capacity',
@@ -34,6 +36,19 @@ class Space extends Model
         'created_by',
         'updated_by',
     ];
+
+    public function leasingUnit(): BelongsTo
+    {
+        return $this->belongsTo(LeasingUnit::class);
+    }
+
+    public function scopePubliclyAccessible(Builder $query): Builder
+    {
+        return $query->where(fn (Builder $query) => $query
+            ->where('type', SpaceType::EventSpace)
+            ->orWhere(fn (Builder $query) => $query->where('type', SpaceType::Leasing)
+                ->where('is_available', true)->whereHas('leasingUnit')));
+    }
 
     public function translations(): HasMany
     {
@@ -74,6 +89,7 @@ class Space extends Model
             'area_sqm' => 'decimal:2',
             'price_from' => 'decimal:2',
             'is_featured' => 'boolean',
+            'is_available' => 'boolean',
             'display_order' => 'integer',
         ];
     }

@@ -17,6 +17,9 @@
     };
 @endphp
 
+@if ($routePrefix === 'admin.leasing')
+    <p class="mb-5 rounded-lg bg-slate-50 p-4 text-sm text-slate-600">Select a real map unit; its floor is assigned automatically. Each unit can belong to only one post (including trashed posts). Only published, available posts with a map unit and a translation are green and clickable. Unassigned or unavailable units stay red.</p>
+@endif
 <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
     <div>
         <label for="status" class="block text-sm font-medium">Status</label>

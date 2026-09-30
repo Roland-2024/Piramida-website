@@ -64,7 +64,7 @@ class SubmissionController extends Controller
     public function storeLeasing(StoreSubmissionRequest $request, string $locale, string $slug): RedirectResponse
     {
         $space = $this->publishedBySlug(Space::class, $locale, $slug);
-        abort_unless($space->type === SpaceType::Leasing && $space->booking_mode->allowsInternal(), 404);
+        abort_unless($space->type === SpaceType::Leasing && $space->is_available && $space->leasingUnit()->exists() && $space->booking_mode->allowsInternal(), 404);
 
         return $this->storeLeasingApplication($request, $space);
     }
@@ -179,6 +179,8 @@ class SubmissionController extends Controller
                 ];
 
                 $details = collect($validated)->only($detailKeys)->all();
+                $details['unit_code'] = $space->leasingUnit->code;
+                $details['floor'] = $space->leasingUnit->floor;
                 $details['area_sqm'] = $space->area_sqm;
                 $details['monthly_rent'] = round((float) $validated['offer_per_sqm'] * (float) $space->area_sqm, 2);
 

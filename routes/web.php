@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BusinessController;
 use App\Http\Controllers\Admin\CareerController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\LeasingController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\PageController;
@@ -55,6 +56,8 @@ Route::prefix('{locale}')
         Route::get('/attractions/{slug}', [PublicAttractionController::class, 'show'])->name('attractions.show');
         Route::get('/businesses', [PublicBusinessController::class, 'index'])->name('businesses.index');
         Route::get('/businesses/{slug}', [PublicBusinessController::class, 'show'])->name('businesses.show');
+        Route::get('/leasing', [PublicSpaceController::class, 'leasing'])->name('leasing.index');
+        Route::get('/leasing/floors/{floor}', [PublicSpaceController::class, 'floor'])->name('leasing.floor');
         Route::get('/spaces', [PublicSpaceController::class, 'index'])->name('spaces.index');
         Route::get('/rent-space', [PublicSpaceController::class, 'overview'])->name('spaces.overview');
         Route::get('/spaces/{slug}', [PublicSpaceController::class, 'show'])->name('spaces.show');
@@ -113,6 +116,8 @@ Route::prefix('admin')
 
         Route::post('spaces/{id}/restore', [SpaceController::class, 'restore'])->name('spaces.restore');
         Route::resource('spaces', SpaceController::class)->except('show');
+        Route::post('leasing/{id}/restore', [LeasingController::class, 'restore'])->name('leasing.restore');
+        Route::resource('leasing', LeasingController::class)->parameters(['leasing' => 'space'])->except('show');
 
         Route::post('careers/{id}/restore', [CareerController::class, 'restore'])->name('careers.restore');
         Route::resource('careers', CareerController::class)->except('show');

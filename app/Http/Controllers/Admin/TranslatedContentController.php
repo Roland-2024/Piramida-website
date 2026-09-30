@@ -42,9 +42,8 @@ abstract class TranslatedContentController extends Controller
             'trashed' => ['nullable', Rule::in(['with', 'only'])],
         ]);
 
-        $modelClass = $this->modelClass;
         $titleColumn = $this->translationTitleColumn;
-        $items = $modelClass::query()
+        $items = $this->contentQuery()
             ->with(['translations', 'updatedBy'])
             ->when($filters['search'] ?? null, function (Builder $query, string $search) use ($titleColumn): void {
                 $query->whereHas(
@@ -102,8 +101,7 @@ abstract class TranslatedContentController extends Controller
 
     public function restore(Request $request): RedirectResponse
     {
-        $modelClass = $this->modelClass;
-        $item = $modelClass::onlyTrashed()->findOrFail($request->route('id'));
+        $item = $this->contentQuery()->onlyTrashed()->findOrFail($request->route('id'));
         Gate::authorize('restore', $item);
         $item->restore();
 
@@ -184,6 +182,11 @@ abstract class TranslatedContentController extends Controller
      * @return array<int, array<string, mixed>>
      */
     abstract protected function translationFields(): array;
+
+    protected function contentQuery(): Builder
+    {
+        return ($this->modelClass)::query();
+    }
 
     protected function routeModel(Request $request): Model
     {

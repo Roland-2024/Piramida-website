@@ -139,4 +139,10 @@ return [
     'opening_hours' => 'Opening hours',
     'website' => 'Website',
     'full_page' => 'View full page',
+    'leasing_map' => 'Leasing — Piramida map',
+    'floor' => 'Floor',
+    'back_to_map' => 'Back to Piramida map',
+    'availability' => 'Availability',
+    'unit_available' => 'Available',
+    'unit_unavailable' => 'Unavailable',
 ];

@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\PublicSite;
 
+use App\Enums\SpaceType;
+use App\Models\Space;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -9,6 +11,15 @@ class StoreSubmissionRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        if ($this->routeIs('public.spaces.leasing-request')) {
+            abort_unless(Space::query()->published()->publiclyAccessible()
+                ->where('type', SpaceType::Leasing)
+                ->whereHas('translations', fn ($query) => $query
+                    ->where('locale', $this->route('locale'))
+                    ->where('slug', $this->route('slug')))
+                ->exists(), 404);
+        }
+
         return true;
     }
 

@@ -1,0 +1,37 @@
+// Highlight the hovered/focused floor and its connector line.
+(function () {
+  const floors = document.querySelectorAll(".piramida-map-floor");
+  const lines = document.querySelectorAll(
+    ".piramida-map-lines [data-line]",
+  );
+  const defaultFloor = "ground";
+
+  function setActive(floor) {
+    floors.forEach((link) =>
+      link.classList.toggle("is-active", link.dataset.floor === floor),
+    );
+    lines.forEach((line) =>
+      line.classList.toggle("is-active", line.dataset.line === floor),
+    );
+  }
+
+  floors.forEach((link) => {
+    link.addEventListener("mouseenter", () =>
+      setActive(link.dataset.floor),
+    );
+    link.addEventListener("focus", () => setActive(link.dataset.floor));
+    link.addEventListener("mouseleave", () => setActive(defaultFloor));
+    link.addEventListener("blur", () => setActive(defaultFloor));
+  });
+
+  setActive(defaultFloor);
+})();
+
+const floorPlan = document.getElementById('floorPlan');
+if (floorPlan) {
+    const mobile = matchMedia('(max-width: 767px)');
+    const layout = () => floorPlan.setAttribute('viewBox', mobile.matches ? '80 0 1440 920' : '0 0 1600 920');
+    layout();
+    mobile.addEventListener('change', layout);
+    requestAnimationFrame(() => floorPlan.classList.add('is-ready'));
+}
