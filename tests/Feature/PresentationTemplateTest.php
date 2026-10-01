@@ -41,7 +41,7 @@ class PresentationTemplateTest extends TestCase
                     ->assertOk()->assertViewIs('public.pages.education')
                     ->assertViewHas('slides', fn ($slides) => $slides->count() === 2 && $slides[0]['title'] === "Seksioni {$first->id}")
                     ->assertDontSee("Seksioni {$hidden->id}")->assertDontSee("Section {$hidden->id}");
-                $this->get('/'.$locale)->assertSee(route('public.pages.show', [$locale, $localizedSlug]), false);
+                $this->get(route('public.home', $locale))->assertSee(route('public.pages.show', [$locale, $localizedSlug]), false);
             }
 
             $page->update(['status' => 'draft']);

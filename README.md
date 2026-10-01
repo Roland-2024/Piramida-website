@@ -84,7 +84,8 @@ Alternatively set `SEED_DEMO_CONTENT=true` before `migrate --seed` for a fresh l
 |---|---:|---|
 | Website | `http://localhost:8088` | `APP_PORT` |
 | Admin login | `http://localhost:8088/admin/login` | — |
-| Albanian frontend | `http://localhost:8088/al` | — |
+| Albanian frontend | `http://localhost:8088` | — |
+| English frontend | `http://localhost:8088/en` | — |
 | English frontend | `http://localhost:8088/en` | — |
 | MySQL from host | `127.0.0.1:3308` | `DB_FORWARD_PORT` |
 | Vite HMR | `http://localhost:5178` | `VITE_PORT` |
@@ -241,7 +242,7 @@ Email delivery uses Laravel's configured mailer. A mail failure is reported to t
 
 Run `php artisan migrate --force` and rebuild assets when deploying the interactive plans. The additive migration installs 40 real SVG units across Ground, Third, Roof L+4 and Exterior. It preserves existing space IDs, translations, media and submissions. Existing leasing posts start unassigned and unavailable: assign each to its actual map unit in **Leasing spaces** rather than guessing from demo names.
 
-The public map is at `/{locale}/leasing`; existing `/{locale}/spaces?type=leasing` links also show it. Available, published and translated units are green links to the existing application template. All other units are red and not clickable; unavailable detail URLs and application endpoints return 404. A unit can belong to only one post, including trashed posts; restore and unassign that post before reusing its unit.
+The public map is at `/leasing` (Albanian) or `/en/leasing` (English). Old `spaces?type=leasing` links redirect permanently to the map; `/spaces` lists event spaces. Available, published and translated units are green links to the existing application template. All other units are red and not clickable; unavailable detail URLs and application endpoints return 404. A unit can belong to only one post, including trashed posts; restore and unassign that post before reusing its unit.
 
 The supplied PNG backgrounds and SVG paths are local assets. Unit geometry and floor inventory are fixed to the supplied plans, not uploaded by editors. No new environment variables or services are needed.
 
@@ -266,7 +267,8 @@ Dashboard users are deactivated rather than deleted so content attribution remai
 
 ## Localization
 
-- URL locales: `al` and `en`
+- Albanian URLs have no language prefix; English URLs use `/en`.
+- Old `/al` GET/HEAD URLs redirect permanently to their unprefixed equivalent, preserving query filters. Old POST endpoints still process forms without redirecting uploads.
 - Default and fallback locale: Albanian (`al`)
 - Interface strings: `resources/lang/{locale}`
 - Managed content: normalized translation tables
@@ -274,7 +276,7 @@ Dashboard users are deactivated rather than deleted so content attribution remai
 - A missing requested record translation returns `404`
 - Non-routing child content such as a section may fall back to Albanian
 
-All Admin content forms expose Albanian and English fields clearly. Slugs are generated from titles when left blank and remain manually editable.
+All Admin content forms expose Albanian and English fields clearly. Slugs are generated from titles when left blank and remain manually editable. Route generation still accepts `al` / `en`; the URL formatter omits `al`. The same public route definitions serve both prefixes and the unprefixed Albanian routes. Admin URLs remain unchanged. After deploying routing changes, rebuild the route cache with `php artisan route:cache` if production uses cached routes. No database or environment changes are needed.
 
 ## Publication behavior
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PublicSite;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 abstract class TranslatedCatalogController extends Controller
@@ -25,7 +26,7 @@ abstract class TranslatedCatalogController extends Controller
     /** @var array<int, string> */
     protected array $with = ['translations', 'featuredMedia'];
 
-    public function index(string $locale): View
+    public function index(string $locale): View|RedirectResponse
     {
         $modelClass = $this->modelClass;
 

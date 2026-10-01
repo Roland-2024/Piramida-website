@@ -11,7 +11,7 @@ class StoreSubmissionRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        if ($this->routeIs('public.spaces.leasing-request')) {
+        if ($this->routeIs('public.spaces.leasing-request', 'default.public.spaces.leasing-request')) {
             abort_unless(Space::query()->published()->publiclyAccessible()
                 ->where('type', SpaceType::Leasing)
                 ->whereHas('translations', fn ($query) => $query
@@ -37,7 +37,7 @@ class StoreSubmissionRequest extends FormRequest
             'message' => ['nullable', 'string', 'max:10000'],
         ];
 
-        return match ($this->route()?->getName()) {
+        return match (str_replace('default.public.', 'public.', $this->route()?->getName() ?? '')) {
             'public.contact.store' => [
                 ...$common,
                 ...$person,

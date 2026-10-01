@@ -14,9 +14,10 @@ class PublicContentTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_root_redirects_to_albanian_and_invalid_locale_returns_404(): void
+    public function test_root_serves_albanian_and_invalid_locale_returns_404(): void
     {
-        $this->get('/')->assertRedirect('/al');
+        $this->get('/')->assertOk();
+        $this->get('/al')->assertRedirect('/')->assertStatus(301);
         $this->get('/fr')->assertNotFound();
     }
 

@@ -62,6 +62,8 @@ class DemoContentSeederTest extends TestCase
             ->assertSee('Glass Experience: Parent &amp; Child Workshop', false);
 
         $this->get('/en/spaces?type=leasing')
+            ->assertRedirect('/en/leasing')->assertStatus(301);
+        $this->get('/en/leasing')
             ->assertOk()
             ->assertSee('Ground Floor')
             ->assertDontSee('Mix Digital');
@@ -73,8 +75,8 @@ class DemoContentSeederTest extends TestCase
         $this->seed(DemoContentSeeder::class);
 
         foreach (['al', 'en'] as $locale) {
-            foreach (['', '/news', '/events', '/events?period=past', '/attractions', '/businesses', '/rent-space', '/spaces', '/spaces?type=leasing', '/careers', '/contact'] as $path) {
-                $this->get('/'.$locale.$path)->assertOk()->assertSee('id="mobileMenu"', false);
+            foreach (['', '/news', '/events', '/events?period=past', '/attractions', '/businesses', '/rent-space', '/spaces', '/leasing', '/careers', '/contact'] as $path) {
+                $this->get(($locale === 'en' ? '/en' : '').($path ?: '/'))->assertOk()->assertSee('id="mobileMenu"', false);
             }
 
             foreach ([Page::class => 'pages', News::class => 'news', Event::class => 'events', Attraction::class => 'attractions', Business::class => 'businesses', Space::class => 'spaces', Career::class => 'careers'] as $model => $module) {
@@ -91,7 +93,7 @@ class DemoContentSeederTest extends TestCase
 
             $this->get(route('public.spaces.overview', $locale))
                 ->assertSee(route('public.spaces.index', [$locale, 'type' => 'event_space']), false)
-                ->assertSee(route('public.spaces.index', [$locale, 'type' => 'leasing']), false);
+                ->assertSee(route('public.leasing.index', $locale), false);
         }
     }
 }

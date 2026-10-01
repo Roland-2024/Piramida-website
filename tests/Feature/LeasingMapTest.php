@@ -20,10 +20,11 @@ class LeasingMapTest extends TestCase
         $this->assertDatabaseMissing('leasing_units', ['code' => 'A16']);
         $this->assertDatabaseHas('leasing_units', ['code' => 'BE1/1', 'svg_id' => 'unit-BE1-1']);
         foreach (['al', 'en'] as $locale) {
-            $this->get("/$locale/spaces?type=leasing")->assertOk()->assertSee('piramida-map-frame');
-            $this->get("/$locale/leasing")->assertOk()->assertDontSee('data-floor="minus-one"', false);
+            $prefix = $locale === 'en' ? '/en' : '';
+            $this->get("$prefix/spaces?type=leasing")->assertRedirect("$prefix/leasing");
+            $this->get("$prefix/leasing")->assertOk()->assertDontSee('data-floor="minus-one"', false);
             foreach (LeasingUnit::FLOORS as $floor => $info) {
-                $response = $this->get("/$locale/leasing/floors/$floor")->assertOk();
+                $response = $this->get("$prefix/leasing/floors/$floor")->assertOk();
                 $response->assertSee($info[$locale])->assertSee('template/images/leasing/');
                 foreach (LeasingUnit::where('floor', $floor)->get() as $unit) {
                     $response->assertSee('id="'.$unit->svg_id.'"', false);
@@ -62,9 +63,9 @@ class LeasingMapTest extends TestCase
         $space->translations()->where('locale', 'en')->delete();
         $this->get('/en/leasing/floors/ground')->assertDontSee($url, false);
         $this->get($url)->assertNotFound();
-        $this->get('/al/leasing/floors/ground')->assertSee('data-status="available"', false);
+        $this->get('/leasing/floors/ground')->assertSee('data-status="available"', false);
         $space->delete();
-        $this->get('/al/leasing/floors/ground')->assertDontSee('data-status="available"', false);
+        $this->get('/leasing/floors/ground')->assertDontSee('data-status="available"', false);
         $this->assertDatabaseCount('submissions', 0);
     }
 

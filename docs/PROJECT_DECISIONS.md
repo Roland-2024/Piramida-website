@@ -11,6 +11,8 @@ This file records durable decisions that future tasks should preserve. Implement
 ## Languages and content storage
 
 - Albanian (`al`) is the default and fallback locale; English (`en`) is secondary.
+- Albanian public URLs are unprefixed; English uses `/en`. Legacy `/al` GET/HEAD URLs redirect with 301, preserving queries; legacy POST URLs still accept submissions. Existing locale-aware `public.*` route calls are retained through Laravel's path formatter. Unprefixed routes reuse the same definitions as `default.public.*`; SetLocale supplies the leading controller locale argument. Form Requests recognize both route-name prefixes.
+- Leasing navigation uses `/leasing` or `/en/leasing`; old `spaces?type=leasing` URLs redirect. Event spaces remain at `/spaces` or `/en/spaces`.
 - Interface translations stay in language files; managed content uses normalized translation tables.
 - Shared/queryable values stay on parent records. JSON is limited to optional page-section structures.
 - Public content resolves using the requested locale's slug. A missing record translation returns `404`; non-routing child content may fall back to Albanian.

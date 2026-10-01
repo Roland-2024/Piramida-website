@@ -16,6 +16,7 @@ use App\Models\Space;
 use App\Models\User;
 use App\Policies\ContentPolicy;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,6 +35,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Keep existing locale-aware named routes while omitting Albanian's URL prefix.
+        URL::formatPathUsing(fn (string $path, $route) => $route?->named('public.*')
+            ? (preg_replace('#^/al(?=/|$)#', '', $path) ?: '/')
+            : $path);
+
         Gate::define('manage-users', fn (User $user): bool => $user->isAdmin());
         Gate::define('manage-submissions', fn (User $user): bool => $user->isAdmin());
         Gate::define('manage-settings', fn (User $user): bool => $user->isAdmin());

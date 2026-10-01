@@ -39,37 +39,35 @@ Route::model('business', Business::class);
 Route::model('space', Space::class);
 Route::model('career', Career::class);
 
-Route::redirect('/', '/al');
+$publicRoutes = function (): void {
+    Route::get('/', HomeController::class)->name('home');
+    Route::get('/news', [PublicNewsController::class, 'index'])->name('news.index');
+    Route::get('/news/{slug}', [PublicNewsController::class, 'show'])->name('news.show');
+    Route::get('/events', [PublicEventController::class, 'index'])->name('events.index');
+    Route::get('/events/{slug}', [PublicEventController::class, 'show'])->name('events.show');
+    Route::post('/events/{slug}/request', [PublicSubmissionController::class, 'storeEvent'])->middleware('throttle:10,1')->name('events.request');
+    Route::get('/attractions', [PublicAttractionController::class, 'index'])->name('attractions.index');
+    Route::get('/attractions/{slug}', [PublicAttractionController::class, 'show'])->name('attractions.show');
+    Route::get('/businesses', [PublicBusinessController::class, 'index'])->name('businesses.index');
+    Route::get('/businesses/{slug}', [PublicBusinessController::class, 'show'])->name('businesses.show');
+    Route::get('/leasing', [PublicSpaceController::class, 'leasing'])->name('leasing.index');
+    Route::get('/leasing/floors/{floor}', [PublicSpaceController::class, 'floor'])->name('leasing.floor');
+    Route::get('/spaces', [PublicSpaceController::class, 'index'])->name('spaces.index');
+    Route::get('/rent-space', [PublicSpaceController::class, 'overview'])->name('spaces.overview');
+    Route::get('/spaces/{slug}', [PublicSpaceController::class, 'show'])->name('spaces.show');
+    Route::post('/spaces/{slug}/event-request', [PublicSubmissionController::class, 'storeEventSpace'])->middleware('throttle:10,1')->name('spaces.event-request');
+    Route::post('/spaces/{slug}/leasing-request', [PublicSubmissionController::class, 'storeLeasing'])->middleware('throttle:10,1')->name('spaces.leasing-request');
+    Route::get('/careers', [PublicCareerController::class, 'index'])->name('careers.index');
+    Route::get('/careers/{slug}', [PublicCareerController::class, 'show'])->name('careers.show');
+    Route::post('/careers/{slug}/apply', [PublicSubmissionController::class, 'storeCareer'])->middleware('throttle:10,1')->name('careers.apply');
+    Route::get('/contact', [PublicSubmissionController::class, 'contact'])->name('contact');
+    Route::post('/contact', [PublicSubmissionController::class, 'storeContact'])->middleware('throttle:10,1')->name('contact.store');
+    Route::get('/{slug}', [PublicPageController::class, 'show'])->name('pages.show');
+};
 
-Route::prefix('{locale}')
-    ->name('public.')
+Route::prefix('{locale}')->name('public.')
     ->whereIn('locale', array_keys(config('cms.locales')))
-    ->middleware(SetLocale::class)
-    ->group(function (): void {
-        Route::get('/', HomeController::class)->name('home');
-        Route::get('/news', [PublicNewsController::class, 'index'])->name('news.index');
-        Route::get('/news/{slug}', [PublicNewsController::class, 'show'])->name('news.show');
-        Route::get('/events', [PublicEventController::class, 'index'])->name('events.index');
-        Route::get('/events/{slug}', [PublicEventController::class, 'show'])->name('events.show');
-        Route::post('/events/{slug}/request', [PublicSubmissionController::class, 'storeEvent'])->middleware('throttle:10,1')->name('events.request');
-        Route::get('/attractions', [PublicAttractionController::class, 'index'])->name('attractions.index');
-        Route::get('/attractions/{slug}', [PublicAttractionController::class, 'show'])->name('attractions.show');
-        Route::get('/businesses', [PublicBusinessController::class, 'index'])->name('businesses.index');
-        Route::get('/businesses/{slug}', [PublicBusinessController::class, 'show'])->name('businesses.show');
-        Route::get('/leasing', [PublicSpaceController::class, 'leasing'])->name('leasing.index');
-        Route::get('/leasing/floors/{floor}', [PublicSpaceController::class, 'floor'])->name('leasing.floor');
-        Route::get('/spaces', [PublicSpaceController::class, 'index'])->name('spaces.index');
-        Route::get('/rent-space', [PublicSpaceController::class, 'overview'])->name('spaces.overview');
-        Route::get('/spaces/{slug}', [PublicSpaceController::class, 'show'])->name('spaces.show');
-        Route::post('/spaces/{slug}/event-request', [PublicSubmissionController::class, 'storeEventSpace'])->middleware('throttle:10,1')->name('spaces.event-request');
-        Route::post('/spaces/{slug}/leasing-request', [PublicSubmissionController::class, 'storeLeasing'])->middleware('throttle:10,1')->name('spaces.leasing-request');
-        Route::get('/careers', [PublicCareerController::class, 'index'])->name('careers.index');
-        Route::get('/careers/{slug}', [PublicCareerController::class, 'show'])->name('careers.show');
-        Route::post('/careers/{slug}/apply', [PublicSubmissionController::class, 'storeCareer'])->middleware('throttle:10,1')->name('careers.apply');
-        Route::get('/contact', [PublicSubmissionController::class, 'contact'])->name('contact');
-        Route::post('/contact', [PublicSubmissionController::class, 'storeContact'])->middleware('throttle:10,1')->name('contact.store');
-        Route::get('/{slug}', [PublicPageController::class, 'show'])->name('pages.show');
-    });
+    ->middleware(SetLocale::class)->group($publicRoutes);
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/admin/login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -139,3 +137,6 @@ Route::prefix('admin')
             ->only(['index', 'create', 'store', 'edit', 'update'])
             ->middleware('can:manage-users');
     });
+
+// Register unprefixed Albanian routes after Admin so the page slug cannot shadow it.
+Route::name('default.public.')->middleware(SetLocale::class)->group($publicRoutes);

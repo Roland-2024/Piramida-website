@@ -16,7 +16,7 @@
             </span>
           </a>
 
-          <a class="rent-space-card" href="{{ route('public.spaces.index', [app()->getLocale(), 'type' => 'leasing']) }}">
+          <a class="rent-space-card" href="{{ route('public.leasing.index', app()->getLocale()) }}">
             <img
               class="rent-space-card-image rent-space-card-image-leasing"
               src="/template/images/rent-leasing.jpg"

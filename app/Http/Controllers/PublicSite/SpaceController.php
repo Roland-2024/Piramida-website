@@ -6,6 +6,7 @@ use App\Enums\SpaceType;
 use App\Models\LeasingUnit;
 use App\Models\Space;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
@@ -64,7 +65,7 @@ class SpaceController extends TranslatedCatalogController
         ]);
     }
 
-    public function index(string $locale): View
+    public function index(string $locale): View|RedirectResponse
     {
         $filters = request()->validate([
             'type' => ['nullable', Rule::enum(SpaceType::class)],
@@ -72,7 +73,7 @@ class SpaceController extends TranslatedCatalogController
         $type = SpaceType::tryFrom($filters['type'] ?? '') ?? SpaceType::EventSpace;
 
         if ($type === SpaceType::Leasing) {
-            return $this->leasing($locale);
+            return redirect()->route('public.leasing.index', $locale, 301);
         }
 
         return view('public.spaces.index', [
