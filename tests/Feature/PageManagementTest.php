@@ -93,4 +93,34 @@ class PageManagementTest extends TestCase
             ],
         ];
     }
+
+    public function test_editor_can_manage_homepage_youtube_video(): void
+    {
+        $page = Page::factory()->published()->create(['is_homepage' => true]);
+        $this->actingAs(User::factory()->create());
+        $this->get(route('admin.pages.edit', $page))->assertOk()->assertSee('Homepage YouTube video');
+        $data = [...$this->validPageData(), 'is_homepage' => true];
+
+        foreach (['https://www.youtube.com/watch?v=8f-I2EdcvRI', 'https://youtu.be/8f-I2EdcvRI?si=demo', 'https://youtube.com/shorts/8f-I2EdcvRI'] as $url) {
+            $this->put(route('admin.pages.update', $page), [...$data, 'homepage_video_url' => $url])
+                ->assertSessionHasNoErrors()->assertRedirect();
+            $this->assertSame($url, $page->fresh()->homepage_video_url);
+            foreach (['/', '/en'] as $home) {
+                $this->get($home)->assertOk()->assertSee('data-youtube-open', false)
+                    ->assertSee('data-src="https://www.youtube-nocookie.com/embed/8f-I2EdcvRI?autoplay=1"', false)
+                    ->assertDontSee(' src="https://www.youtube-nocookie.com', false);
+            }
+        }
+
+        foreach (['javascript:alert(1)', 'https://youtube.com.evil.test/watch?v=8f-I2EdcvRI', 'https://youtube.com/watch?v[]=8f-I2EdcvRI', 'https://youtube.com/watch?v=invalid'] as $url) {
+            $this->put(route('admin.pages.update', $page), [...$data, 'homepage_video_url' => $url])
+                ->assertSessionHasErrors('homepage_video_url');
+        }
+
+        $this->put(route('admin.pages.update', $page), [...$data, 'homepage_video_url' => null])
+            ->assertSessionHasNoErrors();
+        $this->get('/')->assertDontSee('data-youtube-open', false);
+        $page->update(['homepage_video_url' => 'https://youtu.be/8f-I2EdcvRI', 'status' => ContentStatus::Draft]);
+        $this->get('/')->assertDontSee('data-youtube-open', false);
+    }
 }

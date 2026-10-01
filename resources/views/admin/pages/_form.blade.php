@@ -44,6 +44,13 @@
     </div>
 </div>
 
+<div class="mt-6">
+    <label for="homepage_video_url" class="block text-sm font-medium">Homepage YouTube video</label>
+    <input id="homepage_video_url" name="homepage_video_url" type="url" maxlength="2048" value="{{ old('homepage_video_url', $page->homepage_video_url ?? '') }}" placeholder="https://www.youtube.com/watch?v=..." aria-describedby="homepage_video_help" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+    <p id="homepage_video_help" class="mt-2 text-sm text-slate-500">Used by the homepage Play button in both languages. Leave blank to use the existing section video or About link.</p>
+    @error('homepage_video_url') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+</div>
+
 <div class="mt-8 space-y-5">
     @foreach ($locales as $locale => $localeName)
         @php

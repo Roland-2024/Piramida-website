@@ -158,6 +158,19 @@ document.querySelectorAll('.template-dialog').forEach(dialog => {
 
 const video = document.querySelector('#piramidaVideo');
 const playBadge = document.querySelector('#playBadge');
+const homepageVideoDialog = document.querySelector('#homepageVideoDialog');
+if (homepageVideoDialog && playBadge?.hasAttribute('data-youtube-open')) {
+    const player = homepageVideoDialog.querySelector('iframe');
+    playBadge.addEventListener('click', event => {
+        event.preventDefault();
+        homepageVideoDialog.showModal();
+        player.src = player.dataset.src;
+    });
+    homepageVideoDialog.addEventListener('close', () => player.removeAttribute('src'));
+    homepageVideoDialog.addEventListener('click', event => {
+        if (event.target === homepageVideoDialog) homepageVideoDialog.close();
+    });
+}
 if (video && playBadge) {
     playBadge.addEventListener('click', event => {
         event.preventDefault();

@@ -3,8 +3,16 @@
     $pillars = $page?->sections->firstWhere('type', \App\Enums\SectionType::Features);
     $pillarItems = data_get($pillars?->structured_data, app()->getLocale().'.items', []);
     $videoSection = $page?->sections->first(fn ($section) => filled($section->video_url));
+    $youtubeId = \App\Rules\YouTubeUrl::videoId($page?->homepage_video_url);
 @endphp
 <x-layouts.public :title="$translation?->seo_title ?: $translation?->title" :description="$translation?->seo_description ?: $translation?->short_description" :language-urls="$languageUrls" :styles="['homepage']" body-class="">
+    @if($youtubeId)
+        <dialog id="homepageVideoDialog" class="homepage-video-dialog" aria-label="{{ __('cms.play_video') }}">
+            <a class="homepage-video-fallback" href="{{ $page->homepage_video_url }}" target="_blank" rel="noopener noreferrer">YouTube ↗</a>
+            <form method="dialog"><button class="homepage-video-close" aria-label="{{ __('cms.close') }}">&times;</button></form>
+            <iframe data-src="https://www.youtube-nocookie.com/embed/{{ $youtubeId }}?autoplay=1" title="{{ __('cms.play_video') }}" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </dialog>
+    @endif
     <div class="intro" data-intro hidden>
         <div class="intro-content" aria-hidden="true">
             <img src="{{ asset('template/images/logo piramida.svg') }}" alt="" class="mx-auto mb-6 w-[97px]">
@@ -192,7 +200,7 @@
     <!-- Video using the shape, with the original image as its thumbnail (poster) -->
     <div class="max-w-7xl mx-auto relative">
       <div class="video-clip">
-        @if ($videoSection?->video_url && preg_match('/\\.(mp4|webm|ogg)(\\?.*)?$/i', $videoSection->video_url))
+        @if (! $youtubeId && $videoSection?->video_url && preg_match('/\\.(mp4|webm|ogg)(\\?.*)?$/i', $videoSection->video_url))
         <video id="piramidaVideo" poster="/template/images/Image Container.png" class="w-full aspect-[1280/680] object-cover" preload="metadata" playsinline controls><source src="{{ $videoSection->video_url }}"></video>
         @else
         <img src="/template/images/Image Container.png" alt="Piramida" class="w-full aspect-[1280/680] object-cover" loading="lazy">
@@ -200,7 +208,7 @@
       </div>
 
       <!-- Custom play badge: blurred glass backing + rotating "ABOUT US" ring + solid center -->
-      <a href="{{ $videoSection?->video_url ?: $aboutUrl }}" id="playBadge" aria-label="{{ __('cms.about_us') }}" class="play-badge">
+      <a href="{{ $youtubeId ? $page->homepage_video_url : ($videoSection?->video_url ?: $aboutUrl) }}" id="playBadge" @if($youtubeId) data-youtube-open @endif aria-label="{{ __('cms.play_video') }}" class="play-badge">
         <span class="play-badge-blur" aria-hidden="true"></span>
         <svg viewBox="0 0 220 220" class="play-badge-ring" aria-hidden="true">
           <defs>

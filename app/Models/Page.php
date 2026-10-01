@@ -18,6 +18,7 @@ class Page extends Model
     protected $fillable = [
         'featured_media_id',
         'is_homepage',
+        'homepage_video_url',
         'status',
         'published_at',
         'display_order',

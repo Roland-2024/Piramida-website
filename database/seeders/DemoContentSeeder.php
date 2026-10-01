@@ -110,6 +110,7 @@ class DemoContentSeeder extends Seeder
             [
                 'featured_media_id' => $media['front']->id,
                 'is_homepage' => true,
+                'homepage_video_url' => 'https://www.youtube.com/watch?v=8f-I2EdcvRI',
                 'status' => ContentStatus::Published,
                 'published_at' => now()->subMonth(),
                 'display_order' => 0,

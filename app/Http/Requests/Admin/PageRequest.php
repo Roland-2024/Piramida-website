@@ -4,6 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use App\Enums\ContentStatus;
 use App\Models\Page;
+use App\Rules\YouTubeUrl;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -29,6 +30,7 @@ class PageRequest extends FormRequest
         $rules = [
             'featured_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
             'is_homepage' => ['required', 'boolean'],
+            'homepage_video_url' => ['nullable', 'string', 'max:2048', new YouTubeUrl],
             'status' => ['required', Rule::enum(ContentStatus::class)],
             'published_at' => [
                 Rule::requiredIf($this->input('status') === ContentStatus::Published->value),

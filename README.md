@@ -321,6 +321,8 @@ Do not point PHPUnit at a shared or production database.
 
 ## Integrating the final frontend template
 
+Homepage video: edit **Pages → Homepage → Homepage YouTube video**. The shared link applies to Albanian and English; Play opens a dialog and loads YouTube only on click. Clear it to restore the section-video / About fallback. Deploy the field with `php artisan migrate --force` and rebuild assets. The demo seeder includes the client-supplied video.
+
 The draft `Piramida.zip` template is integrated through the public Blade views, `resources/css/public.css`, and `resources/js/public.js`. Its selected local images and fonts live under `public/template` (font licenses included). Build these with the existing `npm run build` command; Admin continues using its separate `app.css` / `app.js` bundle.
 
 `/{locale}/rent-space` links to event-space and leasing catalogues. The animated homepage has a skip control and respects reduced motion. About and the shared Education/Innovation/Business/Art template use existing editable Page Sections, businesses retain native information dialogs, and forms retain the existing staff-reviewed submission workflow. Museum is disabled pending the PM's destination. Template sample video and broken placeholder assets were not imported; use a Page Section video URL for real media.
