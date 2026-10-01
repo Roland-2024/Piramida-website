@@ -35,7 +35,7 @@ body:has(dialog[open]) { overflow:hidden; }
 #attractions .attraction-card { padding:0; background:transparent; }
 #attractions .attraction-card img { border-radius:0; }
 #attractions [data-cards]:has(.attraction-card:only-child) { justify-content:center; }
-.template-event-filters { position:absolute; top:72px; left:8%; z-index:30; display:flex; gap:18px; font-size:12px; }
+.template-event-filters { position:absolute; top:72px; left:8%; z-index:110; display:flex; gap:18px; font-size:12px; }
 .template-event-filters [aria-current] { color:#cbff00; }
 .template-event-controls { position:absolute; bottom:30px; left:6%; z-index:30; display:flex; gap:16px; }
 .template-event-controls button { border:1px solid #ffffff50; border-radius:50%; width:40px; height:40px; }
