@@ -52,7 +52,8 @@ $publicRoutes = function (): void {
     Route::get('/businesses/{slug}', [PublicBusinessController::class, 'show'])->name('businesses.show');
     Route::get('/leasing', [PublicSpaceController::class, 'leasing'])->name('leasing.index');
     Route::get('/leasing/floors/{floor}', [PublicSpaceController::class, 'floor'])->name('leasing.floor');
-    Route::get('/spaces', [PublicSpaceController::class, 'index'])->name('spaces.index');
+    Route::get('/event-space', [PublicSpaceController::class, 'index'])->name('spaces.index');
+    Route::get('/spaces', [PublicSpaceController::class, 'legacyIndex'])->name('spaces.legacy-index');
     Route::get('/rent-space', [PublicSpaceController::class, 'overview'])->name('spaces.overview');
     Route::get('/spaces/{slug}', [PublicSpaceController::class, 'show'])->name('spaces.show');
     Route::post('/spaces/{slug}/event-request', [PublicSubmissionController::class, 'storeEventSpace'])->middleware('throttle:10,1')->name('spaces.event-request');

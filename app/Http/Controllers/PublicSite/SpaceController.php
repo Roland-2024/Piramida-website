@@ -65,16 +65,27 @@ class SpaceController extends TranslatedCatalogController
         ]);
     }
 
-    public function index(string $locale): View|RedirectResponse
+    public function legacyIndex(string $locale): RedirectResponse
     {
         $filters = request()->validate([
             'type' => ['nullable', Rule::enum(SpaceType::class)],
         ]);
         $type = SpaceType::tryFrom($filters['type'] ?? '') ?? SpaceType::EventSpace;
 
-        if ($type === SpaceType::Leasing) {
-            return redirect()->route('public.leasing.index', $locale, 301);
+        return redirect()->route(
+            $type === SpaceType::Leasing ? 'public.leasing.index' : 'public.spaces.index',
+            ['locale' => $locale, ...request()->except(['type', 'locale'])],
+            301,
+        );
+    }
+
+    public function index(string $locale): View|RedirectResponse
+    {
+        if (request()->has('type')) {
+            return $this->legacyIndex($locale);
         }
+
+        $type = SpaceType::EventSpace;
 
         return view('public.spaces.index', [
             'items' => Space::query()
@@ -89,7 +100,7 @@ class SpaceController extends TranslatedCatalogController
             'spaceType' => $type,
             'languageUrls' => collect(config('cms.locales'))
                 ->mapWithKeys(fn (string $name, string $targetLocale) => [
-                    $targetLocale => route('public.spaces.index', [$targetLocale, 'type' => $type->value]),
+                    $targetLocale => route('public.spaces.index', $targetLocale),
                 ])
                 ->all(),
         ]);

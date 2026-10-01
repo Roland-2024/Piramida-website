@@ -2,7 +2,7 @@
         <h1 class="rent-space-title">{{ __('cms.rent_a_space') }}</h1>
 
         <section class="rent-space-card-list" aria-label="Rentable spaces">
-          <a class="rent-space-card" href="{{ route('public.spaces.index', [app()->getLocale(), 'type' => 'event_space']) }}">
+          <a class="rent-space-card" href="{{ route('public.spaces.index', app()->getLocale()) }}">
             <img
               class="rent-space-card-image rent-space-card-image-event"
               src="/template/images/rent-event-spaces.jpg"

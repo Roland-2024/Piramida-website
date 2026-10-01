@@ -50,6 +50,21 @@ class PublicUrlTest extends TestCase
         $this->post('/spaces/example/event-request', [])->assertSessionHasErrors(['event_type', 'preferred_date', 'attendees']);
     }
 
+    public function test_event_space_urls_are_canonical_and_old_listings_redirect(): void
+    {
+        foreach (['al' => '', 'en' => '/en'] as $locale => $prefix) {
+            $this->assertSame(url("$prefix/event-space"), route('public.spaces.index', $locale));
+            $this->get("$prefix/event-space")->assertOk()->assertViewIs('public.spaces.index')
+                ->assertSee('href="'.url('/event-space').'"', false)
+                ->assertSee('href="'.url('/en/event-space').'"', false);
+            $this->get("$prefix/spaces")->assertStatus(301)->assertRedirect("$prefix/event-space");
+            $this->get("$prefix/spaces?type=event_space&page=2")->assertStatus(301)
+                ->assertRedirect("$prefix/event-space?page=2");
+            $this->get("$prefix/event-space?type=event_space")->assertStatus(301)
+                ->assertRedirect("$prefix/event-space");
+        }
+    }
+
     public function test_albanian_event_submission_resolves_the_correct_localized_record(): void
     {
         $event = Event::factory()->published()->create(['booking_mode' => BookingMode::Internal]);

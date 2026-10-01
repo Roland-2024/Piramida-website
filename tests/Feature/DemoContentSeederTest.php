@@ -75,7 +75,7 @@ class DemoContentSeederTest extends TestCase
         $this->seed(DemoContentSeeder::class);
 
         foreach (['al', 'en'] as $locale) {
-            foreach (['', '/news', '/events', '/events?period=past', '/attractions', '/businesses', '/rent-space', '/spaces', '/leasing', '/careers', '/contact'] as $path) {
+            foreach (['', '/news', '/events', '/events?period=past', '/attractions', '/businesses', '/rent-space', '/event-space', '/leasing', '/careers', '/contact'] as $path) {
                 $this->get(($locale === 'en' ? '/en' : '').($path ?: '/'))->assertOk()->assertSee('id="mobileMenu"', false);
             }
 
@@ -92,7 +92,7 @@ class DemoContentSeederTest extends TestCase
             }
 
             $this->get(route('public.spaces.overview', $locale))
-                ->assertSee(route('public.spaces.index', [$locale, 'type' => 'event_space']), false)
+                ->assertSee(route('public.spaces.index', $locale), false)
                 ->assertSee(route('public.leasing.index', $locale), false);
         }
     }
