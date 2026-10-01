@@ -22,7 +22,12 @@ class LeasingMapTest extends TestCase
         foreach (['al', 'en'] as $locale) {
             $prefix = $locale === 'en' ? '/en' : '';
             $this->get("$prefix/spaces?type=leasing")->assertRedirect("$prefix/leasing");
-            $this->get("$prefix/leasing")->assertOk()->assertDontSee('data-floor="minus-one"', false);
+            $this->get("$prefix/leasing")->assertOk()
+                ->assertSee('template/images/leasing/piramida-final.webp')
+                ->assertSee('piramida-map-lines--desktop')
+                ->assertSee('piramida-map-lines--mobile')
+                ->assertDontSee('Piramida_map.png')
+                ->assertDontSee('data-floor="minus-one"', false);
             foreach (LeasingUnit::FLOORS as $floor => $info) {
                 $response = $this->get("$prefix/leasing/floors/$floor")->assertOk();
                 $response->assertSee($info[$locale])->assertSee('template/images/leasing/');

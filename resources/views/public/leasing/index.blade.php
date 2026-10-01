@@ -9,46 +9,81 @@
           <div class="piramida-map-stage">
             <div class="piramida-map-frame">
               <img
-                src="{{ asset('template/images/leasing/Piramida_map.png') }}"
-                alt="Front view of the Piramida building"
+                src="{{ asset('template/images/leasing/piramida-final.webp') }}"
+                alt="Cutaway render of the Piramida building"
                 class="piramida-map-image"
               />
 
               <!-- Connector lines: viewBox matches the frame aspect ratio -->
               <svg
-                class="piramida-map-lines"
-                viewBox="0 0 1000 576"
+                class="piramida-map-lines piramida-map-lines--desktop"
+                viewBox="0 0 1000 575"
                 aria-hidden="true"
               >
                 <g data-line="roof">
-                  <path d="M500 181 V143" />
-                  <circle cx="500" cy="143" r="5" />
+                  <path d="M500 177 V142" />
+                  <circle cx="500" cy="142" r="5" />
                 </g>
                 <g data-line="third">
-                  <path d="M574 255 H657" />
-                  <circle cx="657" cy="255" r="5" />
+                  <path d="M575 250 H657" />
+                  <circle cx="657" cy="250" r="5" />
                 </g>
                 <g data-line="ground">
-                  <path d="M574 309 H648 V402" />
-                  <circle cx="648" cy="402" r="5" />
+                  <path d="M575 304 H651 V405" />
+                  <circle cx="651" cy="405" r="5" />
                 </g>
-
                 <g data-line="exterior">
-                  <path d="M426 414 H79" />
-                  <circle cx="79" cy="414" r="5" />
+                  <path d="M425 412 H80" />
+                  <circle cx="80" cy="412" r="5" />
+                </g>
+              </svg>
+
+              <!-- Mobile connector lines: viewBox matches the 4:5 mobile frame,
+                   endpoints follow the same building points after the crop -->
+              <svg
+                class="piramida-map-lines piramida-map-lines--mobile"
+                viewBox="0 0 400 500"
+                aria-hidden="true"
+              >
+                <g data-line="roof">
+                  <path d="M200 155 V123" />
+                  <circle cx="200" cy="123" r="4" />
+                </g>
+                <g data-line="third">
+                  <path d="M268 218 H336" />
+                  <circle cx="336" cy="218" r="4" />
+                </g>
+                <g data-line="ground">
+                  <path d="M268 265 H331 V352" />
+                  <circle cx="331" cy="352" r="4" />
+                </g>
+                <g data-line="exterior">
+                  <path d="M132 358 H36" />
+                  <circle cx="36" cy="358" r="4" />
                 </g>
               </svg>
 
               <nav class="piramida-map-floors" aria-label="{{ __('cms.leasing_map') }}">
                 <a
-                  href="{{ route('public.leasing.floor', [app()->getLocale(), 'roof']) }}" class="piramida-map-floor" data-floor="roof">{{ $floors['roof'][app()->getLocale()] }}</a>
+                  href="{{ route('public.leasing.floor', [app()->getLocale(), 'roof']) }}"
+                  class="piramida-map-floor"
+                  data-floor="roof"
+                >{{ $floors['roof'][app()->getLocale()] }}</a>
                 <a
-                  href="{{ route('public.leasing.floor', [app()->getLocale(), 'third']) }}" class="piramida-map-floor" data-floor="third">{{ $floors['third'][app()->getLocale()] }}</a>
+                  href="{{ route('public.leasing.floor', [app()->getLocale(), 'third']) }}"
+                  class="piramida-map-floor"
+                  data-floor="third"
+                >{{ $floors['third'][app()->getLocale()] }}</a>
                 <a
-                  href="{{ route('public.leasing.floor', [app()->getLocale(), 'ground']) }}" class="piramida-map-floor is-active" data-floor="ground">{{ $floors['ground'][app()->getLocale()] }}</a>
-
+                  href="{{ route('public.leasing.floor', [app()->getLocale(), 'ground']) }}"
+                  class="piramida-map-floor is-active"
+                  data-floor="ground"
+                >{{ $floors['ground'][app()->getLocale()] }}</a>
                 <a
-                  href="{{ route('public.leasing.floor', [app()->getLocale(), 'exterior']) }}" class="piramida-map-floor" data-floor="exterior">{{ $floors['exterior'][app()->getLocale()] }}</a>
+                  href="{{ route('public.leasing.floor', [app()->getLocale(), 'exterior']) }}"
+                  class="piramida-map-floor"
+                  data-floor="exterior"
+                >{{ $floors['exterior'][app()->getLocale()] }}</a>
               </nav>
             </div>
           </div>
@@ -58,5 +93,4 @@
             class="md:block hidden h-[200px] w-full bg-gradient-to-b from-transparent to-black -mb-24 mt-[-1px] pointer-events-none"
           ></div>
         </section>
-
 </x-layouts.public>
