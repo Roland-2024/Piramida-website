@@ -138,7 +138,7 @@
     function cardsPerPage() {
         const cardWidth = cards[0].getBoundingClientRect().width;
         const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || "0");
-        return Math.max(1, Math.round(track.clientWidth / (cardWidth + gap)));
+        return Math.max(1, Math.floor((track.clientWidth + gap) / (cardWidth + gap)));
     }
 
     function pageCount() {
@@ -148,6 +148,8 @@
     function buildDots() {
         dotsWrap.innerHTML = "";
         const pages = pageCount();
+        const canScroll = track.scrollWidth > track.clientWidth + 1;
+        prevBtn.hidden = nextBtn.hidden = dotsWrap.hidden = !canScroll;
         for (let i = 0; i < pages; i++) {
             const dot = document.createElement("button");
             dot.type = "button";
@@ -169,8 +171,12 @@
 
     function updateActiveDot() {
         const perPage = cardsPerPage();
-        const scrolledCards = Math.round(track.scrollLeft / (cards[0].getBoundingClientRect().width + 20));
-        const activePage = Math.min(pageCount() - 1, Math.round(scrolledCards / perPage));
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        const scrolledCards = Math.round(track.scrollLeft / (cards[0].getBoundingClientRect().width + gap));
+        const atEnd = track.scrollLeft >= track.scrollWidth - track.clientWidth - 1;
+        const activePage = atEnd ? pageCount() - 1 : Math.min(pageCount() - 1, Math.floor(scrolledCards / perPage));
+        prevBtn.disabled = track.scrollLeft <= 1;
+        nextBtn.disabled = atEnd;
         Array.from(dotsWrap.children).forEach((dot, i) => {
             dot.classList.toggle("is-active", i === activePage);
         });
@@ -273,6 +279,7 @@
     track.addEventListener("click", (e) => {
         if (dragMoved) {
             e.preventDefault();
+            e.stopImmediatePropagation();
             dragMoved = false;
         }
     }, true);

@@ -68,6 +68,8 @@ Before seeding, set `INITIAL_ADMIN_NAME`, `INITIAL_ADMIN_EMAIL`, and `INITIAL_AD
 
 ## Prototype demo content
 
+To add only missing logos to the four demo businesses without reseeding other content, run `php artisan db:seed --class=BusinessLogoSeeder`. It reuses the supplied template logos (Piramida's mark is a demo placeholder for Piramida Store) and preserves existing logo assignments. Editors can replace them in Businesses.
+
 The idempotent `DemoContentSeeder` creates a complete Albanian/English demonstration based on the approved Figma prototype: Home, Education, About, legal pages, ordered page sections, news, events, attractions, business experience cards, four event spaces, two leasing units, careers, site settings, and reusable prototype imagery. It updates only records identified by its stable demo slugs or internal section names and does not remove other CMS content.
 
 Run it explicitly in an existing local database:

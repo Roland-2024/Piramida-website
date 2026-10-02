@@ -37,6 +37,10 @@ body:has(dialog[open]) { overflow:hidden; }
 #attractions [data-cards]:has(.attraction-card:only-child) { justify-content:center; }
 .template-event-filters { position:absolute; top:72px; left:8%; z-index:110; display:flex; gap:18px; font-size:12px; }
 .template-event-filters [aria-current] { color:#cbff00; }
+@media (min-width:768px) {
+    #experiences .exp-track-wrap { box-sizing:border-box; width:calc(var(--exp-card-w) * var(--exp-count) + 1.25rem * (var(--exp-count) - 1) + 2 * var(--exp-pad)); max-width:100%; padding:0 var(--exp-pad); }
+}
+#experiences button:disabled { opacity:.35; cursor:default; }
 .template-event-controls { position:absolute; bottom:30px; left:6%; z-index:30; display:flex; gap:16px; }
 .template-event-controls button { border:1px solid #ffffff50; border-radius:50%; width:40px; height:40px; }
 #eventsSection,#eventsMobile { background-image:url('/template/images/BG.png'); }

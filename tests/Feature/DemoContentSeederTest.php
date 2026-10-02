@@ -40,7 +40,11 @@ class DemoContentSeederTest extends TestCase
         $this->assertSame(4, Business::count());
         $this->assertSame(6, Space::count());
         $this->assertSame(5, Career::count());
-        $this->assertSame(14, Media::count());
+        $this->assertSame(18, Media::count());
+        foreach (Business::with('logoMedia')->get() as $business) {
+            $this->assertNotNull($business->logoMedia);
+            Storage::disk('public')->assertExists($business->logoMedia->path);
+        }
 
         $this->assertDatabaseHas('page_translations', ['locale' => 'al', 'slug' => 'rreth-nesh']);
         $this->assertDatabaseHas('page_translations', ['locale' => 'en', 'slug' => 'about-us']);

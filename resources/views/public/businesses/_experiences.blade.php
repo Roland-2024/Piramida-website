@@ -6,7 +6,7 @@
         <div class="title-60 text-center text-[#CBFF00] uppercase p-[50px] bg-transparent">
             {{ __('cms.experiences') }}</div>
 
-        <div class="exp-track-wrap">
+        <div class="exp-track-wrap" style="--exp-count: {{ min(6, $businesses->count()) }}">
             <button data-exp-prev type="button" aria-label="Previous experience">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />

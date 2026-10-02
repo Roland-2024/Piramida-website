@@ -59,6 +59,7 @@ class DemoContentSeeder extends Seeder
         $this->seedEvents($ownerId, $media);
         $this->seedAttractions($ownerId, $media);
         $this->seedBusinesses($ownerId, $media);
+        $this->call(BusinessLogoSeeder::class);
         $this->seedSpaces($ownerId, $media);
         $this->seedCareers($ownerId);
         $this->seedSiteSettings();
@@ -452,7 +453,6 @@ class DemoContentSeeder extends Seeder
             /** @var Business $business */
             $business = $this->upsertTranslated(Business::class, [$item['slug']], [
                 'featured_media_id' => $media[$item['image']]->id,
-                'logo_media_id' => null,
                 'category' => $item['category'],
                 'status' => ContentStatus::Published,
                 'published_at' => now()->subMonth(),
