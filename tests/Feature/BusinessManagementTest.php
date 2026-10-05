@@ -90,6 +90,7 @@ class BusinessManagementTest extends TestCase
             ->assertSee("Business {$published->id}")
             ->assertSee("business-{$published->id}", false)
             ->assertSee('Business description.')
+            ->assertDontSee('class="template-pagination"', false)
             ->assertDontSee("Business {$draft->id}");
 
         $this->get(route('public.businesses.show', ['en', "business-{$published->id}"]))
@@ -97,5 +98,9 @@ class BusinessManagementTest extends TestCase
 
         $this->get(route('public.businesses.show', ['en', "biznesi-{$published->id}"]))
             ->assertNotFound();
+
+        Business::factory()->published()->count(12)->create();
+        $this->get(route('public.businesses.index', 'en'))->assertOk()
+            ->assertSee('class="template-pagination" style="background:#000"', false);
     }
 }
