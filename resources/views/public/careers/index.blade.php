@@ -62,7 +62,7 @@
 
 @forelse ($items as $item)
 @php $translation = $item->translation(app()->getLocale(), false); @endphp
-<details class="role-card rounded-2xl" @if($loop->index === 1) open @endif>
+<details class="role-card rounded-2xl">
 <summary class="flex items-center justify-between px-5 py-4"><span class="role-title title-26 py-3">{{ $translation->title }}</span><svg class="chev w-4 h-4 shrink-0" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
 <div class="panel"><div class="px-5 pb-5"><div class="role-body title-18 space-y-3 prose-content">{!! $translation->description !!}</div>
 @if($translation->requirements)<div class="role-body title-18 prose-content mt-4">{!! $translation->requirements !!}</div>@endif

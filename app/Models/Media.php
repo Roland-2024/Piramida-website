@@ -51,7 +51,8 @@ class Media extends Model
             || PageSection::withTrashed()
                 ->where(fn ($query) => $query
                     ->where('primary_media_id', $this->id)
-                    ->orWhere('secondary_media_id', $this->id))
+                    ->orWhere('secondary_media_id', $this->id)
+                    ->orWhere('video_url', $this->url()))
                 ->exists()
             || News::withTrashed()->where('featured_media_id', $this->id)->exists()
             || Event::withTrashed()->where('featured_media_id', $this->id)->exists()

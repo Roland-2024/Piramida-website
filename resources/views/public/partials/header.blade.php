@@ -73,10 +73,6 @@
               </li>
 
               <li>
-                <span class="mobile-main-link" aria-disabled="true" title="{{ __('cms.museum_pending') }}">{{ __('cms.museum') }}</span>
-              </li>
-
-              <li>
                 <a href="{{ route('public.spaces.overview', app()->getLocale()) }}" class="mobile-main-link">{{ __('cms.rent_a_space') }}</a>
               </li>
             </ul>

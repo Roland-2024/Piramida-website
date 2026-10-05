@@ -123,10 +123,6 @@ if (intro && window.innerWidth > 1024 && !matchMedia('(prefers-reduced-motion: r
         intro.hidden = true;
         swipe.hidden = true;
     };
-    intro.querySelector('button').addEventListener('click', () => {
-        skip();
-        document.querySelector('#main-content').focus({ preventScroll: true });
-    });
     // Never leave the visual intro covering someone navigating by keyboard.
     document.addEventListener('keydown', event => {
         if (event.key === 'Tab' || event.key === 'Escape') {
@@ -152,7 +148,7 @@ document.querySelectorAll('[data-request-panel]').forEach(panel => {
 
 document.querySelectorAll('.template-dialog').forEach(dialog => {
     dialog.addEventListener('click', event => {
-        if (event.target === dialog || event.target.matches('.place-popup-section, .job-application-section, .registration-section')) dialog.close();
+        if (event.target === dialog || event.target.matches('.place-popup-section, .job-application-section, .registration-section, .event-space-section')) dialog.close();
     });
 });
 
@@ -160,17 +156,25 @@ const video = document.querySelector('#piramidaVideo');
 const playBadge = document.querySelector('#playBadge');
 const homepageVideoDialog = document.querySelector('#homepageVideoDialog');
 if (homepageVideoDialog && playBadge?.hasAttribute('data-youtube-open')) {
-    const player = homepageVideoDialog.querySelector('iframe');
     playBadge.addEventListener('click', event => {
         event.preventDefault();
         homepageVideoDialog.showModal();
-        player.src = player.dataset.src;
-    });
-    homepageVideoDialog.addEventListener('close', () => player.removeAttribute('src'));
-    homepageVideoDialog.addEventListener('click', event => {
-        if (event.target === homepageVideoDialog) homepageVideoDialog.close();
     });
 }
+document.querySelectorAll('[data-video-dialog]').forEach(dialog => {
+    const player = dialog.querySelector('iframe, video');
+    new MutationObserver(() => {
+        if (!dialog.open) return;
+        player.src = player.dataset.src;
+        if (player.tagName === 'VIDEO') player.play().catch(() => {});
+    }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
+    dialog.addEventListener('close', () => {
+        if (player.tagName === 'VIDEO') player.pause();
+        player.removeAttribute('src');
+        if (player.tagName === 'VIDEO') player.load();
+    });
+    dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
+});
 if (video && playBadge) {
     playBadge.addEventListener('click', event => {
         event.preventDefault();

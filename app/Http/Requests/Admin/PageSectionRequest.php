@@ -5,6 +5,7 @@ namespace App\Http\Requests\Admin;
 use App\Enums\SectionType;
 use App\Models\PageSection;
 use App\Rules\SafeUrl;
+use App\Rules\YouTubeUrl;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -30,7 +31,7 @@ class PageSectionRequest extends FormRequest
             'secondary_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
             'gallery_media_ids' => ['nullable', 'array', 'max:30'],
             'gallery_media_ids.*' => [Rule::exists('media', 'id')->whereNull('deleted_at')],
-            'video_url' => ['nullable', 'string', 'max:2048', new SafeUrl],
+            'video_url' => ['bail', 'nullable', 'string', 'max:2048', new SafeUrl],
             'primary_button_url' => ['nullable', 'string', 'max:2048', new SafeUrl],
             'secondary_button_url' => ['nullable', 'string', 'max:2048', new SafeUrl],
             'display_order' => ['required', 'integer', 'min:0', 'max:100000'],
@@ -46,6 +47,14 @@ class PageSectionRequest extends FormRequest
             $rules["translations.{$locale}.description"] = ['nullable', 'string'];
             $rules["translations.{$locale}.primary_button_label"] = ['nullable', 'string', 'max:255'];
             $rules["translations.{$locale}.secondary_button_label"] = ['nullable', 'string', 'max:255'];
+        }
+
+        if ($this->input('internal_name') === 'About - History') {
+            $rules['video_url'][] = function ($attribute, $value, $fail): void {
+                if (! YouTubeUrl::videoId($value) && ! preg_match('/\.(mp4|webm)$/i', parse_url($value, PHP_URL_PATH) ?? '')) {
+                    $fail('Use a YouTube link or an MP4/WebM video URL.');
+                }
+            };
         }
 
         return $rules;

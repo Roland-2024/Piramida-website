@@ -4,6 +4,7 @@ namespace App\Http\Controllers\PublicSite;
 
 use App\Enums\SectionType;
 use App\Http\Controllers\Controller;
+use App\Models\Business;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -38,21 +39,31 @@ class PageController extends Controller
             'page' => $page,
             'translation' => $page->translation($locale, false),
             'languageUrls' => $this->languageUrls($page),
-            'slides' => $page->sections
-                ->whereIn('type', [SectionType::TextImage, SectionType::Gallery])
-                ->flatMap(function ($section) use ($locale, $page) {
-                    $content = $section->translation($locale);
-                    $images = $section->gallery->isNotEmpty()
-                        ? $section->gallery
-                        : collect([$section->primaryMedia])->filter();
+            'slides' => $page->translations->contains('slug', 'business')
+                ? Business::query()->published()
+                    ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
+                    ->with(['translations', 'featuredMedia'])
+                    ->orderBy('display_order')->orderBy('id')->get()
+                    ->map(fn (Business $business) => [
+                        'url' => $business->featuredMedia?->url(),
+                        'title' => $business->translation($locale, false)->name,
+                        'description' => strip_tags($business->translation($locale, false)->description ?? ''),
+                    ])
+                : $page->sections
+                    ->whereIn('type', [SectionType::TextImage, SectionType::Gallery])
+                    ->flatMap(function ($section) use ($locale, $page) {
+                        $content = $section->translation($locale);
+                        $images = $section->gallery->isNotEmpty()
+                            ? $section->gallery
+                            : collect([$section->primaryMedia])->filter();
 
-                    return $images->map(fn ($image) => [
-                        'url' => $image->url(),
-                        'title' => ($images->count() > 1 ? ($locale === 'en' ? $image->alt_text_en : $image->alt_text_al) : null)
-                            ?: $content?->subtitle ?: $content?->title ?: $page->translation($locale)->title,
-                        'description' => strip_tags($content?->description ?? ''),
-                    ]);
-                })->values(),
+                        return $images->map(fn ($image) => [
+                            'url' => $image->url(),
+                            'title' => ($images->count() > 1 ? ($locale === 'en' ? $image->alt_text_en : $image->alt_text_al) : null)
+                                ?: $content?->subtitle ?: $content?->title ?: $page->translation($locale)->title,
+                            'description' => strip_tags($content?->description ?? ''),
+                        ]);
+                    })->values(),
         ]);
     }
 

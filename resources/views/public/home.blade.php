@@ -7,11 +7,7 @@
 @endphp
 <x-layouts.public :title="$translation?->seo_title ?: $translation?->title" :description="$translation?->seo_description ?: $translation?->short_description" :language-urls="$languageUrls" :styles="['homepage']" body-class="">
     @if($youtubeId)
-        <dialog id="homepageVideoDialog" class="homepage-video-dialog" aria-label="{{ __('cms.play_video') }}">
-            <a class="homepage-video-fallback" href="{{ $page->homepage_video_url }}" target="_blank" rel="noopener noreferrer">YouTube ↗</a>
-            <form method="dialog"><button class="homepage-video-close" aria-label="{{ __('cms.close') }}">&times;</button></form>
-            <iframe data-src="https://www.youtube-nocookie.com/embed/{{ $youtubeId }}?autoplay=1" title="{{ __('cms.play_video') }}" allow="autoplay; encrypted-media; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-        </dialog>
+        @include('public.partials.video-dialog', ['id' => 'homepageVideoDialog', 'url' => $page->homepage_video_url])
     @endif
     <div class="intro" data-intro hidden>
         <div class="intro-content" aria-hidden="true">
@@ -21,7 +17,6 @@
             <p class="mx-auto mt-5 max-w-2xl text-[16px] text-white/60">{{ $translation?->short_description }}</p>
         </div>
         <div class="intro-stripes" aria-hidden="true"></div>
-        <button class="skip-intro outline-button" type="button">{{ __('cms.skip_intro') }} ↓</button>
     </div>
     <div class="intro-swipe" data-intro-swipe aria-hidden="true" hidden></div>
 
@@ -308,7 +303,7 @@
           </div>
           <div class="py-[50px] px-[40px]">
             <div class=" uppercase title-36 text-black mb-2">{{ $featuredAttractions->first()?->translation(app()->getLocale(), false)?->title ?: __('cms.step_into_piramida') }}</div>
-            <p class="title-16 fw-[400] mb-5 text-black">
+            <p class="home-attraction-description title-16 mb-5">
               {{ $featuredAttractions->first()?->translation(app()->getLocale(), false)?->short_description }}
             </p>
             <a href="{{ route('public.attractions.index', app()->getLocale()) }}"
@@ -326,7 +321,7 @@
           </div>
           <div class="py-[50px] px-[40px]">
             <div class=" uppercase title-36 text-black mb-2">{{ __('cms.social_spaces') }}</div>
-            <p class="title-16 fw-[400] mb-5 text-black">
+            <p class="home-attraction-description title-16 mb-5">
               {{ __('cms.businesses_intro') }}
             </p>
             <a href="{{ route('public.businesses.index', app()->getLocale()) }}"

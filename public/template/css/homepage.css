@@ -221,16 +221,3 @@
 
 /* The existing accessible intro uses these classes instead of the static IDs. */
 body:has([data-intro]) { background:#050a1c; font-family:'Inter',sans-serif; }
-.homepage-video-dialog {
-  margin: auto;
-  width: min(960px, 94vw);
-  max-width: 94vw;
-  padding: 44px 0 0;
-  border: 0;
-  background: #000;
-  color: #fff;
-}
-.homepage-video-dialog::backdrop { background: rgb(0 0 0 / 85%); }
-.homepage-video-dialog iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; max-height: 80vh; }
-.homepage-video-close { position: absolute; top: 0; right: 0; width: 44px; height: 44px; font-size: 30px; cursor: pointer; }
-.homepage-video-fallback { position: absolute; top: 10px; left: 16px; color: #fff; text-decoration: underline; }

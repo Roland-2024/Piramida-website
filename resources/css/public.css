@@ -76,7 +76,6 @@
     .intro-stripes { position:absolute; bottom:0; width:100%; height:260px; display:flex; mask-image:radial-gradient(circle farthest-corner at 50% 100%,white 0%,white var(--reveal-inner,0%),transparent var(--reveal-outer,0%)); }
     .intro-stripes span { flex:1; background:linear-gradient(to right,color-mix(in srgb,var(--stripe-color) 52%,black),color-mix(in srgb,var(--stripe-color) 72%,white) 50%,color-mix(in srgb,var(--stripe-color) 52%,black)); }
     .intro-swipe { position:fixed; inset:0; z-index:1100; background:#123a8f; pointer-events:none; animation:swipe-away 1.3s cubic-bezier(.65,0,.35,1) both; }
-    .skip-intro { position:absolute; bottom:24px; right:24px; z-index:2; background:#050a1c; }
     @keyframes swipe-away { 0% { transform:translateY(100%); } 45%,58% { transform:translateY(0); } 100% { transform:translateY(-100%); } }
     @media(max-width:767px) {
         .intro h2 { font-size:clamp(32px,8vw,60px); line-height:1.1; }

@@ -2,11 +2,16 @@
     $overview = $page->sections->firstWhere('internal_name', 'About - Overview');
     $mission = $page->sections->firstWhere('internal_name', 'About - Mission');
     $history = $page->sections->firstWhere('internal_name', 'About - History');
+    $youtubeId = \App\Rules\YouTubeUrl::videoId($history?->video_url);
+    $historyVideo = $youtubeId || preg_match('/\.(mp4|webm)$/i', parse_url($history?->video_url ?? '', PHP_URL_PATH) ?? '');
     $timeline = $page->sections->firstWhere('internal_name', 'About - Timeline');
     $missionItems = data_get($mission?->structured_data, app()->getLocale().'.items', data_get($mission?->structured_data, 'al.items', []));
     $timelineItems = data_get($timeline?->structured_data, app()->getLocale().'.items', data_get($timeline?->structured_data, 'al.items', []));
 @endphp
 <x-layouts.public :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['about']" body-class="about-page">
+@if($historyVideo)
+    @include('public.partials.video-dialog', ['id' => 'historyVideoDialog', 'url' => $history->video_url])
+@endif
 <div class="relative z-0"><div class="page-top-bg hidden sm:block" aria-hidden="true"></div>
 <div>
             <div class="mx-auto max-w-7xl px-6 pt-32 pb-24 sm:px-10 sm:pt-40">
@@ -96,8 +101,8 @@
                     <span class="absolute bottom-6 left-6 h-4 w-4 rounded-[3px] bg-[#CBFF00]" aria-hidden="true"></span>
                     <span class="absolute bottom-10 left-10 h-6 w-6 rounded-[3px] bg-[#CBFF00]" aria-hidden="true"></span>
 
-                    @if($history?->video_url)
-                        <a href="{{ $history->video_url }}" target="_blank" rel="noopener" aria-label="{{ __('cms.play_video') }}"
+                    @if($historyVideo)
+                        <a href="{{ $history->video_url }}" data-dialog-open="historyVideoDialog" aria-label="{{ __('cms.play_video') }}"
                             class="absolute bottom-16 left-16 flex h-12 w-12 items-center justify-center rounded-[6px] bg-[#CBFF00] shadow-lg transition hover:brightness-110 sm:h-14 sm:w-14">
                             <svg class="h-5 w-5 text-[#0f172a] sm:h-6 sm:w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
                         </a>

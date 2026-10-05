@@ -272,6 +272,7 @@ class DemoContentSeeder extends Seeder
         ]);
 
         $this->upsertSection($about, 'About - History', [
+            'video_url' => 'https://www.youtube.com/watch?v=8f-I2EdcvRI',
             'type' => SectionType::TextImage,
             'primary_media_id' => $media['aerial']->id,
             'gallery_media_ids' => [$media['front']->id, $media['aerial']->id, $media['rooftop']->id],

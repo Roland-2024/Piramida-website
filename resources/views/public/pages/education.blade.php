@@ -9,7 +9,7 @@
                     <div class="slider-track" id="track">
                         @foreach ($slides as $slide)
                             <article class="card">
-                                <img src="{{ $slide['url'] }}" alt="{{ $slide['title'] }}" draggable="false">
+                                @if ($slide['url'])<img src="{{ $slide['url'] }}" alt="{{ $slide['title'] }}" draggable="false">@endif
                                 <div class="sr-only">
                                     <h2 data-slide-title>{{ $slide['title'] }}</h2>
                                     <p data-slide-description>{{ $slide['description'] }}</p>

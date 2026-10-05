@@ -4,10 +4,13 @@ namespace Tests\Feature;
 
 use App\Enums\BookingMode;
 use App\Enums\SectionType;
+use App\Enums\SpaceType;
+use App\Models\Business;
 use App\Models\Career;
 use App\Models\Media;
 use App\Models\Page;
 use App\Models\PageSection;
+use App\Models\Space;
 use Database\Seeders\PresentationPageSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +22,7 @@ class PresentationTemplateTest extends TestCase
 
     public function test_shared_template_uses_published_localized_pages_and_active_ordered_sections(): void
     {
-        foreach (['education', 'innovation', 'business', 'art'] as $slug) {
+        foreach (['education', 'innovation', 'art'] as $slug) {
             $page = Page::factory()->published()->create();
             $page->translations()->where('locale', 'en')->update(['slug' => $slug]);
             $first = PageSection::factory()->for($page)->create([
@@ -50,6 +53,22 @@ class PresentationTemplateTest extends TestCase
         }
     }
 
+    public function test_business_presentation_uses_only_published_localized_business_records(): void
+    {
+        $page = Page::factory()->published()->create();
+        $page->translations()->where('locale', 'en')->update(['slug' => 'business']);
+        $business = Business::factory()->published()->create(['featured_media_id' => Media::factory()]);
+        Business::factory()->create();
+        Business::factory()->published()->create(['published_at' => now()->addDay()]);
+        $untranslated = Business::factory()->published()->create();
+        $untranslated->translations()->where('locale', 'en')->delete();
+
+        $this->get('/en/business')->assertOk()->assertViewIs('public.pages.education')
+            ->assertViewHas('slides', fn ($slides) => $slides->count() === 1
+                && $slides[0]['title'] === "Business {$business->id}"
+                && $slides[0]['url'] === $business->featuredMedia->url());
+    }
+
     public function test_template_seed_adds_missing_pages_without_overwriting_drafts_or_deleted_pages(): void
     {
         Storage::fake('public');
@@ -71,11 +90,31 @@ class PresentationTemplateTest extends TestCase
         $this->get(route('public.pages.show', ['al', 'art-kulture']))->assertOk()->assertSee('Dizajn grafik');
     }
 
+    public function test_space_booking_opens_per_record_dialog_and_reopens_only_invalid_form(): void
+    {
+        $first = Space::factory()->published()->create(['type' => SpaceType::EventSpace, 'booking_mode' => BookingMode::Internal]);
+        $second = Space::factory()->published()->create(['type' => SpaceType::EventSpace, 'booking_mode' => BookingMode::Internal]);
+        $external = Space::factory()->published()->create(['type' => SpaceType::EventSpace, 'booking_mode' => BookingMode::External]);
+        $slug = $second->translation('en', false)->slug;
+        $this->from('/en/event-space')->post(route('public.spaces.event-request', ['en', $slug]), [
+            '_space_id' => (string) $second->id, 'email' => 'invalid',
+        ])->assertRedirect('/en/event-space')->assertSessionHasErrors('email');
+        $response = $this->withCookie(config('session.cookie'), session()->getId())->get('/en/event-space')
+            ->assertOk()->assertSee('data-dialog-open="space-request-'.$first->id.'"', false)
+            ->assertSee('data-dialog-open="space-request-'.$second->id.'"', false)
+            ->assertDontSee('data-dialog-open="space-request-'.$external->id.'"', false)
+            ->assertSee('id="space-'.$first->id.'-email"', false)
+            ->assertSee('id="space-'.$second->id.'-email"', false);
+        $this->assertSame(1, substr_count($response->getContent(), 'data-feedback="true"'));
+    }
+
     public function test_career_popup_keeps_unique_fields_and_reopens_only_the_invalid_application(): void
     {
         $first = Career::factory()->published()->create(['booking_mode' => BookingMode::Internal]);
         $second = Career::factory()->published()->create(['booking_mode' => BookingMode::Internal]);
         $external = Career::factory()->published()->create(['booking_mode' => BookingMode::External]);
+
+        $this->get('/en/careers')->assertOk()->assertDontSee('class="role-card rounded-2xl" open', false);
 
         $this->from('/en/careers')->post(route('public.careers.apply', ['en', "position-{$second->id}"]), [
             '_career_id' => (string) $second->id,

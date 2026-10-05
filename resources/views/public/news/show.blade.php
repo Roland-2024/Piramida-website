@@ -19,7 +19,7 @@
         </div>
 
 
-        <article class="mx-auto max-w-6xl px-6 md:py-16 py-8 space-y-6 title_18 prose-content">
+        <article class="news-article mx-auto max-w-6xl px-6 prose-content">
 {!! $translation->content !!}
 @if($article->gallery->isNotEmpty())<div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
 @foreach($article->gallery as $media)<img src="{{ $media->url() }}" alt="{{ app()->getLocale() === 'en' ? $media->alt_text_en : $media->alt_text_al }}" class="w-full h-[260px] object-cover rounded-[16px]" loading="lazy">@endforeach

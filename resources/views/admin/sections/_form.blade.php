@@ -46,8 +46,9 @@
     </div>
     <div>
         <label for="video_url" class="block text-sm font-medium">Video URL</label>
-        <input id="video_url" name="video_url" type="url" value="{{ old('video_url', $section->video_url ?? '') }}" placeholder="https://…" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
-        <p class="mt-2 text-xs text-slate-500">For the About video section. Primary image is used as its poster.</p>
+        <input id="video_url" name="video_url" list="uploaded-videos" value="{{ old('video_url', $section->video_url ?? '') }}" placeholder="YouTube or uploaded video URL" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+        <datalist id="uploaded-videos">@foreach($mediaItems->filter(fn ($media) => in_array($media->mime_type, ['video/mp4', 'video/webm'])) as $video)<option value="{{ $video->url() }}">{{ $video->original_name }}</option>@endforeach</datalist>
+        <p class="mt-2 text-xs text-slate-500">About History: paste a YouTube link or select an uploaded MP4/WebM. <a href="{{ route('admin.media.create') }}" target="_blank" rel="noopener" class="underline">Upload video in Media</a> (10 MB maximum), then reload this form. Primary image is the poster.</p>
         @error('video_url')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
     </div>
     <div>

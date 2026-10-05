@@ -5,7 +5,7 @@
             @if (str_starts_with($media->mime_type, 'image/'))
                 <img src="{{ $media->url() }}" alt="{{ $media->alt_text_al }}" class="max-h-80 w-full rounded-lg object-contain">
             @else
-                <a href="{{ $media->url() }}" target="_blank" rel="noopener" class="flex min-h-48 items-center justify-center rounded-lg bg-slate-100 text-sm font-medium text-amber-700">Open PDF</a>
+                <a href="{{ $media->url() }}" target="_blank" rel="noopener" class="flex min-h-48 items-center justify-center rounded-lg bg-slate-100 text-sm font-medium text-amber-700">Open file</a>
             @endif
             <dl class="mt-4 space-y-2 text-xs text-slate-500"><div><dt class="inline font-medium">Type:</dt> <dd class="inline">{{ $media->mime_type }}</dd></div><div><dt class="inline font-medium">Size:</dt> <dd class="inline">{{ number_format($media->size / 1024, 1) }} KB</dd></div>@if ($media->width)<div><dt class="inline font-medium">Dimensions:</dt> <dd class="inline">{{ $media->width }} × {{ $media->height }}</dd></div>@endif</dl>
         </section>

@@ -24,14 +24,15 @@ class MediaController extends Controller
 
         $filters = $request->validate([
             'search' => ['nullable', 'string', 'max:100'],
-            'type' => ['nullable', Rule::in(['image', 'document'])],
+            'type' => ['nullable', Rule::in(['image', 'document', 'video'])],
             'trashed' => ['nullable', Rule::in(['with', 'only'])],
         ]);
 
         $mediaItems = Media::query()
             ->when($filters['search'] ?? null, fn (Builder $query, string $search) => $query->where('original_name', 'like', "%{$search}%"))
             ->when(($filters['type'] ?? null) === 'image', fn (Builder $query) => $query->where('mime_type', 'like', 'image/%'))
-            ->when(($filters['type'] ?? null) === 'document', fn (Builder $query) => $query->where('mime_type', 'not like', 'image/%'))
+            ->when(($filters['type'] ?? null) === 'video', fn (Builder $query) => $query->where('mime_type', 'like', 'video/%'))
+            ->when(($filters['type'] ?? null) === 'document', fn (Builder $query) => $query->where('mime_type', 'application/pdf'))
             ->when(($filters['trashed'] ?? null) === 'with', fn (Builder $query) => $query->withTrashed())
             ->when(($filters['trashed'] ?? null) === 'only', fn (Builder $query) => $query->onlyTrashed())
             ->latest()

@@ -1,4 +1,5 @@
 <section class="job-application-section">
+    <div class="request-frame">
           <div class="job-application-shape" aria-hidden="true"></div>
 
           @if($dialog ?? false)<button type="button" data-dialog-close="career-{{ $item->id }}"
@@ -161,4 +162,5 @@
             </form>@endif
 @if ($item->booking_mode->allowsExternal() && $item->external_url)<a href="{{ $item->external_url }}" rel="noopener" target="_blank" class="public-button">{{ __('cms.external_form') }}</a>@endif
           </div>
+    </div>
         </section>

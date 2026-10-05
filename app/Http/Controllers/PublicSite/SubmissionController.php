@@ -135,7 +135,8 @@ class SubmissionController extends Controller
 
         $this->notifyStaff($submission);
 
-        return back()->with('success', __('cms.request_received'));
+        return back()->with('success', __('cms.request_received'))
+            ->with('submitted_space_id', $type === SubmissionType::SpaceBooking ? $related->id : null);
     }
 
     private function storeLeasingApplication(StoreSubmissionRequest $request, Space $space): RedirectResponse
