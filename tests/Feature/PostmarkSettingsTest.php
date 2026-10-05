@@ -15,6 +15,7 @@ class PostmarkSettingsTest extends TestCase
     public function test_only_admins_can_save_encrypted_credentials_and_blank_fields_preserve_them(): void
     {
         $data = [
+            'notification_email' => 'team@example.test',
             'postmark_enabled' => '1',
             'postmark_username' => 'test-access-key',
             'postmark_password' => 'test-secret-key',
@@ -44,6 +45,6 @@ class PostmarkSettingsTest extends TestCase
     {
         $this->actingAs(User::factory()->admin()->create())
             ->put(route('admin.settings.update'), ['postmark_enabled' => '1'])
-            ->assertSessionHasErrors(['postmark_username', 'postmark_password', 'mail_from_address', 'mail_from_name']);
+            ->assertSessionHasErrors(['postmark_username', 'postmark_password', 'mail_from_address', 'mail_from_name', 'notification_email']);
     }
 }

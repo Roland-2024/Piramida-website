@@ -17,6 +17,7 @@ use App\Models\Submission;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Mail\Transport\ArrayTransport;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -94,6 +95,32 @@ class SubmissionWorkflowTest extends TestCase
             'attendees' => 1, 'privacy' => '1',
         ])->assertSessionHas('success');
         $this->assertDatabaseCount('submissions', 1);
+    }
+
+    public function test_postmark_sends_to_staff_using_the_configured_sender(): void
+    {
+        SiteSetting::query()->create([
+            'notification_email' => 'team@example.test',
+            'postmark_enabled' => true,
+            'postmark_username' => 'test-access',
+            'postmark_password' => 'test-secret',
+            'mail_from_address' => 'sender@example.test',
+            'mail_from_name' => 'Piramida team',
+        ]);
+        // Exercise the real Laravel mail pipeline without a network connection.
+        $transport = new ArrayTransport;
+        Mail::extend('smtp', fn (array $config) => $transport);
+        $event = Event::factory()->published()->create(['booking_mode' => BookingMode::Internal]);
+        $this->post(route('public.events.request', ['en', "event-{$event->id}"]), [
+            'name' => 'Visitor', 'email' => 'visitor@example.test', 'phone' => '+355690000000',
+            'attendees' => 1, 'privacy' => '1',
+        ])->assertSessionHas('success');
+
+        $this->assertCount(1, $transport->messages());
+        $message = $transport->messages()->first()->getOriginalMessage();
+        $this->assertSame('sender@example.test', $message->getFrom()[0]->getAddress());
+        $this->assertSame('Piramida team', $message->getFrom()[0]->getName());
+        $this->assertSame('team@example.test', $message->getTo()[0]->getAddress());
     }
 
     public function test_event_space_form_creates_a_staff_confirmed_request(): void

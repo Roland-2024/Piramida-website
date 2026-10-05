@@ -21,7 +21,7 @@ class SiteSettingRequest extends FormRequest
             'postmark_password' => [Rule::requiredIf(fn () => $this->boolean('postmark_enabled') && ! SiteSetting::query()->value('postmark_password')), 'nullable', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_-]+$/'],
             'mail_from_address' => ['required_if:postmark_enabled,1', 'nullable', 'email:rfc', 'max:255'],
             'mail_from_name' => ['required_if:postmark_enabled,1', 'nullable', 'string', 'max:255', 'not_regex:/[\r\n]/'],
-            'notification_email' => ['nullable', 'email:rfc', 'max:255'],
+            'notification_email' => ['required_if:postmark_enabled,1', 'nullable', 'email:rfc', 'max:255'],
             'email' => ['nullable', 'email:rfc', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'facebook_url' => ['nullable', 'url:http,https', 'max:2048'],
