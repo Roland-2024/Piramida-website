@@ -1,3 +1,5 @@
+import { scrollCarousel } from './carousel-scroll';
+
 export function initHome() {
 if (!document.querySelector('#cardTrack .card-snap')) return;
 const track = document.getElementById("cardTrack");
@@ -46,9 +48,7 @@ function currentIndex() {
   return Math.round(track.scrollLeft / cardStep());
 }
 function goTo(index, smooth = true) {
-  track.style.scrollBehavior = smooth && !matchMedia("(prefers-reduced-motion: reduce)").matches ? "smooth" : "auto";
-
-  track.scrollLeft = index * cardStep();
+  scrollCarousel(track, index * cardStep(), smooth);
 }
 
 // ---- Detect and mark whichever card is centered in the viewport ----
@@ -208,7 +208,7 @@ track.querySelectorAll("img").forEach((img) => {
     dots.forEach((dot) => {
         dot.addEventListener('click', () => {
             const index = parseInt(dot.dataset.index, 10);
-            cards[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            scrollCarousel(scrollEl, cards[index].offsetLeft - cards[0].offsetLeft - (scrollEl.clientWidth - cards[index].clientWidth) / 2);
         });
     });
 

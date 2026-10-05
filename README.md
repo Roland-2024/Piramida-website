@@ -240,6 +240,12 @@ Editors may also manage attractions, businesses, spaces, and careers. Submission
 
 Email delivery uses Laravel's configured mailer. A mail failure is reported to the application log but does not discard a successfully stored request.
 
+### Postmark SMTP
+
+Run `php artisan migrate --force` after deploying the Postmark settings migration. Admins can configure **Site settings → Postmark SMTP** for all submission notifications. Use a transactional stream's SMTP Access Key and Secret Key (or the Server API Token in both fields), and a verified sender address/name. Enable SMTP in Postmark first. The application uses `smtp.postmarkapp.com:587` with mandatory STARTTLS and a 10-second timeout, following [Postmark's SMTP setup](https://postmarkapp.com/developer/user-guide/send-email-with-smtp).
+
+Both credentials are encrypted with `APP_KEY`, excluded from serialization and validation flash data, and never prefilled. Blank credential fields retain saved values; enter new values to rotate them. Back up `APP_KEY` securely with the database. Disable the checkbox to return to the environment mailer. Saving sends no email; verify delivery with an intentional submission after configuration. SMTP failures do not discard requests and log only the submission ID, not authentication diagnostics. No additional package, queue, or environment variable is required.
+
 ## Leasing floor plans
 
 Run `php artisan migrate --force` and rebuild assets when deploying the interactive plans. The additive migration installs 40 real SVG units across Ground, Third, Roof L+4 and Exterior. It preserves existing space IDs, translations, media and submissions. Existing leasing posts start unassigned and unavailable: assign each to its actual map unit in **Leasing spaces** rather than guessing from demo names.

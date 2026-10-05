@@ -30,6 +30,8 @@ class LeasingMapTest extends TestCase
                 ->assertDontSee('data-floor="minus-one"', false);
             foreach (LeasingUnit::FLOORS as $floor => $info) {
                 $response = $this->get("$prefix/leasing/floors/$floor")->assertOk();
+                $response->assertSee(__('cms.unit_unavailable_notice', [], $locale))
+                    ->assertSee('aria-describedby="unit-tooltip"', false);
                 $response->assertSee($info[$locale])->assertSee('template/images/leasing/');
                 foreach (LeasingUnit::where('floor', $floor)->get() as $unit) {
                     $response->assertSee('id="'.$unit->svg_id.'"', false);

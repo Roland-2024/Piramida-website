@@ -131,6 +131,26 @@
 }
 
 /* Legend */
+.floor-plan-tooltip {
+  position:fixed;
+  z-index:120;
+  width:max-content;
+  max-width:min(260px,calc(100vw - 24px));
+  padding:12px 16px;
+  border:1px solid #ffffff30;
+  border-radius:10px;
+  background:#000929;
+  color:#fff;
+  font-size:14px;
+  line-height:1.5;
+  box-shadow:0 8px 24px #0005;
+}
+.floor-plan-unit[data-status="unavailable"]:is(:hover,:focus-visible) .floor-plan-unit-shape {
+  fill-opacity:.5;
+  stroke:#fff;
+  stroke-width:2;
+}
+
 .floor-plan-legend {
   display: flex;
   gap: 24px;

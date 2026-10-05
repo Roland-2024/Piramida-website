@@ -1,3 +1,5 @@
+import { scrollCarousel } from './carousel-scroll';
+
 (function () {
     const root = document.getElementById("attractions");
     if (!root?.querySelector("[data-cards]")?.children.length) return;
@@ -165,7 +167,7 @@
         const perPage = cardsPerPage();
         const targetCard = cards[i * perPage];
         if (targetCard) {
-            track.scrollTo({ left: targetCard.offsetLeft - track.offsetLeft, behavior: "smooth" });
+            scrollCarousel(track, targetCard.offsetLeft - cards[0].offsetLeft);
         }
     }
 
@@ -185,7 +187,7 @@
     function scrollByCards(direction) {
         const cardWidth = cards[0].getBoundingClientRect().width;
         const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || "0");
-        track.scrollBy({ left: direction * (cardWidth + gap), behavior: "smooth" });
+        scrollCarousel(track, track.scrollLeft + direction * (cardWidth + gap));
     }
 
     prevBtn.addEventListener("click", () => scrollByCards(-1));
@@ -261,7 +263,7 @@
         const nearestIndex = Math.round(track.scrollLeft / (cardWidth + gap));
         const target = cards[Math.max(0, Math.min(cards.length - 1, nearestIndex))];
         if (target) {
-            track.scrollTo({ left: target.offsetLeft - track.offsetLeft, behavior: "smooth" });
+            scrollCarousel(track, target.offsetLeft - cards[0].offsetLeft);
         }
     }
 

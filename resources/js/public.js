@@ -1,4 +1,5 @@
 import { initHome } from './template-home';
+import { scrollCarousel } from './carousel-scroll';
 import { initEducation } from './template-education';
 import './template-attractions';
 import './template-leasing';
@@ -63,10 +64,7 @@ document.querySelectorAll('#mobileMenu a[href]').forEach(link => {
 document.querySelectorAll('[data-carousel]').forEach(carousel => {
     const track = carousel.querySelector('.carousel-track');
     carousel.querySelectorAll('[data-scroll]').forEach(button => {
-        button.addEventListener('click', () => track.scrollBy({
-            left: Number(button.dataset.scroll) * (Number(carousel.dataset.scrollAmount) || track.clientWidth),
-            behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
-        }));
+        button.addEventListener('click', () => scrollCarousel(track, track.scrollLeft + Number(button.dataset.scroll) * (Number(carousel.dataset.scrollAmount) || track.clientWidth)));
     });
     const dotsWrap = carousel.querySelector('[data-carousel-dots]');
     if (dotsWrap) {
@@ -76,7 +74,7 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
             dot.type = 'button';
             dot.className = 'event-dot';
             dot.setAttribute('aria-label', card.textContent.trim() || String(index + 1));
-            dot.addEventListener('click', () => track.scrollTo({ left: card.offsetLeft - cards[0].offsetLeft, behavior: 'smooth' }));
+            dot.addEventListener('click', () => scrollCarousel(track, card.offsetLeft - cards[0].offsetLeft));
             dotsWrap.append(dot);
             return dot;
         });
@@ -230,13 +228,13 @@ if (eventSection) {
 document.querySelectorAll('.event-spaces-carousel').forEach(carousel => {
     const track = carousel.querySelector('.event-spaces-card-track');
     carousel.querySelectorAll('.event-spaces-carousel-arrow').forEach(button => button.addEventListener('click', () => {
-        track.scrollBy({ left: track.clientWidth * (button.classList.contains('event-spaces-carousel-arrow-left') ? -1 : 1), behavior: 'smooth' });
+        scrollCarousel(track, track.scrollLeft + track.clientWidth * (button.classList.contains('event-spaces-carousel-arrow-left') ? -1 : 1));
     }));
 });
 document.querySelectorAll('.leasing-form-carousel').forEach(carousel => {
     const track = carousel.querySelector('.leasing-form-gallery');
     carousel.querySelectorAll('.leasing-form-carousel-arrow').forEach(button => button.addEventListener('click', () => {
-        track.scrollBy({ left: track.clientWidth * (button.classList.contains('leasing-form-carousel-arrow-left') ? -1 : 1), behavior: 'smooth' });
+        scrollCarousel(track, track.scrollLeft + track.clientWidth * (button.classList.contains('leasing-form-carousel-arrow-left') ? -1 : 1));
     }));
 });
 

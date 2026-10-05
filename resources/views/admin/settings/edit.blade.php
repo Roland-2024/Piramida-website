@@ -22,6 +22,23 @@
             @endforeach
         </div>
 
+        <fieldset class="mt-8 space-y-5 rounded-xl border border-slate-200 p-5">
+            <legend class="px-2 font-semibold">Postmark SMTP — submission notifications</legend>
+            <p class="text-sm text-slate-500">smtp.postmarkapp.com · Port 587 · STARTTLS required. Enable SMTP in Postmark and verify your sender domain/address first. Use a transactional stream's SMTP Access Key and Secret Key, or the Server API Token in both fields. Credentials are encrypted and never displayed again.</p>
+            <input type="hidden" name="postmark_enabled" value="0">
+            <label class="flex items-center gap-2"><input type="checkbox" name="postmark_enabled" value="1" @checked(old('postmark_enabled', $settings->postmark_enabled))> Use Postmark for request notifications</label>
+            <p class="text-sm text-slate-500">When disabled, the environment mailer remains in use. Saving does not send an email.</p>
+            <div class="grid gap-5 md:grid-cols-2">
+                @foreach (['postmark_username' => 'SMTP Access Key / Username', 'postmark_password' => 'SMTP Secret Key / Password'] as $name => $label)
+                    <div><label for="{{ $name }}" class="block text-sm font-medium">{{ $label }}</label><input id="{{ $name }}" name="{{ $name }}" type="password" autocomplete="new-password" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"><p class="mt-1 text-xs text-slate-500">{{ $settings->{$name} ? 'Configured. Leave blank to keep the saved value.' : 'Not configured.' }}</p>@error($name)<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror</div>
+                @endforeach
+                @foreach (['mail_from_address' => 'Verified sender email', 'mail_from_name' => 'Sender name'] as $name => $label)
+                    <div><label for="{{ $name }}" class="block text-sm font-medium">{{ $label }}</label><input id="{{ $name }}" name="{{ $name }}" type="{{ $name === 'mail_from_address' ? 'email' : 'text' }}" value="{{ old($name, $settings->{$name}) }}" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">@error($name)<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror</div>
+                @endforeach
+            </div>
+            @error('postmark_enabled')<p class="text-sm text-red-600">{{ $message }}</p>@enderror
+        </fieldset>
+
         <div class="mt-8 space-y-5">
             @foreach ($locales as $locale => $localeName)
                 @php

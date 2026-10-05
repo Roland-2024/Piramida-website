@@ -19,7 +19,23 @@ class SiteSetting extends Model
         'instagram_url',
         'linkedin_url',
         'map_url',
+        'postmark_enabled',
+        'postmark_username',
+        'postmark_password',
+        'mail_from_address',
+        'mail_from_name',
     ];
+
+    protected $hidden = ['postmark_username', 'postmark_password'];
+
+    protected function casts(): array
+    {
+        return [
+            'postmark_enabled' => 'boolean',
+            'postmark_username' => 'encrypted',
+            'postmark_password' => 'encrypted',
+        ];
+    }
 
     public function translations(): HasMany
     {

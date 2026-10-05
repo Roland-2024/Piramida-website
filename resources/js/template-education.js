@@ -14,7 +14,7 @@ const MOBILE_CARD_H = 512;
 const MOBILE_CARD_MAX_W = 380;
 const MOBILE_RADIUS = 28;
 
-const SNAP_EASE = matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 0.16;
+const SNAP_EASE = matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 0.09;
 
 const track = document.getElementById("track");
 const viewport = document.getElementById("viewport");

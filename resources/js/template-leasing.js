@@ -34,4 +34,28 @@ if (floorPlan) {
     layout();
     mobile.addEventListener('change', layout);
     requestAnimationFrame(() => floorPlan.classList.add('is-ready'));
+
+    const tooltip = document.getElementById('unit-tooltip');
+    let hideTimer;
+    const hide = () => { tooltip.hidden = true; };
+    const hideSoon = () => { hideTimer = setTimeout(hide, 120); };
+    floorPlan.querySelectorAll('[data-status="unavailable"]').forEach(unit => {
+        const show = () => {
+            clearTimeout(hideTimer);
+            tooltip.hidden = false;
+            const rect = unit.getBoundingClientRect();
+            tooltip.style.left = `${Math.max(12, Math.min(rect.left + rect.width / 2 - tooltip.offsetWidth / 2, innerWidth - tooltip.offsetWidth - 12))}px`;
+            tooltip.style.top = `${Math.max(12, Math.min(rect.bottom + 8, innerHeight - tooltip.offsetHeight - 12))}px`;
+        };
+        unit.addEventListener('pointerenter', show);
+        unit.addEventListener('focus', show);
+        unit.addEventListener('click', show);
+        unit.addEventListener('pointerleave', hideSoon);
+        unit.addEventListener('blur', hideSoon);
+    });
+    tooltip.addEventListener('pointerenter', () => clearTimeout(hideTimer));
+    tooltip.addEventListener('pointerleave', hideSoon);
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') hide(); });
+    window.addEventListener('scroll', hide, { passive: true });
+    window.addEventListener('resize', hide);
 }

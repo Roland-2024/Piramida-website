@@ -145,4 +145,5 @@ return [
     'availability' => 'Disponueshmëria',
     'unit_available' => 'E disponueshme',
     'unit_unavailable' => 'E padisponueshme',
+    'unit_unavailable_notice' => 'Kjo hapësirë nuk është e disponueshme për qira për momentin.',
 ];

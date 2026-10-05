@@ -33,6 +33,12 @@ class SiteSettingController extends Controller
             $translations = $data['translations'];
             unset($data['translations']);
 
+            foreach (['postmark_username', 'postmark_password'] as $secret) {
+                if (empty($data[$secret])) {
+                    unset($data[$secret]);
+                }
+            }
+
             $settings->update($data);
             $settings->syncTranslations($translations);
         });

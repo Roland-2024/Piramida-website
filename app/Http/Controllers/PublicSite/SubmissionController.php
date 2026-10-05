@@ -214,16 +214,37 @@ class SubmissionController extends Controller
 
     private function notifyStaff(Submission $submission): void
     {
-        $notificationEmail = SiteSetting::query()->value('notification_email');
+        $settings = SiteSetting::query()->first();
+        $notificationEmail = $settings?->notification_email;
 
         if (! $notificationEmail) {
             return;
         }
 
         try {
-            Mail::to($notificationEmail)->send(new SubmissionReceived($submission));
+            $message = new SubmissionReceived($submission);
+            if ($settings->postmark_enabled) {
+                $mailer = Mail::build([
+                    'transport' => 'smtp',
+                    'scheme' => 'smtp',
+                    'host' => 'smtp.postmarkapp.com',
+                    'port' => 587,
+                    'username' => $settings->postmark_username,
+                    'password' => $settings->postmark_password,
+                    'require_tls' => true,
+                    'timeout' => 10,
+                ]);
+                $mailer->to($notificationEmail)->send($message->from($settings->mail_from_address, $settings->mail_from_name));
+            } else {
+                Mail::to($notificationEmail)->send($message);
+            }
         } catch (Throwable $exception) {
-            report($exception);
+            // SMTP diagnostics can include authentication exchanges; never log them.
+            if ($settings->postmark_enabled) {
+                logger()->error('Postmark notification failed; request remains saved.', ['submission_id' => $submission->id]);
+            } else {
+                report($exception);
+            }
         }
     }
 

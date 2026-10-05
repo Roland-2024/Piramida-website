@@ -10,6 +10,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
     <title>{{ $title ? $title.' · ' : '' }}Piramida</title>
     @if ($description)<meta name="description" content="{{ $description }}">@endif
     @vite(['resources/css/public.css', 'resources/js/public.js'])

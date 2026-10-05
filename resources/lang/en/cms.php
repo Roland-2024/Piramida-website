@@ -145,4 +145,5 @@ return [
     'availability' => 'Availability',
     'unit_available' => 'Available',
     'unit_unavailable' => 'Unavailable',
+    'unit_unavailable_notice' => 'This space is not available for leasing at the moment.',
 ];

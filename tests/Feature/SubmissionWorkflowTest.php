@@ -70,6 +70,32 @@ class SubmissionWorkflowTest extends TestCase
         $this->assertDatabaseCount('submissions', 0);
     }
 
+    public function test_postmark_notifications_use_saved_smtp_settings_and_preserve_requests_on_failure(): void
+    {
+        SiteSetting::query()->create([
+            'notification_email' => 'team@example.test',
+            'postmark_enabled' => true,
+            'postmark_username' => 'test-access',
+            'postmark_password' => 'test-secret',
+            'mail_from_address' => 'sender@example.test',
+            'mail_from_name' => 'Piramida',
+        ]);
+        Mail::shouldReceive('build')->once()->withArgs(function (array $config): bool {
+            $this->assertSame('smtp.postmarkapp.com', $config['host']);
+            $this->assertSame(587, $config['port']);
+            $this->assertTrue($config['require_tls']);
+            $this->assertSame('test-secret', $config['password']);
+
+            return true;
+        })->andThrow(new \RuntimeException('SMTP unavailable'));
+        $event = Event::factory()->published()->create(['booking_mode' => BookingMode::Internal]);
+        $this->post(route('public.events.request', ['en', "event-{$event->id}"]), [
+            'name' => 'Visitor', 'email' => 'visitor@example.test', 'phone' => '+355690000000',
+            'attendees' => 1, 'privacy' => '1',
+        ])->assertSessionHas('success');
+        $this->assertDatabaseCount('submissions', 1);
+    }
+
     public function test_event_space_form_creates_a_staff_confirmed_request(): void
     {
         $space = Space::factory()->published()->create([

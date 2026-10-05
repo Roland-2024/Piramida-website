@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\SiteSetting;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SiteSettingRequest extends FormRequest
 {
@@ -14,6 +16,11 @@ class SiteSettingRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
+            'postmark_enabled' => ['sometimes', 'boolean'],
+            'postmark_username' => [Rule::requiredIf(fn () => $this->boolean('postmark_enabled') && ! SiteSetting::query()->value('postmark_username')), 'nullable', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_-]+$/'],
+            'postmark_password' => [Rule::requiredIf(fn () => $this->boolean('postmark_enabled') && ! SiteSetting::query()->value('postmark_password')), 'nullable', 'string', 'max:255', 'regex:/^[a-zA-Z0-9_-]+$/'],
+            'mail_from_address' => ['required_if:postmark_enabled,1', 'nullable', 'email:rfc', 'max:255'],
+            'mail_from_name' => ['required_if:postmark_enabled,1', 'nullable', 'string', 'max:255', 'not_regex:/[\r\n]/'],
             'notification_email' => ['nullable', 'email:rfc', 'max:255'],
             'email' => ['nullable', 'email:rfc', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],

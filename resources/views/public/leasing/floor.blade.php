@@ -16,6 +16,7 @@
                 @include('public.leasing.plans.'.$floor)
             </div></div>
         </div>
+        <div id="unit-tooltip" class="floor-plan-tooltip" role="tooltip" hidden>{{ __('cms.unit_unavailable_notice') }}</div>
         <ul class="floor-plan-legend" aria-label="{{ __('cms.availability') }}">
             <li><span class="floor-plan-swatch is-available" aria-hidden="true"></span>{{ __('cms.unit_available') }}</li>
             <li><span class="floor-plan-swatch is-unavailable" aria-hidden="true"></span>{{ __('cms.unit_unavailable') }}</li>

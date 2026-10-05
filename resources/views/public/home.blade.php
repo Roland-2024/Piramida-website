@@ -238,7 +238,7 @@
 
         <!-- Left arrow -->
         <button id="prevBtn" aria-label="Previous" type="button"
-          class="hidden md:flex absolute -left-2 md:-left-5 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-white/20 transition">
+          class="hidden md:flex absolute -left-2 md:-left-5 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-[#cbff00] hover:text-[#000929] focus-visible:bg-[#cbff00] focus-visible:text-[#000929] active:bg-[#cbff00] active:text-[#000929] transition-colors duration-300">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
@@ -246,7 +246,7 @@
 
         <!-- Right arrow -->
         <button id="nextBtn" aria-label="Next" type="button"
-          class="hidden md:flex absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-lime-400 text-black hover:bg-lime-300 transition">
+          class="hidden md:flex absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-[#cbff00] hover:text-[#000929] focus-visible:bg-[#cbff00] focus-visible:text-[#000929] active:bg-[#cbff00] active:text-[#000929] transition-colors duration-300">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
