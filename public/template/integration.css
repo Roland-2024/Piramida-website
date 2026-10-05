@@ -39,12 +39,12 @@ body:has(dialog[open]) { overflow:hidden; }
 .template-dialog { position:fixed; inset:0; width:100%; height:100%; max-width:none; max-height:none; margin:0; padding:0; border:0; background:transparent; color:#111; overflow:auto; }
 .template-dialog::backdrop { background:#000929e8 url('/template/images/BG.jpg') center / cover; }
 .request-frame { position:relative; width:min(560px,100%); isolation:isolate; }
-.request-frame :is(.event-space-shape,.job-application-shape) { display:block; inset:-20px; width:auto; height:auto; clip-path:none; transform:skew(-4deg,-3deg); z-index:-1; }
+.request-frame :is(.event-space-shape,.job-application-shape) { display:block; inset:-20px; width:auto; height:auto; clip-path:polygon(0 12px,100% 0,100% calc(100% - 12px),0 100%); transform:none; z-index:-1; }
 .request-frame :is(.event-space-card,.job-application-card) { width:100%; padding-top:60px; }
 .request-frame > :is(.event-space-close,.job-application-close) { display:flex; top:10px; right:10px; left:auto; transform:none; }
 .request-frame > :is(.event-space-close,.job-application-close) img { filter:brightness(0); }
 .request-frame :is(.event-space-close-mobile,.job-application-close-mobile) { display:none; }
-@media(max-width:600px) { .request-frame :is(.event-space-shape,.job-application-shape) { inset:-8px; transform:skew(-1deg,-1deg); } }
+@media(max-width:600px) { .request-frame :is(.event-space-shape,.job-application-shape) { inset:-8px; clip-path:none; border-radius:28px; } }
 .template-dialog .registration-section { min-height:100svh; }
 .template-request-notice { font-size:12px; margin:12px 0; color:#555; }
 .template-consent { display:flex !important; align-items:flex-start; gap:8px; font-size:12px; margin-top:12px; }
