@@ -170,7 +170,7 @@
             Piramida
           </h2>
 
-          <a href="#top" aria-label="Back to top"
+          <button type="button" data-back-to-top aria-label="Back to top"
             class="group flex h-[105px] w-[105px] shrink-0 items-center justify-center rounded-full border border-white/50 transition-colors duration-300 hover:bg-white hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CBFF00] focus-visible:ring-offset-4 focus-visible:ring-offset-[#020503]">
             <svg
               class="h-[55px] w-[55px] transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
@@ -179,7 +179,7 @@
               <path d="M25 15H49V39" stroke="currentColor" stroke-width="3" stroke-linecap="round"
                 stroke-linejoin="round" />
             </svg>
-          </a>
+          </button>
         </div>
       </div>
     </div>

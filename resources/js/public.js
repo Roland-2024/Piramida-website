@@ -6,6 +6,10 @@ import './template-leasing';
 initHome();
 initEducation();
 
+document.querySelector('[data-back-to-top]')?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+});
+
 document.querySelectorAll('[data-gallery]').forEach(gallery => {
     const images = [...gallery.querySelectorAll('[data-gallery-image]')];
     if (!images.length) return;
