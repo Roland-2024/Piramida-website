@@ -8,7 +8,7 @@
     $missionItems = data_get($mission?->structured_data, app()->getLocale().'.items', data_get($mission?->structured_data, 'al.items', []));
     $timelineItems = data_get($timeline?->structured_data, app()->getLocale().'.items', data_get($timeline?->structured_data, 'al.items', []));
 @endphp
-<x-layouts.public :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['about']" body-class="about-page">
+<x-layouts.public :record="$page" :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['about']" body-class="about-page">
 @if($historyVideo)
     @include('public.partials.video-dialog', ['id' => 'historyVideoDialog', 'url' => $history->video_url])
 @endif

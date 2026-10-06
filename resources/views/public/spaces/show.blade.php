@@ -1,4 +1,4 @@
-<x-layouts.public :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['event-spaces-popup','leasing-form']" body-class="desktop-page-background leasing-form-background" :footer="false">
+<x-layouts.public :record="$item" :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['event-spaces-popup','leasing-form']" body-class="desktop-page-background leasing-form-background" :footer="false">
 @if($item->type === \App\Enums\SpaceType::Leasing)
 <div class="event-spaces-main"><section class="leasing-form-hero" aria-labelledby="leasing-form-title">
           <div class="leasing-form-title-wrap">

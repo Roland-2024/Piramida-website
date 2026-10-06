@@ -4,7 +4,6 @@ namespace App\Http\Controllers\PublicSite;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attraction;
-use App\Models\Business;
 use App\Models\Event;
 use App\Models\News;
 use App\Models\Page;
@@ -32,7 +31,7 @@ class HomeController extends Controller
             ?? $pageQuery->first();
 
         $presentationPages = Page::query()->published()
-            ->whereHas('translations', fn (Builder $query) => $query->whereIn('slug', ['education', 'innovation', 'business', 'art']))
+            ->whereHas('translations', fn (Builder $query) => $query->whereIn('slug', ['education', 'innovation', 'business', 'art', 'about-us']))
             ->with('translations')->get();
         $presentationUrls = collect(['education', 'innovation', 'business', 'art'])
             ->mapWithKeys(function ($slug) use ($presentationPages, $locale) {
@@ -43,7 +42,7 @@ class HomeController extends Controller
 
         return view('public.home', [
             'presentationUrls' => $presentationUrls,
-            'aboutUrl' => ($about = Page::query()->published()->whereHas('translations', fn (Builder $query) => $query->where('slug', 'about-us'))->with('translations')->first())?->translation($locale, false)
+            'aboutUrl' => ($about = $presentationPages->first(fn ($page) => $page->translations->contains('slug', 'about-us')))?->translation($locale, false)
                 ? route('public.pages.show', [$locale, $about->translation($locale, false)->slug])
                 : route('public.home', $locale),
             'page' => $page,
@@ -69,14 +68,6 @@ class HomeController extends Controller
                 ->with(['translations', 'featuredMedia'])
                 ->orderBy('display_order')
                 ->limit(2)
-                ->get(),
-            'featuredBusinesses' => Business::query()
-                ->published()
-                ->where('is_featured', true)
-                ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
-                ->with(['translations', 'featuredMedia'])
-                ->orderBy('display_order')
-                ->limit(3)
                 ->get(),
             'languageUrls' => $this->languageUrls(),
         ]);

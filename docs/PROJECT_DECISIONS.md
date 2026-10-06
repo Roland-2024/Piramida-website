@@ -62,6 +62,8 @@ This file records durable decisions that future tasks should preserve. Implement
 - The live server runs Laravel directly with PHP, a web server, MySQL, Composer, built frontend assets, and Laravel's scheduler; Docker is not required there.
 - Redis, a queue worker, and a JavaScript framework are intentionally omitted until a measured requirement appears.
 - Secrets and production configuration stay outside Git.
+- Search metadata is server-rendered from actual locale translations and existing CMS SEO fields, with bilingual defaults for catalogue/presentation pages. Canonical and social URLs use `SEO_URL` (the final `https://piramida.edu.al` origin), independent of the preview host. Published records alone enter the streamed sitemap; the existing career/space accessibility scopes also apply.
+- Indexing requires `SEO_INDEXABLE` and the configured production hostname. Local/staging responses and admin/auth pages are marked noindex; Laravel serves robots.txt dynamically. No AI-only content or new SEO dependency is introduced. Website/organization, news and event structured data describe existing content, without inventing ratings, addresses or ticket offers.
 
 ## Current boundary
 

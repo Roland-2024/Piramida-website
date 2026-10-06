@@ -11,8 +11,30 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <title>{{ $title ? $title.' · ' : '' }}Piramida</title>
-    @if ($description)<meta name="description" content="{{ $description }}">@endif
+    <title>{{ $seo['title'] }}</title>
+    <meta name="description" content="{{ $seo['description'] }}">
+    <link rel="canonical" href="{{ $seo['canonical'] }}">
+    @foreach($seo['alternates'] as $language => $url)
+        <link rel="alternate" hreflang="{{ $language }}" href="{{ $url }}">
+    @endforeach
+    @if(isset($seo['alternates']['sq']))<link rel="alternate" hreflang="x-default" href="{{ $seo['alternates']['sq'] }}">@endif
+    <meta property="og:type" content="{{ $seo['type'] }}">
+    <meta property="og:site_name" content="{{ __('seo.name') }}">
+    <meta property="og:title" content="{{ $seo['title'] }}">
+    <meta property="og:description" content="{{ $seo['description'] }}">
+    <meta property="og:url" content="{{ $seo['canonical'] }}">
+    <meta property="og:locale" content="{{ $seo['language'] === 'sq' ? 'sq_AL' : 'en_GB' }}">
+    @foreach($seo['alternates'] as $language => $url)
+        @if($language !== $seo['language'])<meta property="og:locale:alternate" content="{{ $language === 'sq' ? 'sq_AL' : 'en_GB' }}">@endif
+    @endforeach
+    <meta property="og:image" content="{{ $seo['image'] }}">
+    <meta property="og:image:alt" content="{{ $seo['imageAlt'] }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seo['title'] }}">
+    <meta name="twitter:description" content="{{ $seo['description'] }}">
+    <meta name="twitter:image" content="{{ $seo['image'] }}">
+    <meta name="twitter:image:alt" content="{{ $seo['imageAlt'] }}">
+    <script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@graph' => $seo['graph']], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) !!}</script>
     @vite(['resources/css/public.css', 'resources/js/public.js'])
     @foreach (array_unique(array_merge(['theme', 'header', 'footer'], $styles)) as $style)
         <link rel="stylesheet" href="{{ asset('template/css/'.$style.'.css').'?v='.filemtime(public_path('template/css/'.$style.'.css')) }}">

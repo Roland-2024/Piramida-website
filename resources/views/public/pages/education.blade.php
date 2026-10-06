@@ -1,4 +1,4 @@
-<x-layouts.public :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['education', 'education-carousel-enhanced']">
+<x-layouts.public :record="$page" :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['education', 'education-carousel-enhanced']">
     <div class="education-main">
         <div class="flex justify-center px-6 pt-12 md:pt-72">
             <h1 class="max-md:mt-14 font-anton uppercase text-[38px] leading-none text-[#CBFF00] md:text-[50px] lg:text-[60px]">{{ $translation->title }}</h1>

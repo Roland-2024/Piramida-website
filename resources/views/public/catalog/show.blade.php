@@ -3,7 +3,7 @@
     $bookingMode = data_get($item, 'booking_mode');
 @endphp
 
-<x-layouts.public :title="$translation->seo_title ?: $title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls">
+<x-layouts.public :record="$item" :title="$translation->seo_title ?: $title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls">
     <article class="site-shell py-16">
         @if (isset($item->category) && $item->category instanceof \BackedEnum)<p class="text-sm font-semibold uppercase accent">{{ $item->category->label() }}</p>@endif
         @if (isset($item->type) && $item->type instanceof \BackedEnum)<p class="text-sm font-semibold uppercase accent">{{ $item->type->label() }}</p>@endif

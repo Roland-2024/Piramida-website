@@ -25,6 +25,7 @@ class EventController extends Controller
                 ->when($period === 'upcoming', fn (Builder $query) => $query->upcoming()->orderBy('starts_at'))
                 ->when($period === 'past', fn (Builder $query) => $query->past()->latest('starts_at'))
                 ->with(['translations', 'featuredMedia'])
+                ->orderBy('id')
                 ->paginate(9)
                 ->withQueryString(),
             'period' => $period,

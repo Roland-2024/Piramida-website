@@ -1,4 +1,4 @@
-<x-layouts.public :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['single-event', 'popup']" body-class="" :footer="false">
+<x-layouts.public :record="$event" :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['single-event', 'popup']" body-class="" :footer="false">
 <section class="event-section w-full min-h-screen flex items-center justify-center md:p-12 pt-28 md:pt-12">
         <div class="page-top-bg hidden sm:block" aria-hidden="true"></div>
         <!-- Gradient glow, same as About page -->

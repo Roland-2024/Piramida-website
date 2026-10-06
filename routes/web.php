@@ -24,20 +24,33 @@ use App\Http\Controllers\PublicSite\EventController as PublicEventController;
 use App\Http\Controllers\PublicSite\HomeController;
 use App\Http\Controllers\PublicSite\NewsController as PublicNewsController;
 use App\Http\Controllers\PublicSite\PageController as PublicPageController;
+use App\Http\Controllers\PublicSite\SitemapController;
 use App\Http\Controllers\PublicSite\SpaceController as PublicSpaceController;
 use App\Http\Controllers\PublicSite\SubmissionController as PublicSubmissionController;
 use App\Http\Middleware\EnsureUserIsActive;
+use App\Http\Middleware\SearchIndexing;
 use App\Http\Middleware\SetLocale;
 use App\Models\Attraction;
 use App\Models\Business;
 use App\Models\Career;
 use App\Models\Space;
+use App\Support\Seo;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::model('attraction', Attraction::class);
 Route::model('business', Business::class);
 Route::model('space', Space::class);
 Route::model('career', Career::class);
+
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/robots.txt', function (Request $request) {
+    $rules = SearchIndexing::allowed($request)
+        ? "User-agent: *\nAllow: /\nSitemap: ".Seo::url('/sitemap.xml')."\n"
+        : "User-agent: *\nDisallow: /\n";
+
+    return response($rules, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+});
 
 $publicRoutes = function (): void {
     Route::get('/', HomeController::class)->name('home');

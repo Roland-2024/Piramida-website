@@ -17,6 +17,7 @@ class NewsController extends Controller
                 ->whereHas('translations', fn (Builder $query) => $query->where('locale', app()->getLocale()))
                 ->with(['translations', 'featuredMedia'])
                 ->latest('published_at')
+                ->orderByDesc('id')
                 ->paginate(9),
             'languageUrls' => $this->indexLanguageUrls(),
         ]);

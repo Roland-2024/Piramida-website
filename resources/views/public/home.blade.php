@@ -5,7 +5,7 @@
     $videoSection = $page?->sections->first(fn ($section) => filled($section->video_url));
     $youtubeId = \App\Rules\YouTubeUrl::videoId($page?->homepage_video_url);
 @endphp
-<x-layouts.public :title="$translation?->seo_title ?: $translation?->title" :description="$translation?->seo_description ?: $translation?->short_description" :language-urls="$languageUrls" :styles="['homepage']" body-class="">
+<x-layouts.public :record="$page" :title="$translation?->seo_title ?: $translation?->title" :description="$translation?->seo_description ?: $translation?->short_description" :language-urls="$languageUrls" :styles="['homepage']" body-class="">
     @if($youtubeId)
         @include('public.partials.video-dialog', ['id' => 'homepageVideoDialog', 'url' => $page->homepage_video_url])
     @endif
@@ -23,7 +23,7 @@
 <span class="sr-only">{{ $translation?->title }}</span>
     <section class="relative w-full h-[110vh] overflow-hidden">
       <!-- Background image -->
-      <img src="/template/images/Piramida (2).png" alt="Piramida of Tirana"
+      <img src="/template/images/piramida-hero-1920.jpg" srcset="/template/images/piramida-hero-960.jpg 960w, /template/images/piramida-hero-1920.jpg 1920w" sizes="100vw" width="1920" height="1232" fetchpriority="high" alt="Piramida of Tirana"
         class="absolute inset-0 w-full h-full object-cover" />
 
       <!-- Bottom shadow overlay for text contrast -->

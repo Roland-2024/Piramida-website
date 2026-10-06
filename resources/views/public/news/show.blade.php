@@ -1,4 +1,4 @@
-<x-layouts.public :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->excerpt" :language-urls="$languageUrls" :styles="['homepage']">
+<x-layouts.public :record="$article" :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->excerpt" :language-urls="$languageUrls" :styles="['homepage']">
 <div class="mx-auto pt-[100px] pb-24 relative z-0">
         <div class="page-top-bg hidden sm:block" aria-hidden="true"></div>
 
