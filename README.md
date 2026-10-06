@@ -240,7 +240,17 @@ Editors may also manage attractions, businesses, spaces, and careers. Submission
 
 Email delivery uses Laravel's configured mailer. A mail failure is reported to the application log but does not discard a successfully stored request.
 
+### Pre-live security and upload configuration
+
+Use PHP `post_max_size=50M` and Nginx `client_max_body_size 50M` on the production server, then reload the services. Leasing accepts up to eleven 4 MB documents; the total request needs more than the previous 20 MB limit. Individual file validation remains unchanged. Docker configuration is for local development only.
+
+Password changes revoke database sessions and remember-me tokens; authenticated dashboard sessions also verify the password fingerprint. Forgot/reset-password endpoints are rate-limited and reset requests return a generic response.
+
+WordPress featured images must use HTTPS on port 443 and an exact trusted hostname: the configured API host or `WORDPRESS_EVENTS_IMAGE_HOSTS` (comma-separated, defaults to `piramidaime.al,www.piramidaime.al`). Add a CDN only after verifying ownership. Redirects are rejected; downloads are capped at 10 MB and validated as images. Failed images produce warnings without preventing event content synchronization.
+
 ### Postmark SMTP
+
+The dashboard Postmark settings also deliver administrator/editor password-reset emails. When disabled, Laravel uses the environment mail configuration. Before launch, verify an actual reset email with the verified production sender; automated tests use an in-memory transport and do not prove real delivery.
 
 Run `php artisan migrate --force` after deploying the Postmark settings migration. Admins can configure **Site settings → Postmark SMTP** for all submission notifications. Use a transactional stream's SMTP Access Key and Secret Key (or the Server API Token in both fields), and a verified sender address/name. Enable SMTP in Postmark first. The application uses `smtp.postmarkapp.com:587` with mandatory STARTTLS and a 10-second timeout, following [Postmark's SMTP setup](https://postmarkapp.com/developer/user-guide/send-email-with-smtp).
 

@@ -224,16 +224,7 @@ class SubmissionController extends Controller
         try {
             $message = new SubmissionReceived($submission);
             if ($settings->postmark_enabled) {
-                $mailer = Mail::build([
-                    'transport' => 'smtp',
-                    'scheme' => 'smtp',
-                    'host' => 'smtp.postmarkapp.com',
-                    'port' => 587,
-                    'username' => $settings->postmark_username,
-                    'password' => $settings->postmark_password,
-                    'require_tls' => true,
-                    'timeout' => 10,
-                ]);
+                $mailer = Mail::build($settings->postmarkTransport());
                 $mailer->to($notificationEmail)->send($message->from($settings->mail_from_address, $settings->mail_from_name));
             } else {
                 Mail::to($notificationEmail)->send($message);

@@ -55,6 +55,8 @@ This file records durable decisions that future tasks should preserve. Implement
 - Editors manage permitted content and media but cannot manage users, roles, submissions, or system settings.
 - The final active Admin cannot be demoted or deactivated.
 - Sensitive CV and leasing documents remain on private storage.
+- Password changes rotate remember-me tokens and revoke database sessions; dashboard requests also use Laravel's authenticated-session password check. Reset emails reuse dashboard Postmark settings with environment mail as the disabled-state fallback.
+- Submission CSV exports neutralize formula-leading visitor input. WordPress image imports require exact trusted HTTPS hosts, reject redirects, and enforce a 10 MB transfer limit.
 
 ## Infrastructure and deployment
 

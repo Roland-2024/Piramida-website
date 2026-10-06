@@ -23,10 +23,10 @@
         </div>
 
         <fieldset class="mt-8 space-y-5 rounded-xl border border-slate-200 p-5">
-            <legend class="px-2 font-semibold">Postmark SMTP — submission notifications</legend>
+            <legend class="px-2 font-semibold">Postmark SMTP — notifications and password resets</legend>
             <p class="text-sm text-slate-500">smtp.postmarkapp.com · Port 587 · STARTTLS required. Enable SMTP in Postmark and verify your sender domain/address first. Use a transactional stream's SMTP Access Key and Secret Key, or the Server API Token in both fields. Credentials are encrypted and never displayed again.</p>
             <input type="hidden" name="postmark_enabled" value="0">
-            <label class="flex items-center gap-2"><input type="checkbox" name="postmark_enabled" value="1" @checked(old('postmark_enabled', $settings->postmark_enabled))> Use Postmark for request notifications</label>
+            <label class="flex items-center gap-2"><input type="checkbox" name="postmark_enabled" value="1" @checked(old('postmark_enabled', $settings->postmark_enabled))> Use Postmark for request notifications and password resets</label>
             <p class="text-sm text-slate-500">When disabled, the environment mailer remains in use. Saving does not send an email.</p>
             <div class="grid gap-5 md:grid-cols-2">
                 @foreach (['postmark_username' => 'SMTP Access Key / Username', 'postmark_password' => 'SMTP Secret Key / Password'] as $name => $label)

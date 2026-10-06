@@ -20,6 +20,7 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
         $request->session()->regenerate();
+        $request->session()->put('password_hash_'.Auth::getDefaultDriver(), Auth::guard()->hashPasswordForCookie($request->user()->getAuthPassword()));
 
         return redirect()->intended(route('admin.dashboard'));
     }

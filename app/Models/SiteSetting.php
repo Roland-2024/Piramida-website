@@ -42,6 +42,16 @@ class SiteSetting extends Model
         return $this->hasMany(SiteSettingTranslation::class);
     }
 
+    public function postmarkTransport(): array
+    {
+        return [
+            'transport' => 'smtp', 'scheme' => 'smtp',
+            'host' => 'smtp.postmarkapp.com', 'port' => 587,
+            'username' => $this->postmark_username, 'password' => $this->postmark_password,
+            'require_tls' => true, 'timeout' => 10,
+        ];
+    }
+
     public static function current(): self
     {
         return static::query()->firstOrCreate(['id' => 1]);

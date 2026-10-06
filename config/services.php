@@ -38,6 +38,8 @@ return [
     'wordpress_events' => [
         'url' => env('WORDPRESS_EVENTS_URL', 'https://piramidaime.al/wp-json'),
         'api_key' => env('WORDPRESS_EVENTS_API_KEY'),
+        // Exact trusted image hosts, never wildcard domains. The API host is also allowed.
+        'image_hosts' => array_filter(array_map('trim', explode(',', env('WORDPRESS_EVENTS_IMAGE_HOSTS', 'piramidaime.al,www.piramidaime.al')))),
     ],
 
 ];

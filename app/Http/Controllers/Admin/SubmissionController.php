@@ -90,7 +90,12 @@ class SubmissionController extends Controller
             fputcsv($handle, ['ID', 'Type', 'Status', 'Name', 'Email', 'Phone', 'Subject', 'Created']);
 
             foreach ($this->filteredQuery($filters)->latest()->cursor() as $submission) {
-                fputcsv($handle, [
+                fputcsv($handle, array_map(static function ($value) {
+                    $value = (string) $value;
+
+                    // Exported visitor input must remain text when opened in a spreadsheet.
+                    return preg_match('/^[\s\x{FEFF}]*[=+@\-＝＋＠－]/u', $value) ? "\t".$value : $value;
+                }, [
                     $submission->id,
                     $submission->type->label(),
                     $submission->status->label(),
@@ -99,7 +104,7 @@ class SubmissionController extends Controller
                     $submission->phone,
                     $submission->subject,
                     $submission->created_at->toIso8601String(),
-                ]);
+                ]), ',', '"', '');
             }
 
             fclose($handle);

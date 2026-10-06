@@ -90,10 +90,12 @@ Route::middleware('guest')->group(function (): void {
     Route::get('/admin/forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
     Route::post('/admin/forgot-password', [PasswordResetLinkController::class, 'store'])
+        ->middleware('throttle:5,1')
         ->name('password.email');
     Route::get('/admin/reset-password/{token}', [NewPasswordController::class, 'create'])
         ->name('password.reset');
     Route::post('/admin/reset-password', [NewPasswordController::class, 'store'])
+        ->middleware('throttle:10,1')
         ->name('password.update');
 });
 
@@ -103,7 +105,7 @@ Route::post('/admin/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth', EnsureUserIsActive::class])
+    ->middleware(['auth', EnsureUserIsActive::class, 'auth.session'])
     ->group(function (): void {
         Route::get('/', DashboardController::class)->name('dashboard');
 

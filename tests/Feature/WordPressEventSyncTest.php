@@ -6,6 +6,7 @@ use App\Actions\SynchronizeWordPressEvents;
 use App\Enums\ContentStatus;
 use App\Models\Event;
 use App\Models\User;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -16,6 +17,35 @@ class WordPressEventSyncTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_image_download_rejects_untrusted_hosts_and_redirects(): void
+    {
+        config(['services.wordpress_events.image_hosts' => ['cdn.test']]);
+        Http::fake(['https://cdn.test/redirect.png' => Http::response('', 302, ['Location' => 'http://127.0.0.1/private'])]);
+        $action = app(SynchronizeWordPressEvents::class);
+        $method = new \ReflectionMethod($action, 'mediaFor');
+        foreach (['https://127.0.0.1/private', 'https://untrusted.test/image.png', 'https://cdn.test:8443/image.png', 'https://user:pass@cdn.test/image.png'] as $url) {
+            $this->assertNull($method->invoke($action, ['featured_image_url' => $url], collect()));
+        }
+        Http::assertNothingSent();
+        $this->assertNull($method->invoke($action, ['featured_image_url' => 'https://cdn.test/redirect.png'], collect()));
+        Http::assertSentCount(1);
+    }
+
+    public function test_download_limits_cover_declared_and_streamed_sizes(): void
+    {
+        $action = app(SynchronizeWordPressEvents::class);
+        $options = (new \ReflectionMethod($action, 'imageDownloadOptions'))->invoke($action);
+        $options['progress'](0, 1024, 0, 0);
+        foreach ([fn () => $options['on_headers'](new Response(200, ['Content-Length' => (string) (11 * 1024 * 1024)])), fn () => $options['progress'](0, 11 * 1024 * 1024, 0, 0)] as $check) {
+            try {
+                $check();
+                $this->fail('Oversized image was accepted.');
+            } catch (\RuntimeException $exception) {
+                $this->assertSame('Featured image exceeds 10 MB.', $exception->getMessage());
+            }
+        }
+    }
+
     public function test_it_synchronizes_bilingual_events_without_touching_manual_events(): void
     {
         Storage::fake('public');
@@ -23,6 +53,7 @@ class WordPressEventSyncTest extends TestCase
             'filesystems.default' => 'public',
             'services.wordpress_events.url' => 'https://wordpress.test/wp-json',
             'services.wordpress_events.api_key' => 'test-key',
+            'services.wordpress_events.image_hosts' => ['cdn.test'],
         ]);
 
         $manual = Event::factory()->published()->create();

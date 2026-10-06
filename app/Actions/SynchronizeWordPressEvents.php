@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Throwable;
 
@@ -379,6 +380,15 @@ class SynchronizeWordPressEvents
         }
 
         try {
+            $parts = parse_url($url);
+            $allowedHosts = array_merge(config('services.wordpress_events.image_hosts', []), [parse_url(config('services.wordpress_events.url'), PHP_URL_HOST)]);
+            if (! $parts || isset($parts['user']) || isset($parts['pass']) || isset($parts['fragment'])
+                || ($parts['port'] ?? 443) !== 443
+                || ! in_array(strtolower($parts['host'] ?? ''), $allowedHosts, true)
+                || filter_var($parts['host'] ?? '', FILTER_VALIDATE_IP)) {
+                throw new RuntimeException('Featured image host is not permitted.');
+            }
+
             $disk = config('filesystems.default');
             $pathPrefix = 'media/wordpress/'.sha1($url).'.';
             $existing = Media::withTrashed()->where('path', 'like', $pathPrefix.'%')->first();
@@ -396,7 +406,11 @@ class SynchronizeWordPressEvents
                 return $this->media[$url] = $existing;
             }
 
-            $response = Http::timeout(30)->retry(2, 250)->get($url)->throw();
+            $response = Http::timeout(30)->connectTimeout(5)->withoutRedirecting()
+                ->withOptions($this->imageDownloadOptions())->get($url)->throw();
+            if (! $response->successful()) {
+                throw new RuntimeException('Featured image redirects are not allowed.');
+            }
             $contents = $response->body();
 
             if (strlen($contents) > 10 * 1024 * 1024 || ($dimensions = @getimagesizefromstring($contents)) === false) {
@@ -437,10 +451,29 @@ class SynchronizeWordPressEvents
 
             return $this->media[$url] = $media;
         } catch (Throwable $exception) {
-            report($exception);
-            $this->warnings[] = 'Featured image could not be imported: '.$exception->getMessage();
+            logger()->warning('WordPress featured image could not be imported.');
+            $this->warnings[] = 'Featured image could not be imported; check its host, size and format.';
 
             return $this->media[$url] = null;
         }
+    }
+
+    protected function imageDownloadOptions(): array
+    {
+        $limit = 10 * 1024 * 1024;
+
+        return [
+            'decode_content' => false,
+            'on_headers' => static function (ResponseInterface $response) use ($limit): void {
+                if ((float) $response->getHeaderLine('Content-Length') > $limit) {
+                    throw new RuntimeException('Featured image exceeds 10 MB.');
+                }
+            },
+            'progress' => static function ($total, $downloaded, $uploadTotal, $uploaded) use ($limit): void {
+                if ($total > $limit || $downloaded > $limit) {
+                    throw new RuntimeException('Featured image exceeds 10 MB.');
+                }
+            },
+        ];
     }
 }

@@ -19,10 +19,13 @@ class PasswordResetLinkController extends Controller
     {
         $request->validate(['email' => ['required', 'email']]);
 
-        $status = Password::sendResetLink($request->only('email'));
+        try {
+            Password::sendResetLink($request->only('email'));
+        } catch (\Throwable $exception) {
+            // Transport diagnostics may contain SMTP credentials; do not log the exception.
+            logger()->error('Password reset email delivery failed.');
+        }
 
-        return $status === Password::ResetLinkSent
-            ? back()->with('status', __($status))
-            : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
+        return back()->with('status', 'If an account exists for that email, a password reset link will be sent.');
     }
 }

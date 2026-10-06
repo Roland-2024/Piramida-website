@@ -80,7 +80,7 @@ abstract class TranslatedContentController extends Controller
     {
         $item = $this->routeModel($request);
         Gate::authorize('update', $item);
-        $item->load(['translations', 'gallery']);
+        $item->load($this->withMedia ? ['translations', 'gallery'] : ['translations']);
 
         return view('admin.catalog.edit', [
             'item' => $item,
