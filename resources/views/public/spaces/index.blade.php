@@ -45,10 +45,7 @@
             </button>
           </div>
 
-          <div class="event-spaces-carousel-pagination" aria-hidden="true">
-            <span></span>
-            <span></span>
-          </div>
+          <div class="event-spaces-carousel-pagination" aria-label="{{ __('cms.navigation') }}"></div>
         </section>
 
         <section class="event-spaces-hero" aria-labelledby="event-spaces-title">

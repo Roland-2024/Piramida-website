@@ -231,9 +231,35 @@ if (eventSection) {
 }
 document.querySelectorAll('.event-spaces-carousel').forEach(carousel => {
     const track = carousel.querySelector('.event-spaces-card-track');
-    carousel.querySelectorAll('.event-spaces-carousel-arrow').forEach(button => button.addEventListener('click', () => {
-        scrollCarousel(track, track.scrollLeft + track.clientWidth * (button.classList.contains('event-spaces-carousel-arrow-left') ? -1 : 1));
-    }));
+    const previous = carousel.querySelector('.event-spaces-carousel-arrow-left');
+    const next = carousel.querySelector('.event-spaces-carousel-arrow-right');
+    const pagination = carousel.parentElement.querySelector('.event-spaces-carousel-pagination');
+    let positions = [];
+    const update = () => {
+        previous.disabled = track.scrollLeft <= 1;
+        next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 1;
+        const active = positions.reduce((best, value, index) => Math.abs(value - track.scrollLeft) < Math.abs(positions[best] - track.scrollLeft) ? index : best, 0);
+        [...pagination.children].forEach((dot, index) => dot.setAttribute('aria-current', String(index === active)));
+    };
+    const resize = () => {
+        const maximum = Math.max(0, track.scrollWidth - track.clientWidth);
+        positions = [0];
+        for (let offset = track.clientWidth; offset > 0 && offset < maximum; offset += track.clientWidth) positions.push(offset);
+        if (maximum > 1) positions.push(maximum);
+        previous.hidden = next.hidden = pagination.hidden = maximum <= 1;
+        pagination.replaceChildren(...positions.map((position, index) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.setAttribute('aria-label', `${pagination.getAttribute('aria-label')} ${index + 1}`);
+            dot.addEventListener('click', () => scrollCarousel(track, position));
+            return dot;
+        }));
+        update();
+    };
+    previous.addEventListener('click', () => scrollCarousel(track, track.scrollLeft - track.clientWidth));
+    next.addEventListener('click', () => scrollCarousel(track, track.scrollLeft + track.clientWidth));
+    track.addEventListener('scroll', update, { passive: true });
+    new ResizeObserver(resize).observe(track);
 });
 document.querySelectorAll('.leasing-form-carousel').forEach(carousel => {
     const track = carousel.querySelector('.leasing-form-gallery');

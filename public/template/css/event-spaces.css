@@ -480,16 +480,24 @@ body {
     margin-top: 34px;
   }
 
-  .event-spaces-carousel-pagination span {
+  .event-spaces-carousel-pagination button {
     width: 26px;
     height: 3px;
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.26);
+    border: 0;
+    padding: 0;
+    cursor: pointer;
   }
 
-  .event-spaces-carousel-pagination span:first-child {
+  .event-spaces-carousel-pagination button[aria-current="true"] {
     background: var(--color-white);
   }
+
+  .event-spaces-carousel-arrow[hidden],
+  .event-spaces-carousel-pagination[hidden] { display: none; }
+
+  .event-spaces-carousel-arrow:disabled { opacity: 0.35; cursor: default; }
 }
 
 @media (max-width: 767px) {
