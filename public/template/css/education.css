@@ -56,6 +56,10 @@
 }
 
 @media (min-width: 768px) {
+  .education-main h1 {
+    transform: translateY(-96px);
+  }
+
   .education-main {
     background: linear-gradient(
       to bottom,
