@@ -20,7 +20,7 @@
 
 
         <article class="news-article mx-auto max-w-6xl px-6 prose-content">
-{!! $translation->content !!}
+{!! preg_replace('~<p>(?:\s|&nbsp;|<br\s*/?>)*</p>~iu', '', $translation->content ?? '') !!}
 @if($article->gallery->isNotEmpty())<div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
 @foreach($article->gallery as $media)<img src="{{ $media->url() }}" alt="{{ app()->getLocale() === 'en' ? $media->alt_text_en : $media->alt_text_al }}" class="w-full h-[260px] object-cover rounded-[16px]" loading="lazy">@endforeach
 </div>@endif</article>

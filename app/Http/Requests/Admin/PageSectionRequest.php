@@ -30,7 +30,7 @@ class PageSectionRequest extends FormRequest
             'primary_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
             'secondary_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
             'gallery_media_ids' => ['nullable', 'array', 'max:30'],
-            'gallery_media_ids.*' => [Rule::exists('media', 'id')->whereNull('deleted_at')],
+            'gallery_media_ids.*' => ['integer', 'distinct', Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'video_url' => ['bail', 'nullable', 'string', 'max:2048', new SafeUrl],
             'primary_button_url' => ['nullable', 'string', 'max:2048', new SafeUrl],
             'secondary_button_url' => ['nullable', 'string', 'max:2048', new SafeUrl],

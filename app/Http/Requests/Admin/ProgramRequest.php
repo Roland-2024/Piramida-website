@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Admin;
 
 use App\Enums\BookingMode;
-use App\Enums\ProgramCategory;
 use App\Models\Program;
 use Illuminate\Validation\Rule;
 
@@ -16,7 +15,7 @@ class ProgramRequest extends TranslatedContentRequest
     public function rules(): array
     {
         return $this->contentRules('program_translations', [
-            'category' => ['required', Rule::enum(ProgramCategory::class)],
+            'category' => ['required', Rule::in(['education', 'innovation', 'art_culture'])],
             'starts_at' => ['nullable', 'date'],
             'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
             'booking_mode' => ['required', Rule::enum(BookingMode::class)],

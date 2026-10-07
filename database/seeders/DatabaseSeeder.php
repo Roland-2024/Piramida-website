@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
 
         if (config('cms.seed_demo_content')) {
             $this->call(DemoContentSeeder::class);
+            $this->call(CarouselProgramSeeder::class);
         }
     }
 }

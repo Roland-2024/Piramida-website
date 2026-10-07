@@ -79,5 +79,6 @@ class PresentationPageSeeder extends Seeder
                 }
             }
         });
+        $this->call(CarouselProgramSeeder::class);
     }
 }

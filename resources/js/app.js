@@ -1,3 +1,5 @@
+import './gallery-picker';
+
 const sidebar = document.querySelector('[data-sidebar]');
 const overlay = document.querySelector('[data-sidebar-overlay]');
 const toggle = document.querySelector('[data-sidebar-toggle]');

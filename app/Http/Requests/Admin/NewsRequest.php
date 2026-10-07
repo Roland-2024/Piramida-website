@@ -36,7 +36,7 @@ class NewsRequest extends FormRequest
             ],
             'author_name' => ['nullable', 'string', 'max:255'],
             'gallery_media_ids' => ['nullable', 'array', 'max:30'],
-            'gallery_media_ids.*' => [Rule::exists('media', 'id')->whereNull('deleted_at')],
+            'gallery_media_ids.*' => ['integer', 'distinct', Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'translations' => ['required', 'array'],
         ];
 

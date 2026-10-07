@@ -11,6 +11,7 @@ use App\Models\Media;
 use App\Models\Page;
 use App\Models\PageSection;
 use App\Models\Space;
+use Database\Seeders\CarouselProgramSeeder;
 use Database\Seeders\PresentationPageSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -20,7 +21,7 @@ class PresentationTemplateTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_shared_template_uses_published_localized_pages_and_active_ordered_sections(): void
+    public function test_shared_template_uses_imported_posts_and_hides_missing_translations(): void
     {
         foreach (['education', 'innovation', 'art'] as $slug) {
             $page = Page::factory()->published()->create();
@@ -38,11 +39,13 @@ class PresentationTemplateTest extends TestCase
                 'primary_media_id' => Media::factory(),
             ]);
             $first->translations()->where('locale', 'en')->delete();
+            $this->seed(CarouselProgramSeeder::class);
 
             foreach (['al' => "faqja-{$page->id}", 'en' => $slug] as $locale => $localizedSlug) {
                 $this->get(route('public.pages.show', [$locale, $localizedSlug]))
                     ->assertOk()->assertViewIs('public.pages.education')
-                    ->assertViewHas('slides', fn ($slides) => $slides->count() === 2 && $slides[0]['title'] === "Seksioni {$first->id}")
+                    ->assertViewHas('slides', fn ($slides) => $slides->count() === ($locale === 'al' ? 2 : 1)
+                        && $slides[0]['title'] === ($locale === 'al' ? "Seksioni {$first->id}" : "Section {$last->id}"))
                     ->assertDontSee("Seksioni {$hidden->id}")->assertDontSee("Section {$hidden->id}");
                 $this->get(route('public.home', $locale))->assertSee(route('public.pages.show', [$locale, $localizedSlug]), false);
             }

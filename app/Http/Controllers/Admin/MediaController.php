@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateMediaRequest;
 use App\Models\Media;
 use App\Services\MediaUploader;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -49,13 +50,17 @@ class MediaController extends Controller
         return view('admin.media.create');
     }
 
-    public function store(StoreMediaRequest $request, MediaUploader $uploader): RedirectResponse
+    public function store(StoreMediaRequest $request, MediaUploader $uploader): RedirectResponse|JsonResponse
     {
         $media = $uploader->upload(
             $request->file('file'),
             $request->user(),
             $request->safe()->only(['alt_text_al', 'alt_text_en']),
         );
+
+        if ($request->expectsJson()) {
+            return response()->json(['id' => $media->id, 'name' => $media->original_name, 'url' => $media->url()], 201);
+        }
 
         return redirect()->route('admin.media.edit', $media)->with('success', 'Media uploaded.');
     }

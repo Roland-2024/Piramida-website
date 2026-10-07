@@ -84,19 +84,7 @@
             @error('featured_media_id') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
         </div>
         <div>
-            <label for="gallery_media_ids" class="block text-sm font-medium">Gallery images</label>
-            @php
-                $selectedGallery = collect(old('gallery_media_ids', $editing ? $item->gallery->modelKeys() : []))
-                    ->map(fn ($id) => (string) $id)
-                    ->all();
-            @endphp
-            <select id="gallery_media_ids" name="gallery_media_ids[]" multiple size="5" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
-                @foreach ($mediaItems as $media)
-                    <option value="{{ $media->id }}" @selected(in_array((string) $media->id, $selectedGallery, true))>{{ $media->original_name }}</option>
-                @endforeach
-            </select>
-            <p class="mt-1 text-xs text-slate-500">Use Ctrl/Cmd to select multiple images.</p>
-            @error('gallery_media_ids.*') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+<x-admin.gallery-picker :media-items="$mediaItems" :selected="$editing ? $item->gallery->modelKeys() : []" />
         </div>
     </div>
 @endif

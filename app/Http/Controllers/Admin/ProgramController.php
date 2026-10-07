@@ -33,7 +33,7 @@ class ProgramController extends TranslatedContentController
     protected function globalFields(): array
     {
         return [
-            ['name' => 'category', 'label' => 'Category', 'type' => 'select', 'required' => true, 'options' => $this->options(ProgramCategory::cases())],
+            ['name' => 'category', 'label' => 'Carousel page', 'type' => 'select', 'required' => true, 'options' => array_diff_key($this->options(ProgramCategory::cases()), ['business' => true])],
             ['name' => 'starts_at', 'label' => 'Starts at', 'type' => 'datetime-local'],
             ['name' => 'ends_at', 'label' => 'Ends at', 'type' => 'datetime-local'],
             ['name' => 'booking_mode', 'label' => 'Request / booking action', 'type' => 'select', 'required' => true, 'options' => $this->options(BookingMode::cases())],

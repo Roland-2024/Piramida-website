@@ -59,7 +59,7 @@ abstract class TranslatedContentRequest extends FormRequest
             $rules['gallery_media_ids.*'] = [
                 'integer',
                 'distinct',
-                Rule::exists('media', 'id')->whereNull('deleted_at'),
+                Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%')),
             ];
         }
 

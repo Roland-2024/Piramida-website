@@ -6,6 +6,7 @@ use App\Enums\SectionType;
 use App\Http\Controllers\Controller;
 use App\Models\Business;
 use App\Models\Page;
+use App\Models\Program;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\View\View;
@@ -49,21 +50,31 @@ class PageController extends Controller
                         'title' => $business->translation($locale, false)->name,
                         'description' => strip_tags($business->translation($locale, false)->description ?? ''),
                     ])
-                : $page->sections
-                    ->whereIn('type', [SectionType::TextImage, SectionType::Gallery])
-                    ->flatMap(function ($section) use ($locale, $page) {
-                        $content = $section->translation($locale);
-                        $images = $section->gallery->isNotEmpty()
-                            ? $section->gallery
-                            : collect([$section->primaryMedia])->filter();
+                : (in_array($page->translation('en', false)?->slug, ['education', 'innovation', 'art'], true)
+                    ? Program::query()->published()
+                        ->where('category', $page->translation('en', false)->slug === 'art' ? 'art_culture' : $page->translation('en', false)->slug)
+                        ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
+                        ->with(['translations', 'featuredMedia'])->orderBy('display_order')->orderBy('id')->get()
+                        ->map(fn (Program $program) => [
+                            'url' => $program->featuredMedia?->url(),
+                            'title' => $program->translation($locale, false)->title,
+                            'description' => strip_tags($program->translation($locale, false)->description ?? ''),
+                        ])
+                    : $page->sections
+                        ->whereIn('type', [SectionType::TextImage, SectionType::Gallery])
+                        ->flatMap(function ($section) use ($locale, $page) {
+                            $content = $section->translation($locale);
+                            $images = $section->gallery->isNotEmpty()
+                                ? $section->gallery
+                                : collect([$section->primaryMedia])->filter();
 
-                        return $images->map(fn ($image) => [
-                            'url' => $image->url(),
-                            'title' => ($images->count() > 1 ? ($locale === 'en' ? $image->alt_text_en : $image->alt_text_al) : null)
-                                ?: $content?->subtitle ?: $content?->title ?: $page->translation($locale)->title,
-                            'description' => strip_tags($content?->description ?? ''),
-                        ]);
-                    })->values(),
+                            return $images->map(fn ($image) => [
+                                'url' => $image->url(),
+                                'title' => ($images->count() > 1 ? ($locale === 'en' ? $image->alt_text_en : $image->alt_text_al) : null)
+                                    ?: $content?->subtitle ?: $content?->title ?: $page->translation($locale)->title,
+                                'description' => strip_tags($content?->description ?? ''),
+                            ]);
+                        })->values()),
         ]);
     }
 

@@ -13,10 +13,11 @@
 .homepage-video-close { position: absolute; top: 0; right: 0; width: 44px; height: 44px; font-size: 30px; cursor: pointer; }
 .homepage-video-fallback { position: absolute; top: 10px; left: 16px; color: #fff; text-decoration: underline; }
 .home-attraction-description { color:#4b4b4b; font-weight:400; }
-.news-article { padding-block:64px; font-family:var(--font-body); font-size:18px; line-height:1.65; color:#d0d3dc; }
+.news-article { padding-block:64px; font-family:var(--font-body); font-size:18px; line-height:1.55; color:#d0d3dc; }
 .news-article p { font:inherit; color:inherit; margin:0; }
 .news-article > * + * { margin-top:28px; }
-.news-article.prose-content p + p { margin-top:12px; }
+.news-article.prose-content p + p { margin-top:8px; }
+.news-article p:empty { display:none; }
 @media(max-width:767px) { .news-article { padding-block:40px; font-size:16px; } }
 #mobileMenu { max-width:none; max-height:none; padding:0; border:0; color:white; }
 #mobileMenu:not([open]) { display:none; }

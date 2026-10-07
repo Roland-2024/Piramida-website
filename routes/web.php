@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\PageSectionController;
+use App\Http\Controllers\Admin\ProgramController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SpaceController;
 use App\Http\Controllers\Admin\SubmissionController;
@@ -34,6 +35,7 @@ use App\Http\Middleware\SetLocale;
 use App\Models\Attraction;
 use App\Models\Business;
 use App\Models\Career;
+use App\Models\Program;
 use App\Models\Space;
 use App\Support\Seo;
 use Illuminate\Http\Request;
@@ -43,6 +45,7 @@ Route::model('attraction', Attraction::class);
 Route::model('business', Business::class);
 Route::model('space', Space::class);
 Route::model('career', Career::class);
+Route::model('program', Program::class);
 
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/robots.txt', function (Request $request) {
@@ -118,6 +121,8 @@ Route::prefix('admin')
 
         Route::post('sections/{section}/restore', [PageSectionController::class, 'restore'])->name('sections.restore');
         Route::resource('sections', PageSectionController::class);
+        Route::post('programs/{id}/restore', [ProgramController::class, 'restore'])->name('programs.restore');
+        Route::resource('programs', ProgramController::class)->except('show');
 
         Route::post('news/{news}/restore', [NewsController::class, 'restore'])->name('news.restore');
         Route::resource('news', NewsController::class);

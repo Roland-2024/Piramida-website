@@ -36,13 +36,7 @@
     </div>
     <div></div>
     <div class="lg:col-span-2">
-        <label for="gallery_media_ids" class="block text-sm font-medium">Gallery / partner logos</label>
-        <select id="gallery_media_ids" name="gallery_media_ids[]" multiple size="6" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
-            @foreach ($mediaItems as $media)
-                <option value="{{ $media->id }}" @selected(in_array((string) $media->id, array_map('strval', old('gallery_media_ids', isset($section) ? $section->gallery->pluck('id')->all() : [])), true))>{{ $media->original_name }}</option>
-            @endforeach
-        </select>
-        <p class="mt-2 text-xs text-slate-500">Used for Gallery sections and the partner logos in the design.</p>
+<x-admin.gallery-picker :media-items="$mediaItems" :selected="isset($section) ? $section->gallery->modelKeys() : []" label="Gallery / partner logos" />
     </div>
     <div>
         <label for="video_url" class="block text-sm font-medium">Video URL</label>

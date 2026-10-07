@@ -21,6 +21,7 @@ class StoreMediaRequest extends FormRequest
             'file' => [
                 'required',
                 'file',
+                ...($this->boolean('gallery_upload') ? ['image'] : []),
                 'max:10240',
                 'mimes:jpg,jpeg,png,webp,gif,pdf,mp4,webm',
                 'extensions:jpg,jpeg,png,webp,gif,pdf,mp4,webm',
