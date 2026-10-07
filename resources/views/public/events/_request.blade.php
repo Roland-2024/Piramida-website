@@ -8,10 +8,10 @@
           <button
             data-request-close class="registration-close"
             type="button"
-            aria-label="Close registration form"
+            aria-label="{{ __('website.events__request_close_registration_form') }}"
           >
             <img
-              src="/template/images/Cross.svg"
+              src="{{ \App\Support\WebsiteContent::image('template/images/Cross.svg') }}"
               alt=""
               class="h-7 w-7 object-contain"
             />
@@ -22,7 +22,7 @@
             <button
               data-request-close class="registration-close registration-close-mobile"
               type="button"
-              aria-label="Close registration form"
+              aria-label="{{ __('website.events__request_close_registration_form') }}"
             >
               <span aria-hidden="true"></span>
             </button>
@@ -31,37 +31,37 @@
             <p class="template-request-notice">{{ __('cms.request_confirmation_notice') }}</p><form class="registration-form" method="POST" action="{{ route('public.events.request', [app()->getLocale(), $translation->slug]) }}">@csrf
 @include('public.submissions._feedback')
               <div class="registration-field">
-                <label class="sr-only" for="fullName">Full name</label>
+                <label class="sr-only" for="fullName">{{ __('website.events__request_full_name_90') }}</label>
 
                 <input
                   id="fullName"
                   name="name" value="{{ old('name') }}"
                   type="text"
-                  placeholder="Full Name*"
+                  placeholder="{{ __('website.events__request_full_name') }}"
                   required
                 />
               </div>
 
               <div class="registration-field">
-                <label class="sr-only" for="email">Email</label>
+                <label class="sr-only" for="email">{{ __('website.events__request_email') }}</label>
 
                 <input
                   id="email"
                   name="email" value="{{ old('email') }}"
                   type="email"
-                  placeholder="Email"
+                  placeholder="{{ __('website.events__request_email') }}"
                   required
                 />
               </div>
 
               <div class="registration-field registration-phone-field">
-                <label class="sr-only" for="phone">Phone</label>
+                <label class="sr-only" for="phone">{{ __('website.events__request_phone') }}</label>
 
                 <input
                   id="phone"
                   name="phone" value="{{ old('phone') }}"
                   type="tel"
-                  placeholder="Phone"
+                  placeholder="{{ __('website.events__request_phone') }}"
                   required
                 />
 

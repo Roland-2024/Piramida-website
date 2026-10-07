@@ -106,6 +106,9 @@ class PresentationTemplateTest extends TestCase
             ->assertSee('id="space-'.$first->id.'-email"', false)
             ->assertSee('id="space-'.$second->id.'-email"', false);
         $this->assertSame(1, substr_count($response->getContent(), 'data-feedback="true"'));
+        $this->assertSame(4, substr_count($response->getContent(), 'data-space-target='));
+        $response->assertSee('data-space-target="event-spaces-intro"', false)
+            ->assertSee('data-space-target="space-3"', false);
     }
 
     public function test_career_popup_keeps_unique_fields_and_reopens_only_the_invalid_application(): void

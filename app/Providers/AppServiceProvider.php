@@ -15,6 +15,7 @@ use App\Models\SiteSetting;
 use App\Models\Space;
 use App\Models\User;
 use App\Policies\ContentPolicy;
+use App\Support\WebsiteContent;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -27,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->scoped(WebsiteContent::class);
     }
 
     /**
@@ -43,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('manage-users', fn (User $user): bool => $user->isAdmin());
         Gate::define('manage-submissions', fn (User $user): bool => $user->isAdmin());
         Gate::define('manage-settings', fn (User $user): bool => $user->isAdmin());
+        Gate::define('manage-website-content', fn (User $user): bool => $user->isAdmin() || $user->isEditor());
 
         Gate::policy(Page::class, ContentPolicy::class);
         Gate::policy(PageSection::class, ContentPolicy::class);

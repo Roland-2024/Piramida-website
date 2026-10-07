@@ -13,7 +13,7 @@
     <!-- Mobile footer -->
     <div class="relative z-10 mx-auto max-w-7xl px-[1.5rem] py-10 md:hidden">
       <a href="{{ route('public.home', app()->getLocale()) }}" class="inline-block">
-        <img src="/template/images/logo piramida.svg" alt="Piramida" class="mt-2 h-[22px] w-[50px] object-contain" />
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/logo piramida.svg') }}" alt="{{ __('website.partials_footer_piramida') }}" class="mt-2 h-[22px] w-[50px] object-contain" />
       </a>
 
       <p class="mt-3 text-[14px] font-normal tracking-wide">
@@ -22,7 +22,7 @@
 
       <div class="mt-12 flex items-end justify-between gap-6">
         <div>
-          <h2 class="text-[14px] uppercase tracking-wide">Quick Contact</h2>
+          <h2 class="text-[14px] uppercase tracking-wide">{{ __('website.partials_footer_quick_contact') }}</h2>
 
           <a href="mailto:{{ $siteSettings?->email }}"
             class="mt-2 block text-[14px] tracking-wide text-[#CBFF00] hover:underline">
@@ -35,34 +35,32 @@
         </div>
 
         <div class="flex shrink-0 items-center gap-5">
-          <a href="{{ $siteSettings?->facebook_url ?: '#' }}" aria-label="Facebook"
+          <a href="{{ $siteSettings?->facebook_url ?: '#' }}" aria-label="{{ __('website.partials_footer_facebook') }}"
             class="flex h-8 w-8 items-center justify-center rounded-sm transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CBFF00]">
-            <img src="/template/images/facebook.svg" class="h-5 w-auto object-contain" alt="" />
+            <img src="{{ \App\Support\WebsiteContent::image('template/images/facebook.svg') }}" class="h-5 w-auto object-contain" alt="" />
           </a>
 
-          <a href="{{ $siteSettings?->instagram_url ?: '#' }}" aria-label="Instagram"
+          <a href="{{ $siteSettings?->instagram_url ?: '#' }}" aria-label="{{ __('website.partials_footer_instagram') }}"
             class="flex h-8 w-8 items-center justify-center rounded-sm transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CBFF00]">
-            <img src="/template/images/Ig.svg" class="h-5 w-auto object-contain" alt="" />
+            <img src="{{ \App\Support\WebsiteContent::image('template/images/Ig.svg') }}" class="h-5 w-auto object-contain" alt="" />
           </a>
         </div>
       </div>
 
       <div class="mt-16">
-        <h2 class="text-center text-[12px] font-normal uppercase tracking-wide">
-          Partnerët tanë
-        </h2>
+        <h2 class="text-center text-[12px] font-normal uppercase tracking-wide">{{ __('website.partials_footer_partner_t_tan') }}</h2>
 
         <div class="relative left-1/2 mt-3 w-screen -translate-x-1/2 border-t border-white/10" aria-hidden="true"></div>
 
         <div class="mt-4 flex items-center justify-center gap-3">
-          <img src="/template/images/tumo-finale2 1.svg" class="h-8 w-[75px] object-contain" alt="Tumo" />
-          <img src="/template/images/aadffinalk-logo 1.svg" class="h-8 w-[75px] object-contain" alt="AADF" />
-          <img src="/template/images/bashkia2 1.svg" class="h-8 w-[75px] object-contain" alt="Bashkia Tiranë" />
+          <img src="{{ \App\Support\WebsiteContent::image('template/images/tumo-finale2 1.svg') }}" class="h-8 w-[75px] object-contain" alt="{{ __('website.partials_footer_tumo') }}" />
+          <img src="{{ \App\Support\WebsiteContent::image('template/images/aadffinalk-logo 1.svg') }}" class="h-8 w-[75px] object-contain" alt="{{ __('website.partials_footer_aadf') }}" />
+          <img src="{{ \App\Support\WebsiteContent::image('template/images/bashkia2 1.svg') }}" class="h-8 w-[75px] object-contain" alt="{{ __('website.partials_footer_bashkia_tiran') }}" />
         </div>
       </div>
 
       <p class="mt-8 text-center text-[11px] tracking-wide text-white/30">
-        © {{ now()->year }} Piramida. All rights reserved.
+        {{ __('website.copyright', ['year' => now()->year]) }}
       </p>
     </div>
 
@@ -72,7 +70,7 @@
       <div class="grid grid-cols-[minmax(0,1fr)_auto_auto] items-start gap-[80px] xl:gap-[120px]">
         <div>
           <a href="{{ route('public.home', app()->getLocale()) }}" class="inline-block">
-            <img src="/template/images/logo piramida.svg" alt="Piramida" class="h-[40px] w-[90px] object-contain" />
+            <img src="{{ \App\Support\WebsiteContent::image('template/images/logo piramida.svg') }}" alt="{{ __('website.partials_footer_piramida') }}" class="h-[40px] w-[90px] object-contain" />
           </a>
 
           <p class="mt-6 text-[16px] font-normal tracking-wide">
@@ -80,23 +78,21 @@
           </p>
 
           <div class="mt-16">
-            <h2 class="text-[12px] font-normal uppercase tracking-wide text-white/90">
-              Partnerët tanë
-            </h2>
+            <h2 class="text-[12px] font-normal uppercase tracking-wide text-white/90">{{ __('website.partials_footer_partner_t_tan') }}</h2>
 
             <div class="-ml-[25px] mt-5 flex items-start justify-start">
-              <img src="/template/images/aadffinalk-logo 1.svg" class="h-[40px] w-[102px] object-contain" alt="AADF" />
-              <img src="/template/images/bashkia2 1.svg" class="h-[40px] w-[102px] object-contain"
-                alt="Bashkia Tiranë" />
-              <img src="/template/images/tumo-finale2 1.svg" class="h-[40px] w-[102px] object-contain" alt="Tumo" />
+              <img src="{{ \App\Support\WebsiteContent::image('template/images/aadffinalk-logo 1.svg') }}" class="h-[40px] w-[102px] object-contain" alt="{{ __('website.partials_footer_aadf') }}" />
+              <img src="{{ \App\Support\WebsiteContent::image('template/images/bashkia2 1.svg') }}" class="h-[40px] w-[102px] object-contain"
+                alt="{{ __('website.partials_footer_bashkia_tiran') }}" />
+              <img src="{{ \App\Support\WebsiteContent::image('template/images/tumo-finale2 1.svg') }}" class="h-[40px] w-[102px] object-contain" alt="{{ __('website.partials_footer_tumo') }}" />
             </div>
           </div>
         </div>
 
         <div class="min-w-[170px]">
-          <h2 class="text-[18px] font-normal tracking-wide">Company</h2>
+          <h2 class="text-[18px] font-normal tracking-wide">{{ __('website.partials_footer_company') }}</h2>
 
-          <nav class="mt-5 flex flex-col gap-4 text-[14px]" aria-label="Footer company navigation">
+          <nav class="mt-5 flex flex-col gap-4 text-[14px]" aria-label="{{ __('website.partials_footer_footer_company_navigation') }}">
             <a href="{{ $pageUrl('about-us') }}" class="group flex items-center">
               <span
                 class="w-0 -translate-x-2 overflow-hidden opacity-0 transition-all duration-300 group-hover:mr-2 group-hover:w-4 group-hover:translate-x-0 group-hover:opacity-100"
@@ -132,9 +128,7 @@
         </div>
 
         <div class="min-w-[240px] border-l border-white/10 pl-[70px]">
-          <h2 class="text-[18px] font-normal tracking-wide opacity-85">
-            Quick Contact
-          </h2>
+          <h2 class="text-[18px] font-normal tracking-wide opacity-85">{{ __('website.partials_footer_quick_contact') }}</h2>
 
           <a href="mailto:{{ $siteSettings?->email }}"
             class="mt-4 block text-[16px] tracking-wide text-[#CBFF00] hover:underline opacity-85">
@@ -146,14 +140,14 @@
           </a>
 
           <div class="mt-9 flex items-center gap-6">
-            <a href="{{ $siteSettings?->facebook_url ?: '#' }}" aria-label="Facebook" @if(!$siteSettings?->facebook_url) aria-disabled="true" tabindex="-1" @endif
+            <a href="{{ $siteSettings?->facebook_url ?: '#' }}" aria-label="{{ __('website.partials_footer_facebook') }}" @if(!$siteSettings?->facebook_url) aria-disabled="true" tabindex="-1" @endif
               class="flex h-8 w-8 items-center justify-center rounded-sm transition-opacity hover:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CBFF00]">
-              <img src="/template/images/facebook.svg" class="h-[25px] w-[14px] object-contain" alt="" />
+              <img src="{{ \App\Support\WebsiteContent::image('template/images/facebook.svg') }}" class="h-[25px] w-[14px] object-contain" alt="" />
             </a>
 
-            <a href="{{ $siteSettings?->instagram_url ?: '#' }}" aria-label="Instagram" @if(!$siteSettings?->instagram_url) aria-disabled="true" tabindex="-1" @endif
+            <a href="{{ $siteSettings?->instagram_url ?: '#' }}" aria-label="{{ __('website.partials_footer_instagram') }}" @if(!$siteSettings?->instagram_url) aria-disabled="true" tabindex="-1" @endif
               class="flex h-8 w-8 items-center justify-center rounded-sm transition-opacity hover:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CBFF00]">
-              <img src="/template/images/Ig.svg" class="h-[21px] w-[21px] object-contain" alt="" />
+              <img src="{{ \App\Support\WebsiteContent::image('template/images/Ig.svg') }}" class="h-[21px] w-[21px] object-contain" alt="" />
             </a>
           </div>
         </div>
@@ -161,16 +155,12 @@
 
       <div class="mt-[120px]">
         <span
-          class="inline-flex rounded-full border border-white/50 px-5 py-2 text-[14px] font-normal uppercase tracking-wide">
-          Lorem ipsum text
-        </span>
+          class="inline-flex rounded-full border border-white/50 px-5 py-2 text-[14px] font-normal uppercase tracking-wide">{{ __('website.partials_footer_lorem_ipsum_text') }}</span>
 
         <div class="mt-8 flex items-center justify-between gap-8">
-          <h2 class="text-[90px] font-normal uppercase leading-none tracking-tight xl:text-[120px]">
-            Piramida
-          </h2>
+          <h2 class="text-[90px] font-normal uppercase leading-none tracking-tight xl:text-[120px]">{{ __('website.partials_footer_piramida') }}</h2>
 
-          <button type="button" data-back-to-top aria-label="Back to top"
+          <button type="button" data-back-to-top aria-label="{{ __('website.partials_footer_back_to_top') }}"
             class="group flex h-[105px] w-[105px] shrink-0 items-center justify-center rounded-full border border-white/50 transition-colors duration-300 hover:bg-white hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CBFF00] focus-visible:ring-offset-4 focus-visible:ring-offset-[#020503]">
             <svg
               class="h-[55px] w-[55px] transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"

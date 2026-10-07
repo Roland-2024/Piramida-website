@@ -56,6 +56,7 @@
                     Media
                 </a>
 
+                <a href="{{ route('admin.website-content.edit') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium text-slate-300 hover:bg-white/5 hover:text-white">Website content</a>
                 @can('manage-users')
                     <a href="{{ route('admin.submissions.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.submissions.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
                         Submissions

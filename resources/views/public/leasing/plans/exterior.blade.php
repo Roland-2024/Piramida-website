@@ -13,7 +13,7 @@
                   <g clip-path="url(#floorPlanClip)">
 
                     <image
-                      href="{{ asset('template/images/leasing/outdoor.png') }}"
+                      href="{{ \App\Support\WebsiteContent::image('template/images/leasing/outdoor.png') }}"
                       x="-60.8"
                       y="-59.97"
                       width="1762"

@@ -1,3 +1,2 @@
 <x-layouts.public :record="$item" :title="$translation->seo_title ?: $translation->name" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['piramida-popup', 'attraction']" :footer="false">
-@include('public.businesses._popup', ['business' => $item])
-</x-layouts.public>
+@include('public.businesses._popup', ['business' =>$item])</x-layouts.public>

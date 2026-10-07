@@ -9,8 +9,8 @@
           <div class="piramida-map-stage">
             <div class="piramida-map-frame">
               <img
-                src="{{ asset('template/images/leasing/piramida-final.webp') }}"
-                alt="Cutaway render of the Piramida building"
+                src="{{ \App\Support\WebsiteContent::image('template/images/leasing/piramida-final.webp') }}"
+                alt="{{ __('website.leasing_index_cutaway_render_of_the_piramida_building') }}"
                 class="piramida-map-image"
               />
 

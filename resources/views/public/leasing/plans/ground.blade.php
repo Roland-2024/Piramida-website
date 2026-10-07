@@ -7,7 +7,7 @@
                                 </defs>
                                 <g clip-path="url(#floorPlanClip)">
 
-                                    <image href="{{ asset('template/images/leasing/kati-0.png') }}" x="-85" y="-58"
+                                    <image href="{{ \App\Support\WebsiteContent::image('template/images/leasing/kati-0.png') }}" x="-85" y="-58"
                                         width="1754.66" height="987" preserveAspectRatio="none" />
 
 

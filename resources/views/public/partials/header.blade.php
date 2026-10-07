@@ -1,7 +1,7 @@
 <header class="site-header absolute top-0 left-0 w-full z-50 bg-transparent">
       <nav class="header-inner">
-        <a href="{{ route('public.home', app()->getLocale()) }}" class="header-logo" aria-label="Piramida homepage">
-          <img src="/template/images/logo piramida.svg" alt="Piramida logo" />
+        <a href="{{ route('public.home', app()->getLocale()) }}" class="header-logo" aria-label="{{ __('website.partials_header_piramida_homepage') }}">
+          <img src="{{ \App\Support\WebsiteContent::image('template/images/logo piramida.svg') }}" alt="{{ __('website.partials_header_piramida_logo') }}" />
         </a>
 
         <button
@@ -13,12 +13,12 @@
           aria-controls="mobileMenu"
         >
           <img
-            src="/template/images/menu icon.svg"
+            src="{{ \App\Support\WebsiteContent::image('template/images/menu icon.svg') }}"
             alt=""
             class="h-8 w-8 object-contain"
           />
         </button>
-      <div class="template-languages">@foreach (config('cms.locales') as $locale => $name)<a href="{{ $languageUrls[$locale] ?? route('public.home', $locale) }}" hreflang="{{ $locale === 'al' ? 'sq' : 'en' }}" @if(app()->getLocale() === $locale) aria-current="page" @endif>{{ strtoupper($locale) }}</a>@endforeach</div></nav>
+      <div class="template-languages">@foreach (config('cms.locales') as $locale =>$name)<a href="{{ $languageUrls[$locale] ?? route('public.home', $locale) }}" hreflang="{{ $locale === 'al' ? 'sq' : 'en' }}" @if(app()->getLocale() === $locale) aria-current="page" @endif>{{ strtoupper($locale) }}</a>@endforeach</div></nav>
     </header>
 
     <!-- Fullscreen menu -->
@@ -31,7 +31,7 @@
         aria-label="{{ __('cms.close') }}"
       >
         <img
-          src="/template/images/Cross.svg"
+          src="{{ \App\Support\WebsiteContent::image('template/images/Cross.svg') }}"
           alt=""
           class="h-8 w-8 object-contain"
         />
@@ -41,12 +41,12 @@
         <!-- Left side -->
         <section class="menu-left">
           <img
-            src="/template/images/logo piramida.svg"
-            alt="Piramida logo"
+            src="{{ \App\Support\WebsiteContent::image('template/images/logo piramida.svg') }}"
+            alt="{{ __('website.partials_header_piramida_logo') }}"
             class="menu-logo"
           />
 
-          <nav class="menu-main-navigation" aria-label="Main navigation">
+          <nav class="menu-main-navigation" aria-label="{{ __('website.partials_header_main_navigation') }}">
             <ul>
               <li>
                 <a href="{{ $pageUrl('education') }}" class="mobile-main-link">{{ __('cms.education') }}</a>
@@ -82,7 +82,7 @@
         <!-- Right side -->
         <section class="menu-right">
           <div class="menu-right-content">
-            <nav class="menu-secondary-links" aria-label="Secondary navigation">
+            <nav class="menu-secondary-links" aria-label="{{ __('website.partials_header_secondary_navigation') }}">
               <a href="{{ $pageUrl('about-us') }}" class="mobile-small-link">{{ __('cms.about_us') }}</a>
               <a href="{{ route('public.news.index', app()->getLocale()) }}" class="mobile-small-link">{{ __('cms.news') }}</a>
               <a href="{{ route('public.careers.index', app()->getLocale()) }}" class="mobile-small-link">{{ __('cms.careers') }}</a>
@@ -97,7 +97,7 @@
               </div>
 
               <div class="menu-social-links">
-                <a href="{{ $siteSettings?->facebook_url ?: '#' }}" aria-label="Facebook" @if(!$siteSettings?->facebook_url) aria-disabled="true" tabindex="-1" @endif>
+                <a href="{{ $siteSettings?->facebook_url ?: '#' }}" aria-label="{{ __('website.partials_header_facebook') }}" @if(!$siteSettings?->facebook_url) aria-disabled="true" tabindex="-1" @endif>
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -112,7 +112,7 @@
                   </svg>
                 </a>
 
-                <a href="{{ $siteSettings?->instagram_url ?: '#' }}" aria-label="Instagram" @if(!$siteSettings?->instagram_url) aria-disabled="true" tabindex="-1" @endif>
+                <a href="{{ $siteSettings?->instagram_url ?: '#' }}" aria-label="{{ __('website.partials_header_instagram') }}" @if(!$siteSettings?->instagram_url) aria-disabled="true" tabindex="-1" @endif>
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"

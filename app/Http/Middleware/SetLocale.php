@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\WebsiteContent;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -38,6 +39,7 @@ class SetLocale
 
         App::setLocale($locale);
         URL::defaults(['locale' => $locale]);
+        app(WebsiteContent::class)->loadTranslations();
 
         return $next($request);
     }

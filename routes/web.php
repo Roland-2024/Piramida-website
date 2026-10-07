@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\SpaceController;
 use App\Http\Controllers\Admin\SubmissionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\WebsiteContentController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -108,6 +109,9 @@ Route::prefix('admin')
     ->middleware(['auth', EnsureUserIsActive::class, 'auth.session'])
     ->group(function (): void {
         Route::get('/', DashboardController::class)->name('dashboard');
+        Route::get('website-content', [WebsiteContentController::class, 'edit'])->name('website-content.edit');
+        Route::put('website-content', [WebsiteContentController::class, 'update'])->name('website-content.update');
+        Route::put('website-content/contact', [WebsiteContentController::class, 'updateContact'])->name('website-content.contact');
 
         Route::post('pages/{page}/restore', [PageController::class, 'restore'])->name('pages.restore');
         Route::resource('pages', PageController::class);

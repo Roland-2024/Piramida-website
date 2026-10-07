@@ -4,22 +4,14 @@
 
         <!-- Hero -->
         <div class="text-center">
-            <span class="hero-badge title-60 px-5 py-2 text-white">
-                JOIN<span class="text-[#c6f135]">OUR</span>TEAM
-            </span>
+            <span class="hero-badge title-60 px-5 py-2 text-white">{{ __('website.careers_index_join') }}<span class="text-[#c6f135]">{{ __('website.careers_index_our') }}</span>{{ __('website.careers_index_team') }}</span>
 
-            <div class="title_48-400 text-white md:pt-[120px] pt-[60px]">
-                Careers at Piramida
-            </div>
+            <div class="title_48-400 text-white md:pt-[120px] pt-[60px]">{{ __('website.careers_index_careers_at_piramida') }}</div>
 
-            <p class="title-18 text-[#FFFFFF66]">
-                Build, Create, and Grow With Us
-            </p>
+            <p class="title-18 text-[#FFFFFF66]">{{ __('website.careers_index_build_create_and_grow_with_us') }}</p>
 
             <a href="#open-roles"
-                class="mt-7 inline-flex items-center gap-2 bg-[#c6f135] text-[#05070f] title-14-bold p-[20px] rounded-[40px]">
-                See Open Roles
-                <span aria-hidden="true">→</span>
+                class="mt-7 inline-flex items-center gap-2 bg-[#c6f135] text-[#05070f] title-14-bold p-[20px] rounded-[40px]">{{ __('website.careers_index_see_open_roles') }}<span aria-hidden="true">→</span>
             </a>
         </div>
 
@@ -28,20 +20,20 @@
             <div id="photoCarousel"
                 class="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pl-6 sm:pl-0 sm:overflow-visible sm:snap-none">
                 <div class="snap-start shrink-0 w-[85%] aspect-[4/5] rounded-2xl sm:w-auto sm:shrink sm:aspect-auto sm:h-72 sm:flex-[596] sm:rounded-xl overflow-hidden bg-[#0f1730]">
-                    <img src="/template/images/Careers.jpg"
-                        alt="Team on rooftop terrace" class="w-full h-full object-cover">
+                    <img src="{{ \App\Support\WebsiteContent::image('template/images/Careers.jpg') }}"
+                        alt="{{ __('website.careers_index_team_on_rooftop_terrace') }}" class="w-full h-full object-cover">
                 </div>
                 <div class="snap-start shrink-0 w-[85%] aspect-[4/5] rounded-2xl sm:w-auto sm:shrink sm:aspect-auto sm:h-72 sm:flex-[408] sm:rounded-xl overflow-hidden bg-[#0f1730]">
-                    <img src="/template/images/Careers_1.jpg"
-                        alt="Event crowd" class="w-full h-full object-cover">
+                    <img src="{{ \App\Support\WebsiteContent::image('template/images/Careers_1.jpg') }}"
+                        alt="{{ __('website.careers_index_event_crowd') }}" class="w-full h-full object-cover">
                 </div>
                 <div class="snap-start shrink-0 w-[85%] aspect-[4/5] rounded-2xl sm:w-auto sm:shrink sm:aspect-auto sm:h-72 sm:flex-[494] sm:rounded-xl overflow-hidden bg-[#0f1730]">
-                    <img src="/template/images/Careers_2.jpg"
-                        alt="Store front" class="w-full h-full object-cover">
+                    <img src="{{ \App\Support\WebsiteContent::image('template/images/Careers_2.jpg') }}"
+                        alt="{{ __('website.careers_index_store_front') }}" class="w-full h-full object-cover">
                 </div>
                 <div class="snap-start shrink-0 w-[85%] aspect-[4/5] rounded-2xl sm:w-auto sm:shrink sm:aspect-auto sm:h-72 sm:flex-[288] sm:rounded-xl overflow-hidden bg-[#0f1730]">
-                    <img src="/template/images/Careers_3.jpg"
-                        alt="Mall interior with crowd" class="w-full h-full object-cover">
+                    <img src="{{ \App\Support\WebsiteContent::image('template/images/Careers_3.jpg') }}"
+                        alt="{{ __('website.careers_index_mall_interior_with_crowd') }}" class="w-full h-full object-cover">
                 </div>
             </div>
             <div id="carouselDots" class="flex justify-center items-center gap-2 mt-4 sm:hidden">
@@ -56,7 +48,7 @@
         <!-- Open roles -->
 <span id="open-roles"></span>
 @if(session('success'))<div class="template-success">{{ session('success') }}</div>@endif
-        <div class="mt-16 text-center title-50 text-white">OPEN ROLES</div>
+        <div class="mt-16 text-center title-50 text-white">{{ __('website.careers_index_open_roles') }}</div>
         <div class="mt-6 h-px bg-white/10 max-w-6xl mx-auto"></div>
         <div class="md:mt-[100px] mt-[50px] max-w-6xl mx-auto">
 
@@ -68,10 +60,8 @@
 @if($translation->requirements)<div class="role-body title-18 prose-content mt-4">{!! $translation->requirements !!}</div>@endif
 <div class="mt-5 flex items-center justify-between"><span class="title-16">{{ $translation->location }}</span><a href="{{ route('public.careers.show',[app()->getLocale(), $translation->slug]) }}" @if($item->booking_mode->allowsInternal()) data-dialog-open="career-{{ $item->id }}" @endif class="bg-[#c6f135] text-[#05070f] text-sm font-semibold px-5 py-2 rounded-full">{{ __('cms.apply') }}</a></div>
 </div></div></details>
-@if($item->booking_mode->allowsInternal())
-<dialog id="career-{{ $item->id }}" class="template-dialog" aria-label="{{ $translation->title }}" data-feedback="{{ $errors->any() && (string) old('_career_id') === (string) $item->id ? 'true' : 'false' }}">
-@include('public.careers._application', ['dialog' => true])
-</dialog>
+@if($item->booking_mode->allowsInternal())<dialog id="career-{{ $item->id }}" class="template-dialog" aria-label="{{ $translation->title }}" data-feedback="{{ $errors->any() && (string) old('_career_id') === (string) $item->id ? 'true' : 'false' }}">
+@include('public.careers._application', ['dialog' =>true])</dialog>
 @endif
 @empty <p class="template-empty">{{ __('cms.no_content') }}</p> @endforelse
 <div class="template-pagination">{{ $items->links() }}</div>

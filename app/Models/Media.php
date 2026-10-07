@@ -48,6 +48,7 @@ class Media extends Model
     public function isReferenced(): bool
     {
         return Page::withTrashed()->where('featured_media_id', $this->id)->exists()
+            || DB::table('website_images')->where('media_id', $this->id)->exists()
             || PageSection::withTrashed()
                 ->where(fn ($query) => $query
                     ->where('primary_media_id', $this->id)

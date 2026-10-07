@@ -13,7 +13,7 @@
                   <g clip-path="url(#floorPlanClip)">
 
                     <image
-                      href="{{ asset('template/images/leasing/kati-3.png') }}"
+                      href="{{ \App\Support\WebsiteContent::image('template/images/leasing/kati-3.png') }}"
                       x="-244"
                       y="-127.92"
                       width="2072"

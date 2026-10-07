@@ -6,16 +6,16 @@
         <div class="event-space-shape" aria-hidden="true"></div>
 
         @if($dialog ?? false)
-        <button type="button" class="event-space-close" data-dialog-close="space-request-{{ $item->id }}" aria-label="{{ __('cms.close') }}"><img src="/template/images/Cross.svg" alt=""></button>
+        <button type="button" class="event-space-close" data-dialog-close="space-request-{{ $item->id }}" aria-label="{{ __('cms.close') }}"><img src="{{ \App\Support\WebsiteContent::image('template/images/Cross.svg') }}" alt=""></button>
         @else
         <a href="{{ route('public.spaces.index', app()->getLocale()) }}"
           class="event-space-close"
           type="button"
-          aria-label="Close booking form"
+          aria-label="{{ __('website.spaces__request_close_booking_form') }}"
           data-close-event-modal
         >
           <img
-            src="/template/images/Cross.svg"
+            src="{{ \App\Support\WebsiteContent::image('template/images/Cross.svg') }}"
             alt=""
             class="h-7 w-7 object-contain"
           />
@@ -26,7 +26,7 @@
           @if(!($dialog ?? false))<a href="{{ route('public.spaces.index', app()->getLocale()) }}"
             class="event-space-close event-space-close-mobile"
             type="button"
-            aria-label="Close booking form"
+            aria-label="{{ __('website.spaces__request_close_booking_form') }}"
             data-close-event-modal
           >
             <span aria-hidden="true"></span>
@@ -47,25 +47,25 @@
 @endif
 <div class="event-space-row">
               <div class="event-space-field">
-                <label class="sr-only" for="space-{{ $item->id }}-fullName">Full name</label>
+                <label class="sr-only" for="space-{{ $item->id }}-fullName">{{ __('website.spaces__request_full_name_151') }}</label>
                 <input
                   id="space-{{ $item->id }}-fullName"
                   name="name" value="{{ data_get($formValues, 'name') }}"
                   type="text"
                   autocomplete="name"
-                  placeholder="Full Name*"
+                  placeholder="{{ __('website.spaces__request_full_name') }}"
                   required
                 />
               </div>
 
               <div class="event-space-field">
-                <label class="sr-only" for="space-{{ $item->id }}-email">Email Address</label>
+                <label class="sr-only" for="space-{{ $item->id }}-email">{{ __('website.spaces__request_email_address_152') }}</label>
                 <input
                   id="space-{{ $item->id }}-email"
                   name="email" value="{{ data_get($formValues, 'email') }}"
                   type="email"
                   autocomplete="email"
-                  placeholder="Email Address*"
+                  placeholder="{{ __('website.spaces__request_email_address') }}"
                   required
                 />
               </div>
@@ -73,42 +73,42 @@
 
             <div class="event-space-row">
               <div class="event-space-field">
-                <label class="sr-only" for="space-{{ $item->id }}-guests">Number of Guests</label>
+                <label class="sr-only" for="space-{{ $item->id }}-guests">{{ __('website.spaces__request_number_of_guests_153') }}</label>
                 <input
                   id="space-{{ $item->id }}-guests"
                   name="attendees" value="{{ data_get($formValues, 'attendees') }}"
                   type="number"
                   min="1"
                   inputmode="numeric"
-                  placeholder="Number of Guests*"
+                  placeholder="{{ __('website.spaces__request_number_of_guests') }}"
                   required
                 />
               </div>
 
               <div class="event-space-field">
-                <label class="sr-only" for="space-{{ $item->id }}-phone">Phone Number</label>
+                <label class="sr-only" for="space-{{ $item->id }}-phone">{{ __('website.spaces__request_phone_number_154') }}</label>
                 <input
                   id="space-{{ $item->id }}-phone"
                   name="phone" value="{{ data_get($formValues, 'phone') }}"
                   type="tel"
                   autocomplete="tel"
                   inputmode="tel"
-                  placeholder="Phone Number*"
+                  placeholder="{{ __('website.spaces__request_phone_number') }}"
                   required
                 />
               </div>
             </div>
 
             <div class="event-space-field">
-              <label class="sr-only" for="space-{{ $item->id }}-eventType">Event type</label>
+              <label class="sr-only" for="space-{{ $item->id }}-eventType">{{ __('website.spaces__request_event_type') }}</label>
               <div class="event-space-select-wrapper">
                 <select id="space-{{ $item->id }}-eventType" name="event_type" required>
-                  <option value="">Event type*</option>
-                  <option value="conference" @selected(data_get($formValues, 'event_type') === 'conference')>Conference</option>
-                  <option value="wedding" @selected(data_get($formValues, 'event_type') === 'wedding')>Wedding</option>
-                  <option value="corporate" @selected(data_get($formValues, 'event_type') === 'corporate')>Corporate Event</option>
-                  <option value="private" @selected(data_get($formValues, 'event_type') === 'private')>Private Event</option>
-                  <option value="other" @selected(data_get($formValues, 'event_type') === 'other')>Other</option>
+                  <option value="">{{ __('website.spaces__request_event_type_156') }}</option>
+                  <option value="conference" @selected(data_get($formValues, 'event_type') === 'conference')>{{ __('website.spaces__request_conference') }}</option>
+                  <option value="wedding" @selected(data_get($formValues, 'event_type') === 'wedding')>{{ __('website.spaces__request_wedding') }}</option>
+                  <option value="corporate" @selected(data_get($formValues, 'event_type') === 'corporate')>{{ __('website.spaces__request_corporate_event') }}</option>
+                  <option value="private" @selected(data_get($formValues, 'event_type') === 'private')>{{ __('website.spaces__request_private_event') }}</option>
+                  <option value="other" @selected(data_get($formValues, 'event_type') === 'other')>{{ __('website.spaces__request_other') }}</option>
                 </select>
                 <span
                   class="event-space-select-arrow"
@@ -119,40 +119,39 @@
 
             <div class="event-space-row">
               <div class="event-space-field">
-                <label class="sr-only" for="space-{{ $item->id }}-date">Preferred Date</label>
+                <label class="sr-only" for="space-{{ $item->id }}-date">{{ __('website.spaces__request_preferred_date') }}</label>
                 <input
                   id="space-{{ $item->id }}-date"
                   name="preferred_date" value="{{ data_get($formValues, 'preferred_date') }}"
                   type="date"
-                  placeholder="Preferred Date"
+                  placeholder="{{ __('website.spaces__request_preferred_date') }}"
                   required
                 />
               </div>
 
               <div class="event-space-field">
-                <label class="sr-only" for="space-{{ $item->id }}-time">Preferred Time</label>
+                <label class="sr-only" for="space-{{ $item->id }}-time">{{ __('website.spaces__request_preferred_time') }}</label>
                 <input
                   id="space-{{ $item->id }}-time"
                   name="preferred_time" value="{{ data_get($formValues, 'preferred_time') }}"
                   type="time"
-                  placeholder="Preferred Time"
+                  placeholder="{{ __('website.spaces__request_preferred_time') }}"
                   required
                 />
               </div>
             </div>
 
             <div class="event-space-field">
-              <label class="sr-only" for="space-{{ $item->id }}-description">Description</label>
+              <label class="sr-only" for="space-{{ $item->id }}-description">{{ __('website.spaces__request_description') }}</label>
               <textarea
                 id="space-{{ $item->id }}-description"
                 name="message"
-                placeholder="Description"
+                placeholder="{{ __('website.spaces__request_description') }}"
                 rows="3"
               >{{ data_get($formValues, 'message') }}</textarea>
             </div>
 
-            @include('public.submissions._consent', ['privacyChecked' => data_get($formValues, 'privacy', false)])
-<button class="event-space-submit" type="submit">
+            @include('public.submissions._consent', ['privacyChecked' =>data_get($formValues, 'privacy', false)])<button class="event-space-submit" type="submit">
               <span>{{ __('cms.submit_request') }}</span>
               <svg
                 class="event-space-submit-arrow"
@@ -170,8 +169,7 @@
               </svg>
             </button>
           </form>
-          @if(($dialog ?? false) && $item->booking_mode->allowsExternal() && $item->external_url)
-              <a href="{{ $item->external_url }}" target="_blank" rel="noopener" class="public-button mt-4">{{ __('cms.external_form') }}</a>
+          @if(($dialog ?? false) && $item->booking_mode->allowsExternal() && $item->external_url)<a href="{{ $item->external_url }}" target="_blank" rel="noopener" class="public-button mt-4">{{ __('cms.external_form') }}</a>
           @endif
         </div>
     </div>

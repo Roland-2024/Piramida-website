@@ -11,8 +11,8 @@
     @endif
     <div class="intro" data-intro hidden>
         <div class="intro-content" aria-hidden="true">
-            <img src="{{ asset('template/images/logo piramida.svg') }}" alt="" class="mx-auto mb-6 w-[97px]">
-            <p>PIRAMIDA</p>
+            <img src="{{ \App\Support\WebsiteContent::image('template/images/logo piramida.svg') }}" alt="" class="mx-auto mb-6 w-[97px]">
+            <p>{{ __('website.home_piramida_18') }}</p>
             <h2>{{ __('cms.space_to') }}<br><span class="intro-word">{{ __('cms.learn') }}</span> <span class="intro-word">{{ __('cms.build') }}</span> <span class="intro-word">{{ __('cms.connect') }}</span></h2>
             <p class="mx-auto mt-5 max-w-2xl text-[16px] text-white/60">{{ $translation?->short_description }}</p>
         </div>
@@ -23,7 +23,7 @@
 <span class="sr-only">{{ $translation?->title }}</span>
     <section class="relative w-full h-[110vh] overflow-hidden">
       <!-- Background image -->
-      <img src="/template/images/piramida-hero-1920.jpg" srcset="/template/images/piramida-hero-960.jpg 960w, /template/images/piramida-hero-1920.jpg 1920w" sizes="100vw" width="1920" height="1232" fetchpriority="high" alt="Piramida of Tirana"
+      <img src="{{ \App\Support\WebsiteContent::image('template/images/piramida-hero-1920.jpg') }}" @if (\App\Support\WebsiteContent::image('template/images/piramida-hero-1920.jpg') === asset('template/images/piramida-hero-1920.jpg')) srcset="/template/images/piramida-hero-960.jpg 960w, /template/images/piramida-hero-1920.jpg 1920w" @endif sizes="100vw" width="1920" height="1232" fetchpriority="high" alt="{{ __('website.home_piramida_of_tirana') }}"
         class="absolute inset-0 w-full h-full object-cover" />
 
       <!-- Bottom shadow overlay for text contrast -->
@@ -40,7 +40,7 @@
           class="uppercase leading-[0.95] tracking-tight text-white drop-shadow-lg text-4xl sm:text-5xl md:text-6xl lg:text-[80px]">
           <span class="block">{{ __('cms.discover') }}</span>
           <span class="block">
-            {{ __('cms.world_of') }} <span class="text-lime-400">Piramida</span>
+            {{ __('cms.world_of') }} <span class="text-lime-400">{{ __('website.home_piramida') }}</span>
           </span>
         </h1>
       </div>
@@ -58,11 +58,11 @@
       <!-- Card: Education -->
       <a @if($presentationUrls['education']) href="{{ $presentationUrls['education'] }}" @else aria-disabled="true" @endif
         id="education" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
-        <img src="/template/images/education.png" alt="Education spaces at Piramida"
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/education.png') }}" alt="{{ __('website.home_education_spaces_at_piramida') }}"
           class="w-full h-full object-cover object-center" />
 
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
-          <img src="/template/images/Education.svg" class="w-[24px] h-[30px]" />
+          <img src="{{ \App\Support\WebsiteContent::image('template/images/Education.svg') }}" class="w-[24px] h-[30px]" />
 
           <div class="mt-auto">
             <h3 class="text-lime-400 font-bold uppercase text-3xl mb-2">{{ data_get($pillarItems, '0.title', __('cms.education')) }}</h3>
@@ -74,11 +74,11 @@
       <!-- Card: Innovation -->
       <a @if($presentationUrls['innovation']) href="{{ $presentationUrls['innovation'] }}" @else aria-disabled="true" @endif
         id="innovation" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
-        <img src="/template/images/innovation.png" alt="Innovation spaces at Piramida"
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/innovation.png') }}" alt="{{ __('website.home_innovation_spaces_at_piramida') }}"
           class="w-full h-full object-cover object-center" />
 
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
-          <img src="/template/images/Innovation.svg" class="w-[24px] h-[30px]" />
+          <img src="{{ \App\Support\WebsiteContent::image('template/images/Innovation.svg') }}" class="w-[24px] h-[30px]" />
 
           <div class="mt-auto">
             <h3 class="text-lime-400 font-bold uppercase text-3xl mb-2">{{ data_get($pillarItems, '1.title', __('cms.innovation')) }}</h3>
@@ -90,11 +90,11 @@
       <!-- Card: Business -->
       <a @if($presentationUrls['business']) href="{{ $presentationUrls['business'] }}" @else aria-disabled="true" @endif
         id="business" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
-        <img src="/template/images/innovation.png" alt="Innovation spaces at Piramida"
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/innovation.png') }}" alt="{{ __('website.home_innovation_spaces_at_piramida') }}"
           class="w-full h-full object-cover object-center" />
 
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
-          <img src="/template/images/Business.svg" class="w-[24px] h-[30px]" />
+          <img src="{{ \App\Support\WebsiteContent::image('template/images/Business.svg') }}" class="w-[24px] h-[30px]" />
 
 
 
@@ -108,11 +108,11 @@
       <!-- Card: Art & Culture -->
       <a @if($presentationUrls['art']) href="{{ $presentationUrls['art'] }}" @else aria-disabled="true" @endif
         id="art" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
-        <img src="/template/images/innovation.png" alt="Innovation spaces at Piramida"
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/innovation.png') }}" alt="{{ __('website.home_innovation_spaces_at_piramida') }}"
           class="w-full h-full object-cover object-center" />
 
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
-          <img src="/template/images/Art.svg" class="w-[24px] h-[30px]" />
+          <img src="{{ \App\Support\WebsiteContent::image('template/images/Art.svg') }}" class="w-[24px] h-[30px]" />
           <div class="mt-auto">
             <h3 class="text-lime-400 font-bold uppercase text-3xl mb-2">{{ data_get($pillarItems, '3.title', __('cms.art')) }}</h3>
             <p class="text-white/80 text-sm leading-snug max-w-[85%] sm:max-w-[70%]">{{ data_get($pillarItems, '3.text', '') }}</p>
@@ -124,7 +124,7 @@
   </section>
 
   <section class="bg-[#0a1435] py-10 sm:pt-16 md:py-[150px] px-4 md:px-12 relative z-[8]">
-    <img src="/template/images/green-gradient.svg" alt="Green gradient" class=" absolute right-0 top-[25%]" />
+    <img src="{{ \App\Support\WebsiteContent::image('template/images/green-gradient.svg') }}" alt="{{ __('website.home_green_gradient') }}" class=" absolute right-0 top-[25%]" />
 
     <svg width="0" height="0" class="absolute">
       <defs>
@@ -195,10 +195,9 @@
     <!-- Video using the shape, with the original image as its thumbnail (poster) -->
     <div class="max-w-7xl mx-auto relative">
       <div class="video-clip">
-        @if (! $youtubeId && $videoSection?->video_url && preg_match('/\\.(mp4|webm|ogg)(\\?.*)?$/i', $videoSection->video_url))
-        <video id="piramidaVideo" poster="/template/images/Image Container.png" class="w-full aspect-[1280/680] object-cover" preload="metadata" playsinline controls><source src="{{ $videoSection->video_url }}"></video>
+        @if (! $youtubeId && $videoSection?->video_url && preg_match('/\\.(mp4|webm|ogg)(\\?.*)?$/i', $videoSection->video_url))<video id="piramidaVideo" poster="{{ \App\Support\WebsiteContent::image('template/images/Image Container.png') }}" class="w-full aspect-[1280/680] object-cover" preload="metadata" playsinline controls><source src="{{ $videoSection->video_url }}"></video>
         @else
-        <img src="/template/images/Image Container.png" alt="Piramida" class="w-full aspect-[1280/680] object-cover" loading="lazy">
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/Image Container.png') }}" alt="{{ __('website.home_piramida') }}" class="w-full aspect-[1280/680] object-cover" loading="lazy">
         @endif
       </div>
 
@@ -210,8 +209,7 @@
             <path id="badgeTextPath" d="M110,20 a90,90 0 1,1 -0.1,0" />
           </defs>
           <text class="play-badge-text">
-            <textPath href="#badgeTextPath" startOffset="0%">ABOUT US &#8212; ABOUT US &#8212; ABOUT US
-              &#8212; ABOUT US &#8212;</textPath>
+            <textPath href="#badgeTextPath" startOffset="0%">{{ __('website.home_about_us_about_us_about_us_about_us') }}</textPath>
           </text>
         </svg>
         <span class="play-badge-center">
@@ -237,7 +235,7 @@
       <div class="relative mx-auto px-6 sm:px-10 md:px-10 max-w-[1670px]">
 
         <!-- Left arrow -->
-        <button id="prevBtn" aria-label="Previous" type="button"
+        <button id="prevBtn" aria-label="{{ __('website.home_previous') }}" type="button"
           class="hidden md:flex absolute -left-2 md:-left-5 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-[#cbff00] hover:text-[#000929] focus-visible:bg-[#cbff00] focus-visible:text-[#000929] active:bg-[#cbff00] active:text-[#000929] transition-colors duration-300">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
@@ -245,7 +243,7 @@
         </button>
 
         <!-- Right arrow -->
-        <button id="nextBtn" aria-label="Next" type="button"
+        <button id="nextBtn" aria-label="{{ __('website.home_next') }}" type="button"
           class="hidden md:flex absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-[#cbff00] hover:text-[#000929] focus-visible:bg-[#cbff00] focus-visible:text-[#000929] active:bg-[#cbff00] active:text-[#000929] transition-colors duration-300">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
@@ -283,7 +281,7 @@
 
     <!-- Glow (replaces the old rose-gradient.svg) -->
     <div class="pointer-events-none absolute inset-0 z-0">
-      <img src="/template/images/bg-low.jpg" alt="Rose gradient" class="w-full h-full object-cover" />
+      <img src="{{ \App\Support\WebsiteContent::image('template/images/bg-low.jpg') }}" alt="{{ __('website.home_rose_gradient') }}" class="w-full h-full object-cover" />
     </div>
 
     <section class="relative z-10 py-16 sm:py-24 px-[30px] md:px-[80px] lg:px-[120px]">
@@ -298,7 +296,7 @@
 
         <div class="rounded-3xl overflow-hidden bg-[#D9F044] rounded-[20px] max-h-[645px]">
           <div class="overflow-hidden">
-            <img src="/template/images/piramida_block.jpg" alt="Piramida staircase from above" loading="lazy"
+            <img src="{{ \App\Support\WebsiteContent::image('template/images/piramida_block.jpg') }}" alt="{{ __('website.home_piramida_staircase_from_above') }}" loading="lazy"
               class="w-full h-full object-cover max-h-[400px] p-[10px] rounded-[20px]" />
           </div>
           <div class="py-[50px] px-[40px]">
@@ -309,14 +307,14 @@
             <a href="{{ route('public.attractions.index', app()->getLocale()) }}"
               class="inline-flex items-center gap-2 bg-white text-black title-14-bold px-[20px] py-[16px] rounded-full hover:bg-white/90 transition">
               {{ __('cms.step_into_piramida') }}
-              <img src="/template/images/arrow right black.svg" alt="Arrow icon" class="w-3.5 h-3.5 mt-1" />
+              <img src="{{ \App\Support\WebsiteContent::image('template/images/arrow right black.svg') }}" alt="{{ __('website.home_arrow_icon') }}" class="w-3.5 h-3.5 mt-1" />
             </a>
           </div>
         </div>
 
         <div class="rounded-3xl overflow-hidden bg-[#BEE3FF] rounded-[20px] max-h-[645px]">
           <div class="overflow-hidden">
-            <img src="/template/images/piramida_block_1.jpg" alt="Piramida staircase from above" loading="lazy"
+            <img src="{{ \App\Support\WebsiteContent::image('template/images/piramida_block_1.jpg') }}" alt="{{ __('website.home_piramida_staircase_from_above') }}" loading="lazy"
               class="w-full h-full object-cover max-h-[400px] p-[10px] rounded-[20px]" />
           </div>
           <div class="py-[50px] px-[40px]">
@@ -327,7 +325,7 @@
             <a href="{{ route('public.businesses.index', app()->getLocale()) }}"
               class="inline-flex items-center gap-2 bg-white text-black title-14-bold px-[20px] py-[16px] rounded-full hover:bg-white/90 transition">
               {{ __('cms.explore_corners') }}
-              <img src="/template/images/arrow right black.svg" alt="Arrow icon" class="w-3.5 h-3.5 mt-1" />
+              <img src="{{ \App\Support\WebsiteContent::image('template/images/arrow right black.svg') }}" alt="{{ __('website.home_arrow_icon') }}" class="w-3.5 h-3.5 mt-1" />
             </a>
           </div>
         </div>
@@ -358,7 +356,7 @@
       <article class="news-card shrink-0 w-full sm:w-auto snap-center rounded-[16px] border border-white/15 p-[30px]">
         <a href="{{ route('public.news.show', [app()->getLocale(), $newsTranslation->slug]) }}">
           <div class="rounded-xl">
-            <img src="{{ $article->featuredMedia?->url() ?: asset('template/images/piramida_block_1.jpg') }}" alt="{{ $newsTranslation->title }}" loading="lazy"
+            <img src="{{ $article->featuredMedia?->url() ?: \App\Support\WebsiteContent::image('template/images/piramida_block_1.jpg') }}" alt="{{ $newsTranslation->title }}" loading="lazy"
               class="w-full sm:w-[350px] object-cover h-[380px] rounded-[12px]" />
           </div>
           <div class="pt-4 px-1">

@@ -1,9 +1,8 @@
 <x-layouts.public :record="$item" :title="$translation->seo_title ?: $translation->title" :description="$translation->seo_description ?: $translation->short_description" :language-urls="$languageUrls" :styles="['event-spaces-popup','leasing-form']" body-class="desktop-page-background leasing-form-background" :footer="false">
-@if($item->type === \App\Enums\SpaceType::Leasing)
-<div class="event-spaces-main"><section class="leasing-form-hero" aria-labelledby="leasing-form-title">
+@if($item->type === \App\Enums\SpaceType::Leasing)<div class="event-spaces-main"><section class="leasing-form-hero" aria-labelledby="leasing-form-title">
           <div class="leasing-form-title-wrap">
             <div id="leasing-form-title" class="leasing-form-title">
-              <span>PIRAMIDA</span><span>{{ __('cms.leasing') }}</span>
+              <span>{{ __('website.spaces_show_piramida') }}</span><span>{{ __('cms.leasing') }}</span>
             </div>
             <p class="leasing-form-kicker">{{ __('cms.request_confirmation_notice') }}</p>
           </div>
@@ -12,7 +11,7 @@
             <button
               class="leasing-form-carousel-arrow leasing-form-carousel-arrow-left"
               type="button"
-              aria-label="Previous leasing images"
+              aria-label="{{ __('website.spaces_show_previous_leasing_images') }}"
             >
               <span aria-hidden="true"></span>
             </button>
@@ -22,7 +21,7 @@
             <button
               class="leasing-form-carousel-arrow leasing-form-carousel-arrow-right"
               type="button"
-              aria-label="Next leasing images"
+              aria-label="{{ __('website.spaces_show_next_leasing_images') }}"
             >
               <span aria-hidden="true"></span>
             </button>
@@ -33,14 +32,14 @@
           <div class="leasing-form-content">
             <div class="leasing-form-description prose-content">{!! $translation->description !!}</div>
 
-            <div class="leasing-form-summary" aria-label="Leasing details">
+            <div class="leasing-form-summary" aria-label="{{ __('website.spaces_show_leasing_details') }}">
               <div class="space-name">
                 <span>{{ __('cms.title') }}</span>
                 <strong>{{ $translation->title }}</strong>
               </div>
               <div class="position">
                 <span>{{ __('cms.location') }}</span>
-                <strong>{{ $item->leasingUnit?->label(app()->getLocale()) ?? $translation->location }}</strong>
+                <strong>{{ $item->leasingUnit ? __('website.floor_'.$item->leasingUnit->floor).' — '.$item->leasingUnit->code : $translation->location }}</strong>
               </div>
 
               <div class="area">

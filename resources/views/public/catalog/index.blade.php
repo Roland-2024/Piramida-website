@@ -9,12 +9,11 @@
                     $title = data_get($translation, $translationTitleColumn);
                 @endphp
                 <article class="content-card">
-                    @if (method_exists($item, 'featuredMedia') && $item->featuredMedia)
-                        <img loading="lazy" src="{{ $item->featuredMedia->url() }}" alt="{{ app()->getLocale() === 'en' ? $item->featuredMedia->alt_text_en : $item->featuredMedia->alt_text_al }}" class="h-80 w-full rounded-xl object-cover">
+                    @if (method_exists($item, 'featuredMedia') && $item->featuredMedia)<img loading="lazy" src="{{ $item->featuredMedia->url() }}" alt="{{ app()->getLocale() === 'en' ? $item->featuredMedia->alt_text_en : $item->featuredMedia->alt_text_al }}" class="h-80 w-full rounded-xl object-cover">
                     @endif
                     <div class="p-5">
-                        @if (isset($item->category) && $item->category instanceof \BackedEnum)<p class="text-xs font-semibold uppercase accent">{{ $item->category->label() }}</p>@endif
-                        @if (isset($item->type) && $item->type instanceof \BackedEnum)<p class="text-xs font-semibold uppercase accent">{{ $item->type->label() }}</p>@endif
+                        @if (isset($item->category) && $item->category instanceof \BackedEnum)<p class="text-xs font-semibold uppercase accent">{{ __('website.category_'.$item->category->value) }}</p>@endif
+                        @if (isset($item->type) && $item->type instanceof \BackedEnum)<p class="text-xs font-semibold uppercase accent">{{ __('website.type_'.$item->type->value) }}</p>@endif
                         <h2 class="mt-2 text-xl font-semibold">{{ $title }}</h2>
                         <p class="mt-3 text-sm muted">{{ $translation?->short_description }}</p>
                         <a href="{{ route("{$routePrefix}.show", [app()->getLocale(), $translation?->slug]) }}" class="mt-5 inline-block text-sm font-semibold accent">{{ __('cms.read_more') }}</a>

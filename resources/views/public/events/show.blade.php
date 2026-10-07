@@ -2,7 +2,7 @@
 <section class="event-section w-full min-h-screen flex items-center justify-center md:p-12 pt-28 md:pt-12">
         <div class="page-top-bg hidden sm:block" aria-hidden="true"></div>
         <!-- Gradient glow, same as About page -->
-        <img src="/template/images/green-gradient.svg" alt="" aria-hidden="true"
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/green-gradient.svg') }}" alt="" aria-hidden="true"
             class="pointer-events-none absolute -bottom-[28rem] right-0 -z-10 hidden w-[55%] max-w-[57rem] sm:block" />
 
         <div class="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-4 items-center px-4 md:px-0">
@@ -43,11 +43,11 @@
 
                 <div class="mt-5 flex flex-wrap items-center gap-x-8 gap-y-2 text-sm text-white/80">
                     <div class="flex items-center gap-2">
-                        <img src="/template/images/Location.svg" />
+                        <img src="{{ \App\Support\WebsiteContent::image('template/images/Location.svg') }}" />
                         <span>{{ __('cms.location') }}: {{ $translation->location }}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <img src="/template/images/Duration.svg" />
+                        <img src="{{ \App\Support\WebsiteContent::image('template/images/Duration.svg') }}" />
                         <span>{{ __('cms.duration') }}: {{ (int) $event->starts_at->diffInMinutes($event->ends_at) }} {{ __('cms.minutes') }}</span>
                     </div>
                 </div>
@@ -62,11 +62,10 @@
 
         </div>
     </section>
-@if($latestEvents->isNotEmpty())
-<section class="max-w-7xl mx-auto py-14 px-5 md:px-0" data-carousel data-scroll-amount="300">
+@if($latestEvents->isNotEmpty())<section class="max-w-7xl mx-auto py-14 px-5 md:px-0" data-carousel data-scroll-amount="300">
     <div class="flex items-center justify-center md:justify-between mb-7">
-        <div class="flex items-center gap-3"><img src="/template/images/calendar-3d-icon.svg" alt="" class="hidden md:block"><h2 class="text-2xl md:text-3xl font-extrabold tracking-wide text-white md:text-lime-400 text-center md:text-left">{{ __('cms.latest_events') }}</h2></div>
-        <div class="hidden md:flex gap-3"><button type="button" data-scroll="-1" class="nav-btn w-10 h-10 flex items-center justify-center" aria-label="{{ __('cms.previous') }}"><img src="/template/images/arrow right.svg" alt="" class="rotate-180"></button><button type="button" data-scroll="1" class="nav-btn w-10 h-10 flex items-center justify-center" aria-label="{{ __('cms.next') }}"><img src="/template/images/arrow right.svg" alt=""></button></div>
+        <div class="flex items-center gap-3"><img src="{{ \App\Support\WebsiteContent::image('template/images/calendar-3d-icon.svg') }}" alt="" class="hidden md:block"><h2 class="text-2xl md:text-3xl font-extrabold tracking-wide text-white md:text-lime-400 text-center md:text-left">{{ __('cms.latest_events') }}</h2></div>
+        <div class="hidden md:flex gap-3"><button type="button" data-scroll="-1" class="nav-btn w-10 h-10 flex items-center justify-center" aria-label="{{ __('cms.previous') }}"><img src="{{ \App\Support\WebsiteContent::image('template/images/arrow right.svg') }}" alt="" class="rotate-180"></button><button type="button" data-scroll="1" class="nav-btn w-10 h-10 flex items-center justify-center" aria-label="{{ __('cms.next') }}"><img src="{{ \App\Support\WebsiteContent::image('template/images/arrow right.svg') }}" alt=""></button></div>
     </div>
     <div class="event-track carousel-track">
         @foreach($latestEvents as $latestEvent)

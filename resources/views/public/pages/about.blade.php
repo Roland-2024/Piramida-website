@@ -31,8 +31,8 @@
                     <div class="absolute inset-0" aria-hidden="true"
                         style="clip-path: polygon(8% 0%, 100% 88%, 0% 100%); background: linear-gradient(155deg, #14532d 0%, #4ade80 55%, #cbff00 100%);">
                     </div>
-                    <img src="{{ $overview?->primaryMedia?->url() ?? $page->featuredMedia?->url() ?? asset('template/images/About/about_piramida.jpg') }}"
-                        alt="The Pyramid of Tirana plaza" class="absolute right-0 top-0 object-cover"
+                    <img src="{{ $overview?->primaryMedia?->url() ?? $page->featuredMedia?->url() ?? \App\Support\WebsiteContent::image('template/images/About/about_piramida.jpg') }}"
+                        alt="{{ __('website.pages_about_the_pyramid_of_tirana_plaza') }}" class="absolute right-0 top-0 object-cover"
                         style="width: 92%; height: 88%;" />
                 </div>
 
@@ -57,7 +57,7 @@
         <!-- ===== History section ===== -->
         <section class="relative">
             <!-- Green gradient glow bridging History and Timeline, sits behind all content -->
-            <img src="/template/images/green-gradient.svg" alt="" aria-hidden="true"
+            <img src="{{ \App\Support\WebsiteContent::image('template/images/green-gradient.svg') }}" alt="" aria-hidden="true"
                 class="pointer-events-none absolute -bottom-[28rem] right-0 -z-10 hidden w-[55%] max-w-[57rem] sm:block" />
 
             <div class="mx-auto max-w-7xl px-6 pb-24 sm:px-10">
@@ -86,13 +86,13 @@
 
             <!-- Image with play button + arrow doodle bridging text and image -->
             <div class="relative mt-16 sm:mt-[160px]">
-                <img src="/template/images/About/Dooodle.svg" alt="arrow-icon" aria-hidden="true"
+                <img src="{{ \App\Support\WebsiteContent::image('template/images/About/Dooodle.svg') }}" alt="{{ __('website.pages_about_arrow_icon') }}" aria-hidden="true"
                     class="pointer-events-none absolute -top-20 right-2 hidden h-auto w-[130%] max-w-none origin-bottom-right 2xl:block sm:-top-[12rem] sm:-right-[13.5rem]" />
 
                 <div class="relative overflow-hidden rounded-2xl">
                     <img id="historyThumb"
-                        src="{{ $history?->primaryMedia?->url() ?? asset('template/images/About/about_piramida.jpg') }}"
-                        alt="Historic view of the Pyramid of Tirana"
+                        src="{{ $history?->primaryMedia?->url() ?? \App\Support\WebsiteContent::image('template/images/About/about_piramida.jpg') }}"
+                        alt="{{ __('website.pages_about_historic_view_of_the_pyramid_of_tirana') }}"
                         class="h-[300px] w-full object-cover grayscale md:h-[680px]" />
 
 
@@ -135,7 +135,7 @@
                 class="mt-8 flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:mt-12 sm:grid sm:grid-cols-3 sm:gap-10 sm:overflow-visible sm:snap-none">
                 @foreach ($timelineItems as $item)
 <div class="w-[88%] shrink-0 snap-start sm:w-auto sm:shrink">
-<img src="{{ asset('template/images/About/'.(['Piramida_1980.png','Piramida_90.png','Piramida_2000.png'][$loop->index % 3])) }}" alt="" class="w-full rounded-2xl object-cover" loading="lazy">
+<img src="{{ \App\Support\WebsiteContent::image('template/images/About/'.(['Piramida_1980.png','Piramida_90.png','Piramida_2000.png'][$loop->index % 3])) }}" alt="" class="w-full rounded-2xl object-cover" loading="lazy">
 <h3 class="mt-6 text-lg font-semibold text-[#CBFF00]">{{ data_get($item, 'title') }}</h3>
 <p class="mt-3 text-sm leading-relaxed text-white/70">{{ data_get($item, 'text') }}</p>
 </div>@endforeach

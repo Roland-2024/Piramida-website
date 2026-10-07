@@ -4,20 +4,20 @@
 
           @if($dialog ?? false)<button type="button" data-dialog-close="career-{{ $item->id }}"
             class="job-application-close"
-            aria-label="Close job application form"
+            aria-label="{{ __('website.careers__application_close_job_application_form') }}"
           >
             <img
-              src="/template/images/Cross.svg"
+              src="{{ \App\Support\WebsiteContent::image('template/images/Cross.svg') }}"
               alt=""
               class="h-7 w-7 object-contain"
             />
           </button>@else<a href="{{ route('public.careers.index', app()->getLocale()) }}"
             class="job-application-close"
             type="button"
-            aria-label="Close job application form"
+            aria-label="{{ __('website.careers__application_close_job_application_form') }}"
           >
             <img
-              src="/template/images/Cross.svg"
+              src="{{ \App\Support\WebsiteContent::image('template/images/Cross.svg') }}"
               alt=""
               class="h-7 w-7 object-contain"
             />
@@ -26,21 +26,19 @@
           <div class="job-application-card">
             @if($dialog ?? false)<button type="button" data-dialog-close="career-{{ $item->id }}"
               class="job-application-close-mobile"
-              aria-label="Close job application form"
+              aria-label="{{ __('website.careers__application_close_job_application_form') }}"
             >
               <span aria-hidden="true"></span>
             </button>@else<a href="{{ route('public.careers.index', app()->getLocale()) }}"
               class="job-application-close-mobile"
               type="button"
-              aria-label="Close job application form"
+              aria-label="{{ __('website.careers__application_close_job_application_form') }}"
             >
               <span aria-hidden="true"></span>
             </a>@endif
 
             <h1 class="job-application-title">{{ $translation->title }}</h1>
-            <p class="job-application-subtitle">
-              Please fill out the form to submit job application
-            </p>
+            <p class="job-application-subtitle">{{ __('website.careers__application_please_fill_out_the_form_to_submit_job_application') }}</p>
 
             @if ($item->booking_mode->allowsInternal())<form class="job-application-form" action="{{ route('public.careers.apply', [app()->getLocale(), $translation->slug]) }}" enctype="multipart/form-data" method="post">
               @csrf
@@ -50,57 +48,57 @@
 @endif
 <div class="job-application-row">
                 <div class="job-application-field">
-                  <label class="sr-only" for="career-{{ $item->id }}-firstName">First Name</label>
+                  <label class="sr-only" for="career-{{ $item->id }}-firstName">{{ __('website.careers__application_first_name_51') }}</label>
                   <input
                     id="career-{{ $item->id }}-firstName"
                     name="first_name" value="{{ old('first_name') }}"
                     type="text"
                     autocomplete="given-name"
-                    placeholder="First Name*"
+                    placeholder="{{ __('website.careers__application_first_name') }}"
                     required
                   />
                 </div>
 
                 <div class="job-application-field">
-                  <label class="sr-only" for="career-{{ $item->id }}-lastName">Last Name</label>
+                  <label class="sr-only" for="career-{{ $item->id }}-lastName">{{ __('website.careers__application_last_name_52') }}</label>
                   <input
                     id="career-{{ $item->id }}-lastName"
                     name="last_name" value="{{ old('last_name') }}"
                     type="text"
                     autocomplete="family-name"
-                    placeholder="Last Name*"
+                    placeholder="{{ __('website.careers__application_last_name') }}"
                     required
                   />
                 </div>
               </div>
 
               <div class="job-application-field">
-                <label class="sr-only" for="career-{{ $item->id }}-email">Email Address</label>
+                <label class="sr-only" for="career-{{ $item->id }}-email">{{ __('website.careers__application_email_address_53') }}</label>
                 <input
                   id="career-{{ $item->id }}-email"
                   name="email" value="{{ old('email') }}"
                   type="email"
                   autocomplete="email"
-                  placeholder="Email Address*"
+                  placeholder="{{ __('website.careers__application_email_address') }}"
                   required
                 />
               </div>
 
               <div class="job-application-field">
-                <label class="sr-only" for="career-{{ $item->id }}-phone">Phone Number</label>
+                <label class="sr-only" for="career-{{ $item->id }}-phone">{{ __('website.careers__application_phone_number_54') }}</label>
                 <input
                   id="career-{{ $item->id }}-phone"
                   name="phone" value="{{ old('phone') }}"
                   type="tel"
                   autocomplete="tel"
                   inputmode="tel"
-                  placeholder="Phone Number*"
+                  placeholder="{{ __('website.careers__application_phone_number') }}"
                   required
                 />
               </div>
 
               <label class="job-application-upload" for="career-{{ $item->id }}-resume">
-                <span>Upload your resume</span>
+                <span>{{ __('website.careers__application_upload_your_resume') }}</span>
                 <svg
                   class="job-application-upload-icon"
                   viewBox="0 0 24 24"
@@ -132,18 +130,18 @@
               </label>
 
               <div class="job-application-field">
-                <label class="sr-only" for="career-{{ $item->id }}-message">Message</label>
+                <label class="sr-only" for="career-{{ $item->id }}-message">{{ __('website.careers__application_message') }}</label>
                 <textarea
                   id="career-{{ $item->id }}-message"
                   name="message"
-                  placeholder="Message"
+                  placeholder="{{ __('website.careers__application_message') }}"
                   rows="2"
                 >{{ old('message') }}</textarea>
               </div>
 
               @include('public.submissions._consent')
 <button class="job-application-submit" type="submit">
-                <span>Submit</span>
+                <span>{{ __('website.careers__application_submit') }}</span>
                 <svg
                   class="job-application-submit-arrow"
                   viewBox="0 0 24 24"

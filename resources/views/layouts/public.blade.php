@@ -10,12 +10,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+    <link rel="icon" href="{{ \App\Support\WebsiteContent::image('favicon.svg') }}">
     <title>{{ $seo['title'] }}</title>
     <meta name="description" content="{{ $seo['description'] }}">
     <link rel="canonical" href="{{ $seo['canonical'] }}">
-    @foreach($seo['alternates'] as $language => $url)
-        <link rel="alternate" hreflang="{{ $language }}" href="{{ $url }}">
+    @foreach($seo['alternates'] as $language =>$url)<link rel="alternate" hreflang="{{ $language }}" href="{{ $url }}">
     @endforeach
     @if(isset($seo['alternates']['sq']))<link rel="alternate" hreflang="x-default" href="{{ $seo['alternates']['sq'] }}">@endif
     <meta property="og:type" content="{{ $seo['type'] }}">

@@ -372,9 +372,17 @@ Keep public route names and controller inputs stable, or update links consistent
 - Before switching the live site: map existing indexed URLs to their replacements with 301 redirects, verify HTTPS and the preferred host, remove demo content, check that public media URLs load, and submit the sitemap in Google Search Console/Bing Webmaster Tools. Recheck social previews and mobile Core Web Vitals on the deployed host; local timings do not establish production scores.
 - AI search uses the same crawlable HTML and factual structured data. No special AI-only pages, speculative `llms.txt`, invented ratings or guaranteed rankings are added. See [Google's AI search guidance](https://developers.google.com/search/docs/appearance/ai-features) and the [Open Graph protocol](https://ogp.me/). Metadata wording reflects the [current Piramida site](https://piramida.edu.al/) without importing outdated public copy.
 
+## Editing public website content
+
+Admins and Editors can use **Website content** (`/admin/website-content`) for bilingual shared labels, navigation, form labels, feedback and validation messages, template copy, default SEO/social metadata, and template images/logos. Existing Pages, Page Sections and individual content modules still manage their own records and media. Public contact details/footer copy are editable here; SMTP credentials, notification recipients, users and submissions remain Admin-only.
+
+Run `php artisan migrate --force` when deploying this update. The additive `website_texts` and `website_images` tables store overrides; existing content and file-based defaults are preserved without reseeding. Text is escaped, not HTML. Preserve placeholders such as `:year`, `:attribute` and `:max`. Images are selected from public Media; private uploads cannot be selected, and referenced media cannot be deleted. Shared template assets update wherever used. Restoring “Original template image” removes its override. Replacing a leasing plan must preserve its proportions and unit positions; map geometry is not CMS content. Browser-native date/file-picker text remains controlled by the visitor's browser.
+
+WordPress event edit screens warn that the next synchronization can replace local edits. Permanent imported-event changes belong in WordPress; manually created events remain independent. Event-space mobile navigation now has one working button per panel plus its intro, with the active state following scroll position.
+
 ## Current limitations
 
-- The public frontend uses the supplied draft template, not yet the final signed-off design. Managed content comes from the CMS; About and the four presentation pages have provisional fixed layout mappings documented in `docs/PROJECT_DECISIONS.md`. Static presentation copy remains where the draft has no managed content equivalent.
+- The public frontend uses the supplied draft template, not yet the final signed-off design. Managed content comes from the CMS; About and the four presentation pages have provisional fixed layout mappings documented in `docs/PROJECT_DECISIONS.md`. Website content manages shared template copy and image overrides without changing layout or map geometry.
 - Section ordering uses a numeric field rather than drag-and-drop.
 - The native rich-text toolbar intentionally supports only basic formatting.
 - There is no automated queue worker because the current workflows are synchronous.

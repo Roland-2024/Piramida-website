@@ -1,8 +1,7 @@
 @if (session('success'))
     <div class="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{{ session('success') }}</div>
 @endif
-@if ($errors->any())
-    <div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{{ __('cms.correct_form') }}</div>
+@if ($errors->any())<div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{{ __('cms.correct_form') }}</div>
 @endif
 
 @if ($formType === 'leasing')
@@ -29,7 +28,7 @@
     @endif
 
     <div class="sm:col-span-2"><label for="request_message" class="block text-sm font-medium">{{ $formType === 'career' ? __('cms.cover_message') : __('cms.message') }}</label><textarea id="request_message" name="message" rows="5" @required($formType === 'contact') class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">{{ old('message') }}</textarea>@error('message')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror</div>
-    <div class="hidden" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <div class="hidden" aria-hidden="true"><label>{{ __('website.submissions__form_website') }}<input name="website" tabindex="-1" autocomplete="off"></label></div>
     <label class="flex items-start gap-3 text-sm text-slate-600 sm:col-span-2"><input name="privacy" type="checkbox" value="1" @checked(old('privacy')) required class="mt-1 rounded border-slate-300"><span>{{ __('cms.privacy_consent') }}</span></label>
     <div class="sm:col-span-2"><button class="rounded-lg bg-slate-950 px-5 py-3 text-sm font-semibold text-white">{{ __('cms.submit_request') }}</button></div>
 </form>

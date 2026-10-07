@@ -25,7 +25,7 @@
 @foreach($article->gallery as $media)<img src="{{ $media->url() }}" alt="{{ app()->getLocale() === 'en' ? $media->alt_text_en : $media->alt_text_al }}" class="w-full h-[260px] object-cover rounded-[16px]" loading="lazy">@endforeach
 </div>@endif</article>
 
-        <img src="/template/images/greeen.png" alt="" aria-hidden="true"
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/greeen.png') }}" alt="" aria-hidden="true"
             class="pointer-events-none absolute right-[95px] -z-10 hidden w-[55%] max-w-[57rem] sm:block"
             style="top: 1530px;" />
 

@@ -30,7 +30,7 @@ class SpaceController extends TranslatedCatalogController
     public function leasing(string $locale): View
     {
         return view('public.leasing.index', [
-            'floors' => LeasingUnit::FLOORS,
+            'floors' => collect(LeasingUnit::FLOORS)->map(fn ($info, $key) => array_replace($info, ['al' => __('website.floor_'.$key, [], 'al'), 'en' => __('website.floor_'.$key, [], 'en')]))->all(),
             'languageUrls' => collect(config('cms.locales'))->mapWithKeys(
                 fn (string $name, string $target) => [$target => route('public.leasing.index', $target)]
             )->all(),
@@ -44,7 +44,7 @@ class SpaceController extends TranslatedCatalogController
 
         return view('public.leasing.floor', [
             'floor' => $floor,
-            'floorInfo' => LeasingUnit::FLOORS[$floor],
+            'floorInfo' => array_replace(LeasingUnit::FLOORS[$floor], ['al' => __('website.floor_'.$floor, [], 'al'), 'en' => __('website.floor_'.$floor, [], 'en')]),
             'units' => $units,
             'availableSpaces' => Space::query()->published()->publiclyAccessible()
                 ->where('type', SpaceType::Leasing)->whereIn('leasing_unit_id', $units->modelKeys())

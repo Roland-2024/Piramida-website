@@ -7,7 +7,7 @@ $images = collect([$business->featuredMedia])->filter()->merge($business->galler
           <div class="place-popup-shape" aria-hidden="true"></div>
 
           @if($dialog ?? false)<button data-dialog-close="business-{{ $business->id }}" class="place-popup-close" type="button" aria-label="{{ __('cms.close') }}">@else<a class="place-popup-close" href="{{ route('public.businesses.index', app()->getLocale()) }}" aria-label="{{ __('cms.close') }}">@endif
-            <img src="/template/images/Cross.svg" alt="" />
+            <img src="{{ \App\Support\WebsiteContent::image('template/images/Cross.svg') }}" alt="" />
           @if($dialog ?? false)</button>@else</a>@endif
 
           <article
@@ -19,7 +19,7 @@ $images = collect([$business->featuredMedia])->filter()->merge($business->galler
               <div  class="place-popup-logo" aria-hidden="true">@if($business->logoMedia)<img src="{{ $business->logoMedia->url() }}" alt="">@endif</div>
               <div>
                 <h1>{{ $businessTranslation->name }}</h1>
-                <p>{{ $business->category->label() }}</p>
+                <p>{{ __('website.category_'.$business->category->value) }}</p>
               </div>
             </header>
 
@@ -31,13 +31,13 @@ $images = collect([$business->featuredMedia])->filter()->merge($business->galler
               <div
                 data-gallery-dots
                 class="place-gallery-dots"
-                aria-label="Gallery navigation"
+                aria-label="{{ __('website.businesses__popup_gallery_navigation') }}"
               ></div>
 
               <button
                 data-gallery-step="-1" class="place-gallery-button place-gallery-button-prev"
                 type="button"
-                aria-label="Previous image"
+                aria-label="{{ __('website.businesses__popup_previous_image') }}"
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M15 6L9 12L15 18" />
@@ -47,7 +47,7 @@ $images = collect([$business->featuredMedia])->filter()->merge($business->galler
               <button
                 data-gallery-step="1" class="place-gallery-button place-gallery-button-next"
                 type="button"
-                aria-label="Next image"
+                aria-label="{{ __('website.businesses__popup_next_image') }}"
               >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M9 6L15 12L9 18" />

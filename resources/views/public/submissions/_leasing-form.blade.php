@@ -71,8 +71,7 @@
         <legend>4. {{ __('cms.required_documents') }}</legend>
         <p class="mt-2 text-sm text-slate-500">{{ __('cms.document_requirements') }}</p>
         <div class="leasing-form-grid leasing-documents-grid">
-            @foreach (\App\Http\Requests\PublicSite\StoreSubmissionRequest::leasingDocumentLabels() as $field => $label)
-                <div class="leasing-document-field">
+            @foreach (\App\Http\Requests\PublicSite\StoreSubmissionRequest::leasingDocumentLabels() as $field =>$label)<div class="leasing-document-field">
                     <label for="leasing_{{ $field }}" class="text-sm font-medium">4.{{ $loop->iteration }} {{ __('cms.document_'.$field) }} @if($field !== 'other_documents') *@endif</label>
                     <div>
                         <input id="leasing_{{ $field }}" name="{{ $field }}" type="file" accept=".pdf,.doc,.docx" @required($field !== 'other_documents') class="leasing-document-input">
@@ -83,7 +82,7 @@
         </div>
     </fieldset>
 
-    <div class="hidden" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
+    <div class="hidden" aria-hidden="true"><label>{{ __('website.submissions__leasingform_website') }}<input name="website" tabindex="-1" autocomplete="off"></label></div>
     <label class="leasing-consent"><input name="privacy" type="checkbox" value="1" @checked(old('privacy')) required class="mt-1 rounded border-slate-300"><span>{{ __('cms.leasing_privacy_consent') }}</span></label>
     <div class="leasing-step-actions"><button type="button" class="leasing-back-button">{{ __('cms.previous') }}</button><button class="leasing-submit-button" data-next-label="{{ __('cms.next') }}" data-submit-label="{{ __('cms.submit_request') }}">{{ __('cms.submit_request') }}</button></div>
 </form>

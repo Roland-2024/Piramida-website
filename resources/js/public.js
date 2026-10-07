@@ -261,6 +261,31 @@ document.querySelectorAll('.event-spaces-carousel').forEach(carousel => {
     track.addEventListener('scroll', update, { passive: true });
     new ResizeObserver(resize).observe(track);
 });
+const spaceDots = document.querySelector('.event-spaces-dots');
+if (spaceDots) {
+    const buttons = [...spaceDots.querySelectorAll('[data-space-target]')];
+    const panels = buttons.map(button => document.getElementById(button.dataset.spaceTarget));
+    const update = () => {
+        const active = panels.findIndex(panel => {
+            const rect = panel.getBoundingClientRect();
+            return rect.top <= window.innerHeight / 2 && rect.bottom > window.innerHeight / 2;
+        });
+        spaceDots.hidden = active < 0;
+        buttons.forEach((button, index) => button.setAttribute('aria-current', String(index === active)));
+    };
+    buttons.forEach((button, index) => button.addEventListener('click', () => {
+        panels[index].scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+    }));
+    let scheduled = false;
+    window.addEventListener('scroll', () => {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(() => { update(); scheduled = false; });
+    }, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+}
+
 document.querySelectorAll('.leasing-form-carousel').forEach(carousel => {
     const track = carousel.querySelector('.leasing-form-gallery');
     carousel.querySelectorAll('.leasing-form-carousel-arrow').forEach(button => button.addEventListener('click', () => {

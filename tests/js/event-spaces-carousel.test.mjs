@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 
 const source = readFileSync(new URL('../../resources/js/public.js', import.meta.url), 'utf8');
-const script = source.slice(source.indexOf("document.querySelectorAll('.event-spaces-carousel')"), source.indexOf("document.querySelectorAll('.leasing-form-carousel')"));
+const script = source.slice(source.indexOf("document.querySelectorAll('.event-spaces-carousel')"), source.indexOf('const spaceDots ='));
 const element = () => ({ attributes: {}, events: {}, children: [], setAttribute(key, value) { this.attributes[key] = value; }, getAttribute() { return 'Page'; }, addEventListener(key, callback) { this.events[key] = callback; }, replaceChildren(...children) { this.children = children; } });
 const track = Object.assign(element(), { clientWidth: 1280, scrollWidth: 1280, scrollLeft: 0 });
 const previous = element(), next = element(), pagination = element();

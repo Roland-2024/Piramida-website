@@ -8,7 +8,7 @@
 
         <div class="attraction-visual">
             <div data-track>
-                <button data-prev type="button" aria-label="Previous attraction">
+                <button data-prev type="button" aria-label="{{ __('website.attractions_index_previous_attraction') }}">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -24,7 +24,7 @@
 </figure>@endforeach
                 </div>
 
-                <button data-next type="button" aria-label="Next attraction">
+                <button data-next type="button" aria-label="{{ __('website.attractions_index_next_attraction') }}">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                         stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -47,5 +47,4 @@
 
     @else<p class="template-empty">{{ __('cms.no_content') }}</p>@endif
 @if($items->hasPages())<div class="template-pagination">{{ $items->links() }}</div>@endif
-@include('public.businesses._experiences', ['businesses' => $businesses])
-</x-layouts.public>
+@include('public.businesses._experiences', ['businesses' =>$businesses])</x-layouts.public>

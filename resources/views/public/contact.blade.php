@@ -24,12 +24,12 @@
               </div>
             </div>
 
-            <div class="contact-socials" aria-label="Social links">
-              <a href="{{ $siteSettings?->facebook_url ?: '#' }}" aria-label="Facebook">
-                <img src="/template/images/facebook.svg" alt="" />
+            <div class="contact-socials" aria-label="{{ __('website.contact_social_links') }}">
+              <a href="{{ $siteSettings?->facebook_url ?: '#' }}" aria-label="{{ __('website.contact_facebook') }}">
+                <img src="{{ \App\Support\WebsiteContent::image('template/images/facebook.svg') }}" alt="" />
               </a>
-              <a href="{{ $siteSettings?->instagram_url ?: '#' }}" aria-label="Instagram">
-                <img src="/template/images/Ig.svg" alt="" />
+              <a href="{{ $siteSettings?->instagram_url ?: '#' }}" aria-label="{{ __('website.contact_instagram') }}">
+                <img src="{{ \App\Support\WebsiteContent::image('template/images/Ig.svg') }}" alt="" />
               </a>
             </div>
           </div>
@@ -39,10 +39,7 @@
               @csrf
 @include('public.submissions._feedback')
 <h2>{{ __('cms.contact') }}</h2>
-              <p>
-                We're always happy to connect. Reach out and our team will get
-                back to you as soon as possible.
-              </p>
+              <p>{{ __('website.contact_we_re_always_happy_to_connect_reach_out_and_our_team_will_get_') }}</p>
 
               <div class="contact-form-row">
                 <label>
@@ -83,11 +80,11 @@
           </div>
         </section>
       </section>
-<section class="contact-map" aria-label="Piramida location map">
+<section class="contact-map" aria-label="{{ __('website.contact_piramida_location_map') }}">
       <div class="contact-map-frame" aria-hidden="true">
         <iframe
           src="{{ $siteSettings?->map_url ?: 'https://maps.google.com/maps?ll=41.3275,19.8187&z=16&t=m&hl=en&output=embed' }}"
-          title="Piramida Tirana map"
+          title="{{ __('website.contact_piramida_tirana_map') }}"
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
         ></iframe>
@@ -98,11 +95,11 @@
         href="https://www.google.com/maps/search/?api=1&query=Piramida+Tirana"
         target="_blank"
         rel="noreferrer"
-        aria-label="Open Piramida Tirana in Google Maps"
+        aria-label="{{ __('website.contact_open_piramida_tirana_in_google_maps') }}"
       >
         <span class="contact-map-pin" aria-hidden="true"></span>
-        <img src="/template/images/logo piramida.svg" alt="" />
-        <span>Google Map</span>
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/logo piramida.svg') }}" alt="" />
+        <span>{{ __('website.contact_google_map') }}</span>
       </a>
     </section>
 </x-layouts.public>
