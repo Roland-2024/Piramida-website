@@ -8,15 +8,23 @@ const closeSidebar = () => {
     sidebar?.classList.add('hidden');
     sidebar?.classList.remove('flex');
     overlay?.classList.add('hidden');
+    toggle?.setAttribute('aria-expanded', 'false');
+    toggle?.focus();
 };
 
 toggle?.addEventListener('click', () => {
     sidebar?.classList.remove('hidden');
     sidebar?.classList.add('flex');
     overlay?.classList.remove('hidden');
+    toggle?.setAttribute('aria-expanded', 'true');
+    sidebar?.querySelector('[data-sidebar-close]')?.focus();
 });
 
 overlay?.addEventListener('click', closeSidebar);
+document.querySelector('[data-sidebar-close]')?.addEventListener('click', closeSidebar);
+document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') closeSidebar();
+});
 
 document.querySelectorAll('[data-confirm]').forEach((form) => {
     form.addEventListener('submit', (event) => {

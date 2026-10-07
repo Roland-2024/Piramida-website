@@ -14,14 +14,20 @@ class DashboardAccessTest extends TestCase
     {
         $this->actingAs(User::factory()->admin()->create())
             ->get(route('admin.dashboard'))
-            ->assertOk();
+            ->assertOk()
+            ->assertSee('Workspace overview')
+            ->assertSee('View website')
+            ->assertSee('admin-navigation');
     }
 
     public function test_editor_can_access_dashboard(): void
     {
         $this->actingAs(User::factory()->create())
             ->get(route('admin.dashboard'))
-            ->assertOk();
+            ->assertOk()
+            ->assertSee('Create article')
+            ->assertDontSee(route('admin.users.index'), false)
+            ->assertDontSee(route('admin.settings.edit'), false);
     }
 
     public function test_inactive_authenticated_user_is_logged_out(): void
