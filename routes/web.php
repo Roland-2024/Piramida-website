@@ -149,7 +149,7 @@ Route::prefix('admin')
         Route::get('submissions/{submission}/attachment', [SubmissionController::class, 'download'])->name('submissions.download');
         Route::get('submissions/{submission}/attachments/{attachment}', [SubmissionController::class, 'downloadAttachment'])->name('submissions.attachments.download');
         Route::resource('submissions', SubmissionController::class)->only(['index', 'show', 'update'])
-            ->middleware('can:manage-submissions');
+            ->middleware('can:view-submissions');
 
         Route::get('settings', [SiteSettingController::class, 'edit'])->name('settings.edit');
         Route::put('settings', [SiteSettingController::class, 'update'])->name('settings.update');

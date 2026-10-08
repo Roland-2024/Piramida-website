@@ -45,10 +45,12 @@
                 <a href="{{ route('admin.media.index') }}" @if(request()->routeIs('admin.media.*')) aria-current="page" @endif class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.media.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">Media</a>
                 @can('manage-users')
                     <x-admin.nav-group label="Administration" :links="[
-                        ['Submissions', 'admin.submissions', 'index'],
                         ['Users', 'admin.users', 'index'],
                         ['Site settings', 'admin.settings', 'edit'],
                     ]" />
+                @endcan
+                @can('view-submissions')
+                    <a href="{{ route('admin.submissions.index') }}" @if(request()->routeIs('admin.submissions.*')) aria-current="page" @endif class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.submissions.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">Submissions</a>
                 @endcan
             </nav>
 

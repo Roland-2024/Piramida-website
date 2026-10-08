@@ -51,7 +51,7 @@ Use the existing Docker commands documented in `README.md`. Do not stop unrelate
 ## Authentication and authorization
 
 - Public registration is disabled and every Admin route requires authentication and server-side authorization.
-- Admins manage all modules and users. Editors manage permitted content and media but cannot manage users, roles, submissions, or system settings.
+- Admins manage all modules and users. Editors manage permitted content and media and may read submission lists/details, but cannot change reviews, see private notes, download attachments, export submissions, or manage users, roles or system settings.
 - Prevent privilege escalation and protect the final active Admin from demotion or deactivation.
 - Preserve content attribution when accounts are deactivated.
 

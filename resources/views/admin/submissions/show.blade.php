@@ -16,6 +16,7 @@
             @if ($submission->details)
                 <div><p class="text-xs uppercase tracking-wide text-slate-400">Request details</p><dl class="mt-2 divide-y divide-slate-100 rounded-lg border border-slate-200">@foreach ($submission->details as $label => $value)<div class="grid grid-cols-2 gap-3 px-4 py-2 text-sm"><dt class="font-medium">{{ str($label)->replace('_', ' ')->title() }}</dt><dd>{{ is_array($value) ? implode(', ', $value) : $value }}</dd></div>@endforeach</dl></div>
             @endif
+            @can('manage-submissions')
             @if ($submission->hasAttachment())<a href="{{ route('admin.submissions.download', $submission) }}" class="inline-flex rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium">Download {{ $submission->attachment_name }}</a>@endif
             @if ($submission->attachments->isNotEmpty())
                 <div>
@@ -30,8 +31,10 @@
                     </div>
                 </div>
             @endif
+            @endcan
         </section>
 
+        @can('manage-submissions')
         <form method="POST" action="{{ route('admin.submissions.update', $submission) }}" class="h-fit rounded-2xl border border-slate-200 bg-white p-5">
             @csrf
             @method('PUT')
@@ -41,5 +44,11 @@
             <textarea id="internal_notes" name="internal_notes" rows="8" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">{{ old('internal_notes', $submission->internal_notes) }}</textarea>
             <button class="mt-5 w-full rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Save review</button>
         </form>
+        @else
+            <section class="h-fit rounded-2xl border border-slate-200 bg-white p-5">
+                <h3 class="font-semibold">{{ $submission->status->label() }}</h3>
+                <p class="mt-2 text-sm text-slate-500">Read-only access. An administrator manages reviews, private notes and documents.</p>
+            </section>
+        @endcan
     </div>
 </x-layouts.admin>

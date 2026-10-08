@@ -29,7 +29,7 @@ class GalleryPickerTest extends TestCase
         $images = Media::factory()->count(3)->create();
         $article->syncGallery([$images[1]->id, $images[0]->id]);
         $response = $this->actingAs(User::factory()->create())->get('/admin/news/'.$article->id.'/edit')->assertOk();
-        preg_match('/data-gallery-selected.*?<button type="button" data-gallery-open/s', $response->getContent(), $match);
+        preg_match('/data-gallery-selected class="gallery-picker-grid".*?<button type="button" data-gallery-open/s', $response->getContent(), $match);
         $this->assertStringContainsString($images[1]->original_name, $match[0]);
         $this->assertStringNotContainsString($images[2]->original_name, $match[0]);
         $this->assertLessThan(strpos($match[0], $images[0]->original_name), strpos($match[0], $images[1]->original_name));
@@ -41,9 +41,28 @@ class GalleryPickerTest extends TestCase
         $this->postJson('/admin/media', ['gallery_upload' => 1])->assertUnauthorized();
         $this->actingAs(User::factory()->create())->postJson('/admin/media', [
             'gallery_upload' => 1, 'file' => UploadedFile::fake()->image('gallery.jpg'),
-        ])->assertCreated()->assertJsonStructure(['id', 'name', 'url']);
+        ])->assertCreated()->assertJsonStructure(['id', 'name', 'url', 'edit_url']);
         $this->postJson('/admin/media', [
             'gallery_upload' => 1, 'file' => UploadedFile::fake()->create('document.pdf', 10, 'application/pdf'),
         ])->assertUnprocessable()->assertJsonValidationErrors('file');
+    }
+
+    public function test_featured_image_picker_preserves_selection_and_can_replace_or_remove_it(): void
+    {
+        $images = Media::factory()->count(2)->create();
+        $article = News::factory()->create(['featured_media_id' => $images[0]->id]);
+        $this->actingAs(User::factory()->create());
+        $this->get(route('admin.news.edit', $article))->assertOk()
+            ->assertSee('data-single-image', false)->assertSee('Set / change image')
+            ->assertSee('Use selected image')->assertSee('data-gallery-upload', false)
+            ->assertSee('name="featured_media_id" value="'.$images[0]->id.'"', false);
+        $data = ['status' => 'draft', 'translations' => [
+            'al' => ['title' => 'Titull', 'slug' => 'titull'], 'en' => ['title' => 'Title', 'slug' => 'title'],
+        ]];
+        foreach ([$images[1]->id, null] as $id) {
+            $this->put(route('admin.news.update', $article), [...$data, 'featured_media_id' => $id])->assertSessionHasNoErrors();
+            $this->assertSame($id, $article->fresh()->featured_media_id);
+        }
+        $this->assertDatabaseCount('media', 2);
     }
 }

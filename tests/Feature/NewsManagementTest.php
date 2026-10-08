@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\ContentStatus;
 use App\Models\Media;
 use App\Models\News;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -12,6 +13,19 @@ use Tests\TestCase;
 class NewsManagementTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_news_list_trash_action_is_admin_only_and_reversible(): void
+    {
+        $article = News::factory()->create();
+        $this->actingAs(User::factory()->create())->get(route('admin.news.index'))->assertOk()->assertDontSee('data-confirm=', false);
+        $this->delete(route('admin.news.destroy', $article))->assertForbidden();
+        $this->actingAs(User::factory()->admin()->create())->get(route('admin.news.index'))->assertOk()->assertSee('Move this article to trash?');
+        $this->delete(route('admin.news.destroy', $article))->assertRedirect();
+        $this->assertSoftDeleted($article);
+        $this->get(route('admin.news.index', ['trashed' => 'only']))->assertOk()->assertSee('Restore');
+        $this->post(route('admin.news.restore', $article->id))->assertRedirect();
+        $this->assertNotSoftDeleted($article);
+    }
 
     public function test_published_scope_excludes_drafts_and_future_dated_news(): void
     {

@@ -43,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('manage-users', fn (User $user): bool => $user->isAdmin());
         Gate::define('manage-submissions', fn (User $user): bool => $user->isAdmin());
+        Gate::define('view-submissions', fn (User $user): bool => $user->isAdmin() || $user->isEditor());
         Gate::define('manage-settings', fn (User $user): bool => $user->isAdmin());
         Gate::define('manage-website-content', fn (User $user): bool => $user->isAdmin() || $user->isEditor());
 

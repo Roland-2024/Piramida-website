@@ -59,7 +59,7 @@ class MediaController extends Controller
         );
 
         if ($request->expectsJson()) {
-            return response()->json(['id' => $media->id, 'name' => $media->original_name, 'url' => $media->url()], 201);
+            return response()->json(['id' => $media->id, 'name' => $media->original_name, 'url' => $media->url(), 'edit_url' => route('admin.media.edit', $media)], 201);
         }
 
         return redirect()->route('admin.media.edit', $media)->with('success', 'Media uploaded.');

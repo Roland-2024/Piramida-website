@@ -4,7 +4,11 @@
             <h2 class="text-2xl font-semibold">Submissions</h2>
             <p class="mt-1 text-sm text-slate-500">Contact, registration, application, booking, and leasing requests.</p>
         </div>
-        <a href="{{ route('admin.submissions.export', request()->query()) }}" class="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold">Export CSV</a>
+        @can('manage-submissions')
+            <a href="{{ route('admin.submissions.export', request()->query()) }}" class="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold">Export CSV</a>
+        @else
+            <p class="text-sm text-slate-500">Read-only access</p>
+        @endcan
     </div>
 
     <form method="GET" class="mb-5 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-4">

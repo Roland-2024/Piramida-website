@@ -47,17 +47,6 @@ document.addEventListener('keydown', event => {
     }
 });
 
-document.querySelectorAll('[data-image-picker]').forEach(picker => {
-    const select = picker.querySelector('select');
-    const preview = picker.querySelector('[data-image-preview]');
-    select.addEventListener('change', () => {
-        const url = select.selectedOptions[0]?.dataset.url;
-        preview.hidden = !url;
-        if (url) preview.src = url;
-        else preview.removeAttribute('src');
-    });
-});
-
 document.querySelectorAll('[data-confirm]').forEach((form) => {
     form.addEventListener('submit', (event) => {
         if (!window.confirm(form.dataset.confirm)) {

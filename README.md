@@ -232,7 +232,7 @@ Admins may access all content and media modules, manage dashboard users, assign 
 
 Editors may access the dashboard and create or update pages, sections, news, events, and media. Editors cannot access user management or delete/restore content and media.
 
-Editors may also manage attractions, businesses, spaces, and careers. Submissions and global site settings remain Admin-only.
+Editors may also manage attractions, businesses, spaces, and careers. Submissions has a separate sidebar link with read-only list/detail access for Editors; updates, private notes, attachment downloads and CSV exports remain Admin-only. Global site settings remain Admin-only.
 
 ## Request workflow
 
@@ -361,7 +361,7 @@ This additive seeder does not change existing pages. New Education, Innovation a
 
 Carousel posts expose only their page/category, publication, order, featured image, bilingual title, slug and caption. Unused historical booking/gallery/SEO fields are preserved in storage. The list filters by carousel page; dashboard counts and recent-content links include these posts and the other catalogues. Template-dependent English page slugs and About section names/parent pages are protected server-side; public titles and text remain editable.
 
-Image selectors show previews and accept only non-deleted public images (also enforced on save). Editor forms warn before leaving with unsaved changes; the mobile sidebar traps keyboard focus and closes with Escape. Run the lightweight JavaScript guard checks with `node tests/js/admin-ui.test.cjs` in addition to the Laravel tests.
+Featured-image selectors reuse the gallery media library with a single-image preview, search, upload, replace and remove controls. Edit image details opens Media metadata in a new tab; save the content record to apply its selected image. Removing a selection never deletes the shared file. Only non-deleted public images are accepted (also enforced on save). Editor forms warn before leaving with unsaved changes; the mobile sidebar traps keyboard focus and closes with Escape. Run the lightweight JavaScript guard checks with `node tests/js/admin-ui.test.cjs` in addition to the Laravel tests.
 
 The frontend team can replace:
 
@@ -382,7 +382,7 @@ Keep public route names and controller inputs stable, or update links consistent
 
 ## Editing public website content
 
-Admins and Editors can use **Website content** (`/admin/website-content`) for bilingual shared labels, navigation, form labels, feedback and validation messages, template copy, default SEO/social metadata, and template images/logos. Existing Pages, Page Sections and individual content modules still manage their own records and media. Public contact details/footer copy are editable here; SMTP credentials, notification recipients, users and submissions remain Admin-only.
+Admins and Editors can use **Website content** (`/admin/website-content`) for bilingual shared labels, navigation, form labels, feedback and validation messages, template copy, default SEO/social metadata, and template images/logos. Existing Pages, Page Sections and individual content modules still manage their own records and media. Public contact details/footer copy are editable here; SMTP credentials, notification recipients, users and submission management remain Admin-only (Editors can read submission details).
 
 Run `php artisan migrate --force` when deploying this update. The additive `website_texts` and `website_images` tables store overrides; existing content and file-based defaults are preserved without reseeding. Text is escaped, not HTML. Preserve placeholders such as `:year`, `:attribute` and `:max`. Images are selected from public Media; private uploads cannot be selected, and referenced media cannot be deleted. Shared template assets update wherever used. Restoring “Original template image” removes its override. Replacing a leasing plan must preserve its proportions and unit positions; map geometry is not CMS content. Browser-native date/file-picker text remains controlled by the visitor's browser.
 

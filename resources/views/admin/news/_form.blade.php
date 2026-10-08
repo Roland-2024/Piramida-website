@@ -1,14 +1,14 @@
 @php $editing = isset($article); @endphp
 
-<div class="grid gap-5 lg:grid-cols-4">
+<div class="grid gap-5 lg:grid-cols-3">
     <div><label class="block text-sm font-medium" for="status">Status</label><select id="status" name="status" required class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">@foreach ($statuses as $status)<option value="{{ $status->value }}" @selected(old('status', $article->status->value ?? 'draft') === $status->value)>{{ $status->label() }}</option>@endforeach</select>@error('status')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror</div>
     <div><label class="block text-sm font-medium" for="published_at">Publication date</label><input id="published_at" name="published_at" type="datetime-local" value="{{ old('published_at', isset($article) ? $article->published_at?->format('Y-m-d\TH:i') : '') }}" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">@error('published_at')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror</div>
     <div><label class="block text-sm font-medium" for="author_name">Author name</label><input id="author_name" name="author_name" value="{{ old('author_name', $article->author_name ?? '') }}" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm"></div>
-    <x-admin.image-picker :media-items="$mediaItems" :selected="$article->featured_media_id ?? null" />
 </div>
 
-<div class="mt-5">
-<x-admin.gallery-picker :media-items="$mediaItems" :selected="isset($article) ? $article->gallery->modelKeys() : []" label="Article gallery" />
+<div class="mt-5 grid items-start gap-5 lg:grid-cols-3">
+    <x-admin.image-picker :media-items="$mediaItems" :selected="$article->featured_media_id ?? null" />
+    <div class="lg:col-span-2"><x-admin.gallery-picker :media-items="$mediaItems" :selected="isset($article) ? $article->gallery->modelKeys() : []" label="Article gallery" /></div>
 </div>
 
 <div class="mt-8 space-y-5">

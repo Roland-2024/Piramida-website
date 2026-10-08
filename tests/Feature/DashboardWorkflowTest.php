@@ -33,7 +33,7 @@ class DashboardWorkflowTest extends TestCase
             $this->assertSame(1, $xpath->query('//nav//a[@aria-current="page" and normalize-space(.)="News"]')->length);
             $this->assertSame($admin ? 1 : 0, $xpath->query('//nav//a[normalize-space(.)="Users"]')->length);
             $this->assertSame($admin ? 1 : 0, $xpath->query('//nav//a[normalize-space(.)="Site settings"]')->length);
-            $this->assertSame($admin ? 1 : 0, $xpath->query('//nav//a[normalize-space(.)="Submissions"]')->length);
+            $this->assertSame(1, $xpath->query('//nav/a[normalize-space(.)="Submissions"]')->length);
         }
     }
 

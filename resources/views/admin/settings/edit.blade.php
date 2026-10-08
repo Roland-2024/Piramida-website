@@ -26,6 +26,12 @@
             <legend class="px-2 font-semibold">Postmark SMTP — notifications and password resets</legend>
             <p class="text-sm text-slate-500">smtp.postmarkapp.com · Port 587 · STARTTLS required. Enable SMTP in Postmark and verify your sender domain/address first. Use a transactional stream's SMTP Access Key and Secret Key, or the Server API Token in both fields. Credentials are encrypted and never displayed again.</p>
             <input type="hidden" name="postmark_enabled" value="0">
+            <div class="rounded-lg bg-slate-50 p-4 text-sm text-slate-700">
+                <p class="font-semibold">Have just one token?</p>
+                <p class="mt-1">Paste your <strong>Server API Token</strong> into both credential fields below. Do not use the Account API Token. This sends through the default outbound transactional stream.</p>
+                <p class="mt-2">For a specific transactional stream, use its SMTP Access Key and Secret Key instead. This dashboard uses SMTP, not the HTTP API; no extra PHP package is required.</p>
+                <a href="https://postmarkapp.com/developer/user-guide/send-email-with-smtp" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block underline">Official Postmark setup (opens in a new tab)</a>
+            </div>
             <label class="flex items-center gap-2"><input type="checkbox" name="postmark_enabled" value="1" @checked(old('postmark_enabled', $settings->postmark_enabled))> Use Postmark for request notifications and password resets</label>
             <p class="text-sm text-slate-500">When disabled, the environment mailer remains in use. Saving does not send an email.</p>
             <div class="grid gap-5 md:grid-cols-2">

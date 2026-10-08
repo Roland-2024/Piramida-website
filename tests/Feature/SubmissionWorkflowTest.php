@@ -265,7 +265,12 @@ class SubmissionWorkflowTest extends TestCase
 
         $this->actingAs($editor)
             ->get(route('admin.submissions.show', $submission))
-            ->assertForbidden();
+            ->assertOk()->assertSee('Read-only access')->assertDontSee('Save review')->assertDontSee('Download');
+        $this->get(route('admin.submissions.index'))->assertOk()->assertDontSee('Export CSV');
+        $this->put(route('admin.submissions.update', $submission), ['status' => 'closed', 'internal_notes' => 'Not allowed'])->assertForbidden();
+        $this->get(route('admin.submissions.export'))->assertForbidden();
+        $this->get(route('admin.submissions.download', $submission))->assertForbidden();
+        $this->assertNull($submission->fresh()->internal_notes);
 
         $this->actingAs($admin)
             ->put(route('admin.submissions.update', $submission), [

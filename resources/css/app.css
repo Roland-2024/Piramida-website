@@ -124,6 +124,10 @@ textarea {
 .admin-ui .rich-text { border-radius:12px; }
 .admin-ui .rich-text:focus-within { border-color:#5267b5; --tw-ring-color:#dce2f4; }
 .admin-ui .gallery-library-item:has(input:checked) { border-color:#7b9633; background:#f6fbdc; }
+.image-picker-selected { padding:12px; border:1px dashed #cbd3e1; border-radius:12px; background:#fafbfd; font-size:13px; }
+.image-picker-selected img { width:100%; height:160px; object-fit:contain; border-radius:8px; }
+.image-picker-selected p { margin-block:8px; overflow-wrap:anywhere; }
+.image-picker-selected a { text-decoration:underline; }
 .admin-auth { background:radial-gradient(ellipse at top left,#303b78,transparent 60%),#000929; }
 .admin-skip { position:fixed; top:12px; left:12px; z-index:100; transform:translateY(-180%); padding:12px 18px; border-radius:8px; background:#cbff00; color:#000929; }
 .admin-skip:focus { transform:translateY(0); }

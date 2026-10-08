@@ -21,7 +21,7 @@ class SubmissionController extends Controller
 {
     public function index(Request $request): View
     {
-        Gate::authorize('manage-submissions');
+        Gate::authorize('view-submissions');
         $filters = $this->validatedFilters($request);
 
         $submissions = $this->filteredQuery($filters)
@@ -39,7 +39,7 @@ class SubmissionController extends Controller
 
     public function show(Submission $submission): View
     {
-        Gate::authorize('manage-submissions');
+        Gate::authorize('view-submissions');
         $submission->load(['related', 'handledBy', 'attachments']);
 
         return view('admin.submissions.show', [
