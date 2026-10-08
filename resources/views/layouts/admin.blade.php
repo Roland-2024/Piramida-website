@@ -23,55 +23,32 @@
             </div>
 
             <button data-sidebar-close type="button" class="mx-4 mt-3 rounded-lg border border-white/20 p-2 text-sm md:hidden">Close navigation ×</button>
-            <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto px-4 py-6" aria-label="Dashboard">
-                <p class="admin-nav-heading">Content workspace</p>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    Dashboard
-                </a>
-                <a href="{{ route('admin.pages.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.pages.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    Pages
-                </a>
-                <a href="{{ route('admin.sections.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.sections.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    Page sections
-                </a>
-                <a href="{{ route('admin.programs.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.programs.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">Programs / Carousel posts</a>
-                <a href="{{ route('admin.news.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.news.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    News
-                </a>
-                <a href="{{ route('admin.events.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.events.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    Events
-                </a>
-                <a href="{{ route('admin.attractions.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.attractions.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    Attractions
-                </a>
-                <a href="{{ route('admin.businesses.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.businesses.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    Businesses
-                </a>
-                <a href="{{ route('admin.spaces.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.spaces.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    Event spaces
-                </a>
-                <a href="{{ route('admin.leasing.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.leasing.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    Leasing spaces
-                </a>
-                <a href="{{ route('admin.careers.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.careers.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    Careers
-                </a>
-                <a href="{{ route('admin.media.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.media.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                    Media
-                </a>
-
-                <a href="{{ route('admin.website-content.edit') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.website-content.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">Website content</a>
+            <nav class="min-h-0 flex-1 space-y-1 overflow-y-auto px-4 py-4" aria-label="Dashboard">
+                <a href="{{ route('admin.dashboard') }}" @if(request()->routeIs('admin.dashboard')) aria-current="page" @endif class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">Dashboard</a>
+                <x-admin.nav-group label="Website" :links="[
+                    ['Pages', 'admin.pages', 'index'],
+                    ['Page sections', 'admin.sections', 'index'],
+                    ['Programs / Carousel posts', 'admin.programs', 'index'],
+                    ['Website content', 'admin.website-content', 'edit'],
+                ]" />
+                <x-admin.nav-group label="Activities & careers" :links="[
+                    ['News', 'admin.news', 'index'],
+                    ['Events', 'admin.events', 'index'],
+                    ['Careers', 'admin.careers', 'index'],
+                ]" />
+                <x-admin.nav-group label="Places & spaces" :links="[
+                    ['Attractions', 'admin.attractions', 'index'],
+                    ['Businesses', 'admin.businesses', 'index'],
+                    ['Event spaces', 'admin.spaces', 'index'],
+                    ['Leasing spaces', 'admin.leasing', 'index'],
+                ]" />
+                <a href="{{ route('admin.media.index') }}" @if(request()->routeIs('admin.media.*')) aria-current="page" @endif class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.media.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">Media</a>
                 @can('manage-users')
-                    <p class="admin-nav-heading">Administration</p>
-                    <a href="{{ route('admin.submissions.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.submissions.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                        Submissions
-                    </a>
-                    <a href="{{ route('admin.users.index') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.users.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                        Users
-                    </a>
-                    <a href="{{ route('admin.settings.edit') }}" class="flex items-center rounded-lg px-3 py-2.5 text-sm font-medium {{ request()->routeIs('admin.settings.*') ? 'bg-white/10 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white' }}">
-                        Site settings
-                    </a>
+                    <x-admin.nav-group label="Administration" :links="[
+                        ['Submissions', 'admin.submissions', 'index'],
+                        ['Users', 'admin.users', 'index'],
+                        ['Site settings', 'admin.settings', 'edit'],
+                    ]" />
                 @endcan
             </nav>
 

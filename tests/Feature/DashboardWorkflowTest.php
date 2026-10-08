@@ -18,6 +18,25 @@ class DashboardWorkflowTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_sidebar_groups_open_for_the_current_page_and_preserve_role_visibility(): void
+    {
+        foreach ([false, true] as $admin) {
+            $user = $admin ? User::factory()->admin()->create() : User::factory()->create();
+            $response = $this->actingAs($user)->get(route('admin.news.index'))->assertOk();
+            $document = new \DOMDocument;
+            @$document->loadHTML($response->getContent());
+            $xpath = new \DOMXPath($document);
+            $this->assertSame($admin ? 4 : 3, $xpath->query('//details[@name="admin-menu"]')->length);
+            $open = $xpath->query('//details[@name="admin-menu" and @open]/summary');
+            $this->assertSame(1, $open->length);
+            $this->assertSame('Activities & careers', trim($open->item(0)->textContent));
+            $this->assertSame(1, $xpath->query('//nav//a[@aria-current="page" and normalize-space(.)="News"]')->length);
+            $this->assertSame($admin ? 1 : 0, $xpath->query('//nav//a[normalize-space(.)="Users"]')->length);
+            $this->assertSame($admin ? 1 : 0, $xpath->query('//nav//a[normalize-space(.)="Site settings"]')->length);
+            $this->assertSame($admin ? 1 : 0, $xpath->query('//nav//a[normalize-space(.)="Submissions"]')->length);
+        }
+    }
+
     public function test_template_identifiers_are_locked_but_content_and_generic_slugs_remain_editable(): void
     {
         $this->actingAs(User::factory()->create());

@@ -84,7 +84,14 @@ textarea {
 .admin-ui { background:#f3f5f9; color:#111c38; }
 .admin-sidebar { background:linear-gradient(165deg,#111b46 0%,#000929 70%); }
 .admin-sidebar > div:first-child { min-height:88px; flex-shrink:0; }
-.admin-nav-heading { padding:14px 12px 8px; color:#94a3b8; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
+.admin-sidebar nav { scrollbar-width:none; overscroll-behavior:contain; }
+.admin-sidebar nav::-webkit-scrollbar { display:none; }
+.admin-sidebar .admin-nav-group > summary { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:44px; padding:10px 12px; border-radius:8px; color:#cbd5e1; font-size:14px; font-weight:600; cursor:pointer; list-style:none; }
+.admin-nav-group > summary::-webkit-details-marker { display:none; }
+.admin-nav-group > summary:hover { background:#ffffff0d; color:white; }
+.admin-nav-group[open] > summary { color:white; }
+.admin-nav-group[open] > summary svg { transform:rotate(90deg); }
+.admin-nav-children { margin:2px 0 8px 12px; padding-left:8px; border-left:1px solid #ffffff20; }
 .admin-sidebar nav a { position:relative; min-height:42px; border:1px solid transparent; }
 .admin-sidebar nav a:hover { background:#ffffff0d; border-color:#ffffff18; }
 .admin-sidebar nav a.bg-white\/10 { background:#cbff00; color:#000929; box-shadow:0 4px 16px #00000012; }

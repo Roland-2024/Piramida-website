@@ -36,7 +36,7 @@ document.addEventListener('keydown', event => {
         closeSidebar();
     }
     if (event.key === 'Tab') {
-        const controls = [...sidebar.querySelectorAll('a[href], button:not([disabled]), [tabindex="0"]')]
+        const controls = [...sidebar.querySelectorAll('a[href], button:not([disabled]), summary, [tabindex="0"]')]
             .filter(control => control.getClientRects().length);
         const first = controls[0];
         const last = controls.at(-1);
