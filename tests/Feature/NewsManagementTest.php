@@ -3,8 +3,16 @@
 namespace Tests\Feature;
 
 use App\Enums\ContentStatus;
+use App\Models\Attraction;
+use App\Models\Business;
+use App\Models\Career;
+use App\Models\Event;
 use App\Models\Media;
 use App\Models\News;
+use App\Models\Page;
+use App\Models\PageSection;
+use App\Models\Program;
+use App\Models\Space;
 use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,17 +22,28 @@ class NewsManagementTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_news_list_trash_action_is_admin_only_and_reversible(): void
+    public function test_editors_can_trash_news_but_only_admins_can_restore_it(): void
     {
         $article = News::factory()->create();
-        $this->actingAs(User::factory()->create())->get(route('admin.news.index'))->assertOk()->assertDontSee('data-confirm=', false);
-        $this->delete(route('admin.news.destroy', $article))->assertForbidden();
-        $this->actingAs(User::factory()->admin()->create())->get(route('admin.news.index'))->assertOk()->assertSee('Move this article to trash?');
+        $editor = User::factory()->create();
+        $this->actingAs($editor)->get(route('admin.news.index'))->assertOk()->assertSee('Move this article to trash?');
+        $this->get(route('admin.news.show', $article))->assertOk()->assertSee('>Trash</button>', false);
         $this->delete(route('admin.news.destroy', $article))->assertRedirect();
         $this->assertSoftDeleted($article);
+        $this->get(route('admin.news.index', ['trashed' => 'only']))->assertOk()->assertDontSee('>Restore</button>', false);
+        $this->post(route('admin.news.restore', $article->id))->assertForbidden();
+        $this->assertFalse($editor->can('forceDelete', $article));
+        foreach ([Page::class, PageSection::class, Event::class,
+            Program::class, Attraction::class, Business::class,
+            Space::class, Career::class, Media::class] as $model) {
+            $this->assertFalse($editor->can('delete', new $model));
+        }
+        $this->actingAs(User::factory()->admin()->create());
         $this->get(route('admin.news.index', ['trashed' => 'only']))->assertOk()->assertSee('Restore');
         $this->post(route('admin.news.restore', $article->id))->assertRedirect();
         $this->assertNotSoftDeleted($article);
+        $this->delete(route('admin.news.destroy', $article))->assertRedirect();
+        $this->assertSoftDeleted($article);
     }
 
     public function test_published_scope_excludes_drafts_and_future_dated_news(): void

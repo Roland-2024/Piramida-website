@@ -54,6 +54,7 @@ This file records durable decisions that future tasks should preserve. Implement
 
 - Public registration is disabled.
 - Admins have full CMS and user-management access.
+- Editors may soft-delete News articles from the list or detail screen. Restore and permanent deletion remain Admin-only; this exception does not grant deletion rights for other content or media.
 - Editors manage permitted content and media and have read-only access to the Submissions list/details. Submission updates, private notes, document downloads and CSV exports remain Admin-only, as do users, roles and system settings.
 - The final active Admin cannot be demoted or deactivated.
 - Sensitive CV and leasing documents remain on private storage.

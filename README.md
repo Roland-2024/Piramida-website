@@ -230,7 +230,7 @@ Admins may access all content and media modules, manage dashboard users, assign 
 
 ### Editor
 
-Editors may access the dashboard and create or update pages, sections, news, events, and media. Editors cannot access user management or delete/restore content and media.
+Editors may access the dashboard and create or update pages, sections, news, events, and media. Editors may move News articles to trash; only Admins may restore them. Editors cannot trash other content/media, permanently delete records, or access user management.
 
 Editors may also manage attractions, businesses, spaces, and careers. Submissions has a separate sidebar link with read-only list/detail access for Editors; updates, private notes, attachment downloads and CSV exports remain Admin-only. Global site settings remain Admin-only.
 

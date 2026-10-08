@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\News;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,7 +30,7 @@ class ContentPolicy
 
     public function delete(User $user, Model $content): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || ($user->isEditor() && $content instanceof News);
     }
 
     public function restore(User $user, Model $content): bool
