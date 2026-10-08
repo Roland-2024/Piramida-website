@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Enums\SectionType;
+use App\Models\Page;
 use App\Models\PageSection;
 use App\Rules\SafeUrl;
 use App\Rules\YouTubeUrl;
@@ -15,7 +16,8 @@ class PageSectionRequest extends FormRequest
     {
         $section = $this->route('section');
 
-        return $this->user()?->can($section ? 'update' : 'create', $section ?: PageSection::class) === true;
+        return ! $section?->page?->carouselSlug()
+            && $this->user()?->can($section ? 'update' : 'create', $section ?: PageSection::class) === true;
     }
 
     /**
@@ -27,8 +29,8 @@ class PageSectionRequest extends FormRequest
             'page_id' => ['required', Rule::exists('pages', 'id')->whereNull('deleted_at')],
             'internal_name' => ['required', 'string', 'max:255'],
             'type' => ['required', Rule::enum(SectionType::class)],
-            'primary_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
-            'secondary_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
+            'primary_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
+            'secondary_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'gallery_media_ids' => ['nullable', 'array', 'max:30'],
             'gallery_media_ids.*' => ['integer', 'distinct', Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'video_url' => ['bail', 'nullable', 'string', 'max:2048', new SafeUrl],
@@ -39,6 +41,13 @@ class PageSectionRequest extends FormRequest
             'structured_data' => ['nullable', 'json'],
             'translations' => ['required', 'array'],
         ];
+
+        $rules['page_id'][] = Rule::in(Page::query()->withoutCarousel()->pluck('id')->all());
+        $section = $this->route('section');
+        if ($section?->hasTemplateName()) {
+            $rules['internal_name'][] = Rule::in([$section->internal_name]);
+            $rules['page_id'][] = Rule::in([$section->page_id]);
+        }
 
         foreach (array_keys(config('cms.locales')) as $locale) {
             $rules["translations.{$locale}"] = ['required', 'array'];
@@ -58,5 +67,13 @@ class PageSectionRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    public function messages(): array
+    {
+        return [
+            'page_id.in' => 'This page uses dynamic carousel posts, or this section must remain on its original page.',
+            'internal_name.in' => 'This internal name is required by the page template. Edit the translated title instead.',
+        ];
     }
 }

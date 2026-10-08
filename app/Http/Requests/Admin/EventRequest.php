@@ -29,7 +29,7 @@ class EventRequest extends FormRequest
         $event?->loadMissing('translations');
 
         $rules = [
-            'featured_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
+            'featured_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'category' => ['required', Rule::enum(EventCategory::class)],
             'status' => ['required', Rule::enum(ContentStatus::class)],
             'published_at' => [

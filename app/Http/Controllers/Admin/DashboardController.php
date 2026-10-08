@@ -11,6 +11,7 @@ use App\Models\Career;
 use App\Models\Event;
 use App\Models\News;
 use App\Models\Page;
+use App\Models\Program;
 use App\Models\Space;
 use App\Models\Submission;
 use App\Models\User;
@@ -23,6 +24,7 @@ class DashboardController extends Controller
         return view('admin.dashboard', [
             'metrics' => [
                 'pages' => Page::query()->count(),
+                'programs' => Program::query()->count(),
                 'news' => News::query()->count(),
                 'events' => Event::query()->count(),
                 'attractions' => Attraction::query()->count(),
@@ -37,6 +39,7 @@ class DashboardController extends Controller
                 'admins' => User::query()->where('role', UserRole::Admin)->count(),
                 'editors' => User::query()->where('role', UserRole::Editor)->count(),
                 'published' => Page::query()->published()->count()
+                    + Program::query()->published()->count()
                     + News::query()->published()->count()
                     + Event::query()->published()->count()
                     + Attraction::query()->published()->count()
@@ -44,6 +47,7 @@ class DashboardController extends Controller
                     + Space::query()->published()->count()
                     + Career::query()->published()->count(),
                 'drafts' => Page::query()->where('status', 'draft')->count()
+                    + Program::query()->where('status', 'draft')->count()
                     + News::query()->where('status', 'draft')->count()
                     + Event::query()->where('status', 'draft')->count()
                     + Attraction::query()->where('status', 'draft')->count()
@@ -53,28 +57,22 @@ class DashboardController extends Controller
                 'upcoming_events' => Event::query()->published()->upcoming()->count(),
             ],
             'recentContent' => collect([
-                Page::query()->with('translations')->latest('updated_at')->limit(5)->get()
-                    ->map(fn (Page $page) => [
-                        'type' => 'Page',
-                        'title' => $page->translation('al')?->title,
-                        'updated_at' => $page->updated_at,
-                        'url' => route('admin.pages.show', $page),
-                    ]),
-                News::query()->with('translations')->latest('updated_at')->limit(5)->get()
-                    ->map(fn (News $news) => [
-                        'type' => 'News',
-                        'title' => $news->translation('al')?->title,
-                        'updated_at' => $news->updated_at,
-                        'url' => route('admin.news.show', $news),
-                    ]),
-                Event::query()->with('translations')->latest('updated_at')->limit(5)->get()
-                    ->map(fn (Event $event) => [
-                        'type' => 'Event',
-                        'title' => $event->translation('al')?->title,
-                        'updated_at' => $event->updated_at,
-                        'url' => route('admin.events.show', $event),
-                    ]),
-            ])->collapse()->sortByDesc('updated_at')->take(8),
+                Page::class => ['Page', 'pages'],
+                News::class => ['News', 'news'],
+                Event::class => ['Event', 'events'],
+                Program::class => ['Carousel post', 'programs'],
+                Attraction::class => ['Attraction', 'attractions'],
+                Business::class => ['Business', 'businesses'],
+                Space::class => ['Space', 'spaces'],
+                Career::class => ['Career', 'careers'],
+            ])->flatMap(fn (array $meta, string $model) => $model::query()
+                ->with('translations')->latest('updated_at')->orderByDesc('id')->limit(8)->get()
+                ->map(fn ($item) => [
+                    'type' => $meta[0],
+                    'title' => $item->translation('al')?->title ?? $item->translation('al')?->name,
+                    'updated_at' => $item->updated_at,
+                    'url' => route('admin.'.($item instanceof Space && $item->type === SpaceType::Leasing ? 'leasing' : $meta[1]).'.edit', $item),
+                ]))->sortByDesc('updated_at')->take(8),
         ]);
     }
 }

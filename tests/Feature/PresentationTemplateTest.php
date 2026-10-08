@@ -10,6 +10,7 @@ use App\Models\Career;
 use App\Models\Media;
 use App\Models\Page;
 use App\Models\PageSection;
+use App\Models\Program;
 use App\Models\Space;
 use Database\Seeders\CarouselProgramSeeder;
 use Database\Seeders\PresentationPageSeeder;
@@ -85,7 +86,8 @@ class PresentationTemplateTest extends TestCase
         $this->seed(PresentationPageSeeder::class);
 
         $this->assertSame(4, Page::withTrashed()->count());
-        $this->assertSame(14, PageSection::count());
+        $this->assertSame(0, PageSection::count());
+        $this->assertSame(14, Program::count());
         $this->assertSame(7, Media::count());
         $this->assertSame('draft', $draft->fresh()->status->value);
         $this->assertTrue($deleted->fresh()->trashed());

@@ -28,7 +28,7 @@ class PageRequest extends FormRequest
         $page?->loadMissing('translations');
 
         $rules = [
-            'featured_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
+            'featured_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'is_homepage' => ['required', 'boolean'],
             'homepage_video_url' => ['nullable', 'string', 'max:2048', new YouTubeUrl],
             'status' => ['required', Rule::enum(ContentStatus::class)],
@@ -55,6 +55,9 @@ class PageRequest extends FormRequest
                     ->where('locale', $locale)
                     ->ignore($translationId),
             ];
+            if ($locale === 'en' && $page?->hasTemplateSlug()) {
+                $rules["translations.{$locale}.slug"][] = Rule::in([$page->translation('en', false)->slug]);
+            }
             $rules["translations.{$locale}.short_description"] = ['nullable', 'string', 'max:2000'];
             $rules["translations.{$locale}.content"] = ['nullable', 'string'];
             $rules["translations.{$locale}.seo_title"] = ['nullable', 'string', 'max:255'];
@@ -75,5 +78,10 @@ class PageRequest extends FormRequest
         }
 
         $this->merge(['translations' => $translations]);
+    }
+
+    public function messages(): array
+    {
+        return ['translations.en.slug.in' => 'This slug is required by the page template. Edit the title instead.'];
     }
 }

@@ -7,8 +7,22 @@
         <a href="{{ route("{$routePrefix}.create") }}" class="rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Create {{ strtolower($singular) }}</a>
     </div>
 
+    @if ($routePrefix === 'admin.programs')
+        <p class="mb-5 text-sm text-slate-600">Add as many posts as needed for Education, Innovation and Art &amp; Culture. Lower display-order numbers appear first. Manage the Business carousel in <a class="underline" href="{{ route('admin.businesses.index') }}">Businesses</a>.</p>
+    @endif
+
     <form method="GET" class="mb-5 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-4">
         <input name="search" type="search" value="{{ $filters['search'] ?? '' }}" placeholder="Search translated name" class="rounded-lg border border-slate-300 px-3 py-2.5 text-sm sm:col-span-2">
+        @if ($routePrefix === 'admin.programs')
+            <select name="category" aria-label="Carousel page" class="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
+                <option value="">All carousel pages</option>
+                @foreach (\App\Enums\ProgramCategory::cases() as $category)
+                    @if ($category !== \App\Enums\ProgramCategory::Business)
+                        <option value="{{ $category->value }}" @selected(($filters['category'] ?? '') === $category->value)>{{ $category->label() }}</option>
+                    @endif
+                @endforeach
+            </select>
+        @endif
         <select name="status" class="rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
             <option value="">All statuses</option>
             <option value="draft" @selected(($filters['status'] ?? '') === 'draft')>Draft</option>
@@ -31,7 +45,7 @@
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200 text-sm">
                     <thead class="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
-                        <tr><th class="px-5 py-3">{{ $singular }}</th><th class="px-5 py-3">Status</th><th class="px-5 py-3">Order</th><th class="px-5 py-3">Updated</th><th class="px-5 py-3 text-right">Actions</th></tr>
+                        <tr><th class="px-5 py-3">{{ $singular }}</th>@if ($routePrefix === 'admin.programs')<th class="px-5 py-3">Carousel page</th>@endif<th class="px-5 py-3">Status</th><th class="px-5 py-3">Order</th><th class="px-5 py-3">Updated</th><th class="px-5 py-3 text-right">Actions</th></tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @foreach ($items as $item)
@@ -43,6 +57,7 @@
                                         <p class="mt-1 text-xs text-slate-600">{{ $item->leasingUnit?->label() ?? 'No map unit assigned' }} · {{ $item->is_available ? 'Available (when published)' : 'Unavailable' }}</p>
                                     @endif
                                 </td>
+                                @if ($routePrefix === 'admin.programs')<td class="px-5 py-4">{{ $item->category->label() }}</td>@endif
                                 <td class="px-5 py-4"><span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $item->status->value === 'published' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800' }}">{{ $item->status->label() }}</span></td>
                                 <td class="px-5 py-4">{{ $item->display_order }}</td>
                                 <td class="px-5 py-4 text-slate-500">{{ $item->updated_at->diffForHumans() }}</td>

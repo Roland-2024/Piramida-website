@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\ContentStatus;
+use App\Enums\ProgramCategory;
 use App\Http\Controllers\Controller;
 use App\Models\Media;
+use App\Models\Program;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
@@ -32,6 +34,8 @@ abstract class TranslatedContentController extends Controller
 
     protected bool $withMedia = true;
 
+    protected bool $withGallery = true;
+
     public function index(Request $request): View
     {
         Gate::authorize('viewAny', $this->modelClass);
@@ -40,6 +44,7 @@ abstract class TranslatedContentController extends Controller
             'search' => ['nullable', 'string', 'max:100'],
             'status' => ['nullable', Rule::enum(ContentStatus::class)],
             'trashed' => ['nullable', Rule::in(['with', 'only'])],
+            ...($this->modelClass === Program::class ? ['category' => ['nullable', Rule::enum(ProgramCategory::class)]] : []),
         ]);
 
         $titleColumn = $this->translationTitleColumn;
@@ -52,6 +57,7 @@ abstract class TranslatedContentController extends Controller
                 );
             })
             ->when($filters['status'] ?? null, fn (Builder $query, string $status) => $query->where('status', $status))
+            ->when($filters['category'] ?? null, fn (Builder $query, string $category) => $query->where('category', $category))
             ->when(($filters['trashed'] ?? null) === 'with', fn (Builder $query) => $query->withTrashed())
             ->when(($filters['trashed'] ?? null) === 'only', fn (Builder $query) => $query->onlyTrashed())
             ->orderBy('display_order')
@@ -125,7 +131,7 @@ abstract class TranslatedContentController extends Controller
             ]);
             $item->syncTranslations($translations);
 
-            if (method_exists($item, 'syncGallery')) {
+            if ($this->withGallery && method_exists($item, 'syncGallery')) {
                 $item->syncGallery($galleryMediaIds);
             }
 
@@ -149,7 +155,7 @@ abstract class TranslatedContentController extends Controller
             $item->update([...$data, 'updated_by' => $request->user()->id]);
             $item->syncTranslations($translations);
 
-            if (method_exists($item, 'syncGallery')) {
+            if ($this->withGallery && method_exists($item, 'syncGallery')) {
                 $item->syncGallery($galleryMediaIds);
             }
         });
@@ -170,6 +176,7 @@ abstract class TranslatedContentController extends Controller
             'globalFields' => $this->globalFields(),
             'translationFields' => $this->translationFields(),
             'withMedia' => $this->withMedia,
+            'withGallery' => $this->withGallery,
         ];
     }
 

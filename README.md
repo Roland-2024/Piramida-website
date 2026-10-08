@@ -347,7 +347,7 @@ Homepage video: edit **Pages → Homepage → Homepage YouTube video**. The shar
 
 The draft `Piramida.zip` template is integrated through the public Blade views, `resources/css/public.css`, and `resources/js/public.js`. Its selected local images and fonts live under `public/template` (font licenses included). Build these with the existing `npm run build` command; Admin continues using its separate `app.css` / `app.js` bundle.
 
-`/{locale}/rent-space` links to event-space and leasing catalogues. The animated homepage has a skip control and respects reduced motion. About and the shared Education/Innovation/Business/Art template use existing editable Page Sections, businesses retain native information dialogs, and forms retain the existing staff-reviewed submission workflow. Museum is disabled pending the PM's destination. Template sample video and broken placeholder assets were not imported; use a Page Section video URL for real media.
+`/{locale}/rent-space` links to event-space and leasing catalogues. The animated homepage has a skip control and respects reduced motion. About uses editable Page Sections. Education, Innovation and Art & Culture use Programs / Carousel posts; the Business carousel uses Businesses. Businesses retain native information dialogs, and forms retain the existing staff-reviewed submission workflow. Museum is disabled pending the PM's destination. Template sample video and broken placeholder assets were not imported; use a Page Section video URL for real media.
 
 After deploying the revised templates, add missing presentation pages once with:
 
@@ -357,7 +357,11 @@ php artisan db:seed --class=PresentationPageSeeder --force
 docker compose exec -T app php artisan db:seed --class=PresentationPageSeeder --force
 ```
 
-This additive seeder does not change existing pages. New pages start with the supplied shared-template placeholders; customize each page’s slides in Page Sections. Business directory records remain separate. No schema migration or environment changes are required.
+This additive seeder does not change existing pages. New Education, Innovation and Art & Culture pages start with demo Program posts; customize their slides in **Programs / Carousel posts**. The Business carousel uses **Businesses**. The one-time `CarouselProgramSeeder` remains available to import legacy section slides into empty categories, without overwriting existing or trashed posts. Legacy carousel sections are retained in storage, hidden from Page Sections and never used as a public fallback. No schema migration or environment changes are required.
+
+Carousel posts expose only their page/category, publication, order, featured image, bilingual title, slug and caption. Unused historical booking/gallery/SEO fields are preserved in storage. The list filters by carousel page; dashboard counts and recent-content links include these posts and the other catalogues. Template-dependent English page slugs and About section names/parent pages are protected server-side; public titles and text remain editable.
+
+Image selectors show previews and accept only non-deleted public images (also enforced on save). Editor forms warn before leaving with unsaved changes; the mobile sidebar traps keyboard focus and closes with Escape. Run the lightweight JavaScript guard checks with `node tests/js/admin-ui.test.cjs` in addition to the Laravel tests.
 
 The frontend team can replace:
 

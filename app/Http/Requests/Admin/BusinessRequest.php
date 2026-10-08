@@ -16,7 +16,7 @@ class BusinessRequest extends TranslatedContentRequest
     {
         return $this->contentRules('business_translations', [
             'category' => ['required', Rule::enum(BusinessCategory::class)],
-            'logo_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
+            'logo_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'website_url' => ['nullable', 'url:http,https', 'max:2048'],
             'email' => ['nullable', 'email:rfc', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],

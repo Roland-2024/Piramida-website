@@ -6,7 +6,7 @@
             <p class="mt-1 text-sm text-slate-500">{{ $page->translation('en')?->title }}</p>
         </div>
         <div class="flex gap-2">
-            <a href="{{ route('admin.sections.create', ['page_id' => $page->id]) }}" class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium">Add section</a>
+            @unless ($page->carouselSlug())<a href="{{ route('admin.sections.create', ['page_id' => $page->id]) }}" class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium">Add section</a>@endunless
             <a href="{{ route('admin.pages.edit', $page) }}" class="rounded-lg bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white">Edit page</a>
             @can('delete', $page)
                 <form method="POST" action="{{ route('admin.pages.destroy', $page) }}" data-confirm="Move this page to trash?">
@@ -38,6 +38,9 @@
         </aside>
     </div>
 
+    @if ($page->carouselSlug())
+        <div class="mt-5"><x-admin.carousel-notice :page="$page" /></div>
+    @else
     <section class="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
             <h3 class="font-semibold">Sections</h3>
@@ -52,4 +55,5 @@
             <p class="p-8 text-center text-sm text-slate-500">No sections have been added.</p>
         @endforelse
     </section>
+    @endif
 </x-layouts.admin>

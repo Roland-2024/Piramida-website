@@ -1,10 +1,13 @@
-@php $editing = isset($section); @endphp
+@php
+    $editing = isset($section);
+    $lockedName = $editing && $section->hasTemplateName();
+@endphp
 
 <div class="grid gap-5 lg:grid-cols-3">
     <div>
         <label for="page_id" class="block text-sm font-medium">Parent page</label>
         <select id="page_id" name="page_id" required class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
-            @foreach ($pages as $pageOption)
+            @foreach ($pages->filter(fn ($pageOption) => ! $lockedName || $pageOption->id === $section->page_id) as $pageOption)
                 <option value="{{ $pageOption->id }}" @selected((string) old('page_id', $section->page_id ?? $selectedPageId ?? '') === (string) $pageOption->id)>{{ $pageOption->translation('al')?->title }}</option>
             @endforeach
         </select>
@@ -12,7 +15,8 @@
     </div>
     <div>
         <label for="internal_name" class="block text-sm font-medium">Internal name</label>
-        <input id="internal_name" name="internal_name" value="{{ old('internal_name', $section->internal_name ?? '') }}" required class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+        <input id="internal_name" name="internal_name" value="{{ old('internal_name', $section->internal_name ?? '') }}" @readonly($lockedName) required class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+        @if ($lockedName)<p class="mt-2 text-xs text-slate-500">Locked template identifier. Edit the translated titles below.</p>@endif
         @error('internal_name') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
     <div>
@@ -45,20 +49,8 @@
         <p class="mt-2 text-xs text-slate-500">About History: paste a YouTube link or select an uploaded MP4/WebM. <a href="{{ route('admin.media.create') }}" target="_blank" rel="noopener" class="underline">Upload video in Media</a> (10 MB maximum), then reload this form. Primary image is the poster.</p>
         @error('video_url')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
     </div>
-    <div>
-        <label for="primary_media_id" class="block text-sm font-medium">Primary image</label>
-        <select id="primary_media_id" name="primary_media_id" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
-            <option value="">No image</option>
-            @foreach ($mediaItems as $media)<option value="{{ $media->id }}" @selected((string) old('primary_media_id', $section->primary_media_id ?? '') === (string) $media->id)>{{ $media->original_name }}</option>@endforeach
-        </select>
-    </div>
-    <div>
-        <label for="secondary_media_id" class="block text-sm font-medium">Secondary image</label>
-        <select id="secondary_media_id" name="secondary_media_id" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
-            <option value="">No image</option>
-            @foreach ($mediaItems as $media)<option value="{{ $media->id }}" @selected((string) old('secondary_media_id', $section->secondary_media_id ?? '') === (string) $media->id)>{{ $media->original_name }}</option>@endforeach
-        </select>
-    </div>
+    <x-admin.image-picker name="primary_media_id" label="Primary image" :media-items="$mediaItems" :selected="$section->primary_media_id ?? null" />
+    <x-admin.image-picker name="secondary_media_id" label="Secondary image" :media-items="$mediaItems" :selected="$section->secondary_media_id ?? null" />
     <div></div>
     <div>
         <label for="primary_button_url" class="block text-sm font-medium">Primary button URL</label>

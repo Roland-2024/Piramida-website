@@ -89,7 +89,7 @@
             </div>
         </aside>
 
-        <div class="min-w-0 flex-1 md:pl-72">
+        <div data-admin-shell class="min-w-0 flex-1 md:pl-72">
             <header class="sticky top-0 z-20 flex h-18 items-center justify-between border-b border-slate-200 bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-8">
                 <div class="flex items-center gap-3">
                     <button data-sidebar-toggle type="button" class="rounded-lg border border-slate-200 p-2 text-slate-600 md:hidden" aria-label="Open navigation" aria-controls="admin-navigation" aria-expanded="false">

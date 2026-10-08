@@ -16,6 +16,11 @@ class PageSection extends Model
 {
     use HasFactory, HasLocalizedContent, HasMediaGallery, SoftDeletes;
 
+    public function hasTemplateName(): bool
+    {
+        return in_array($this->internal_name, ['About - Overview', 'About - Mission', 'About - History', 'About - Timeline'], true);
+    }
+
     protected $fillable = [
         'page_id',
         'internal_name',

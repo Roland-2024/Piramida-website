@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Enums\ContentStatus;
-use App\Enums\SectionType;
 use App\Models\Media;
 use App\Models\Page;
+use App\Models\Program;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 class PresentationPageSeeder extends Seeder
 {
-    // Supplied shared-template placeholders, editable through Page Sections.
+    // Supplied demo posts, editable through Programs / Carousel posts.
     private const SLIDES = [
         ['0be2fd837e46e1dbbfbe5ecb17f7d2ef1799e7c9 (1).png', 'Graphic Design', 'Explore visual composition, branding, and digital tools through practical creative projects.', 'Dizajn grafik', 'Eksploroni kompozimin vizual, identitetin e markës dhe mjetet digjitale përmes projekteve praktike krijuese.'],
         ['4d4494e51518b0723ba377d776658e219fecc676 (1).jpg', 'Music', 'Build rhythm, production, and performance skills while experimenting with sound and collaboration.', 'Muzikë', 'Zhvilloni aftësi në ritëm, prodhim dhe interpretim duke eksperimentuar me tingullin dhe bashkëpunimin.'],
@@ -48,6 +48,11 @@ class PresentationPageSeeder extends Seeder
                     'en' => ['title' => $title, 'slug' => $slug],
                 ]);
 
+                $category = $slug === 'art' ? 'art_culture' : $slug;
+                if ($slug === 'business' || Program::withTrashed()->where('category', $category)->exists()) {
+                    continue;
+                }
+
                 foreach (self::SLIDES as $index => [$file, $heading, $description, $alHeading, $alDescription]) {
                     $source = public_path('template/images/'.$file);
                     $path = 'media/presentation/'.$file;
@@ -65,16 +70,16 @@ class PresentationPageSeeder extends Seeder
                         'alt_text_al' => $alHeading,
                         'alt_text_en' => $heading,
                     ]);
-                    $section = $page->sections()->create([
-                        'internal_name' => $title.' - template slide '.($index + 1),
-                        'type' => SectionType::TextImage,
-                        'primary_media_id' => $media->id,
+                    $program = Program::create([
+                        'category' => $category,
+                        'featured_media_id' => $media->id,
+                        'status' => ContentStatus::Published,
+                        'published_at' => $page->published_at,
                         'display_order' => $index,
-                        'is_active' => true,
                     ]);
-                    $section->syncTranslations([
-                        'al' => ['title' => $alHeading, 'description' => $alDescription],
-                        'en' => ['title' => $heading, 'description' => $description],
+                    $program->syncTranslations([
+                        'al' => ['title' => $alHeading, 'slug' => $slug.'-slide-'.($index + 1), 'description' => $alDescription],
+                        'en' => ['title' => $heading, 'slug' => $slug.'-slide-'.($index + 1), 'description' => $description],
                     ]);
                 }
             }

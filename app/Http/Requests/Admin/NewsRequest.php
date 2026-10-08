@@ -27,7 +27,7 @@ class NewsRequest extends FormRequest
         $news?->loadMissing('translations');
 
         $rules = [
-            'featured_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')],
+            'featured_media_id' => ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'status' => ['required', Rule::enum(ContentStatus::class)],
             'published_at' => [
                 Rule::requiredIf($this->input('status') === ContentStatus::Published->value),

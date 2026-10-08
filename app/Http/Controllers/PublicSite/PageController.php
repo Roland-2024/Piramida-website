@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\PublicSite;
 
-use App\Enums\SectionType;
 use App\Http\Controllers\Controller;
 use App\Models\Business;
 use App\Models\Page;
@@ -20,19 +19,18 @@ class PageController extends Controller
             ->whereHas('translations', fn (Builder $query) => $query
                 ->where('locale', $locale)
                 ->where('slug', $slug))
-            ->with([
-                'translations',
-                'featuredMedia',
-                'sections' => fn (HasMany $query) => $query
-                    ->active()
-                    ->with(['translations', 'primaryMedia', 'secondaryMedia', 'gallery']),
-            ])
+            ->with(['translations', 'featuredMedia'])
             ->firstOrFail();
+
+        if (! $page->carouselSlug()) {
+            $page->load(['sections' => fn (HasMany $query) => $query->active()
+                ->with(['translations', 'primaryMedia', 'secondaryMedia', 'gallery'])]);
+        }
 
         // Draft template mapping; keep other CMS pages on the generic section renderer.
         $view = match (true) {
-            $page->translations->contains('slug', 'about-us') => 'public.pages.about',
-            $page->translations->whereIn('slug', ['education', 'innovation', 'business', 'art'])->isNotEmpty() => 'public.pages.education',
+            $page->translation('en', false)?->slug === 'about-us' => 'public.pages.about',
+            $page->carouselSlug() !== null => 'public.pages.education',
             default => 'public.pages.show',
         };
 
@@ -40,7 +38,7 @@ class PageController extends Controller
             'page' => $page,
             'translation' => $page->translation($locale, false),
             'languageUrls' => $this->languageUrls($page),
-            'slides' => $page->translations->contains('slug', 'business')
+            'slides' => $page->carouselSlug() === 'business'
                 ? Business::query()->published()
                     ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
                     ->with(['translations', 'featuredMedia'])
@@ -50,7 +48,7 @@ class PageController extends Controller
                         'title' => $business->translation($locale, false)->name,
                         'description' => strip_tags($business->translation($locale, false)->description ?? ''),
                     ])
-                : (in_array($page->translation('en', false)?->slug, ['education', 'innovation', 'art'], true)
+                : ($page->carouselSlug() !== null
                     ? Program::query()->published()
                         ->where('category', $page->translation('en', false)->slug === 'art' ? 'art_culture' : $page->translation('en', false)->slug)
                         ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
@@ -60,21 +58,7 @@ class PageController extends Controller
                             'title' => $program->translation($locale, false)->title,
                             'description' => strip_tags($program->translation($locale, false)->description ?? ''),
                         ])
-                    : $page->sections
-                        ->whereIn('type', [SectionType::TextImage, SectionType::Gallery])
-                        ->flatMap(function ($section) use ($locale, $page) {
-                            $content = $section->translation($locale);
-                            $images = $section->gallery->isNotEmpty()
-                                ? $section->gallery
-                                : collect([$section->primaryMedia])->filter();
-
-                            return $images->map(fn ($image) => [
-                                'url' => $image->url(),
-                                'title' => ($images->count() > 1 ? ($locale === 'en' ? $image->alt_text_en : $image->alt_text_al) : null)
-                                    ?: $content?->subtitle ?: $content?->title ?: $page->translation($locale)->title,
-                                'description' => strip_tags($content?->description ?? ''),
-                            ]);
-                        })->values()),
+                    : collect()),
         ]);
     }
 

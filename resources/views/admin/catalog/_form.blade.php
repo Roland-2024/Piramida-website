@@ -46,7 +46,9 @@
             $value = $fieldValue($field);
         @endphp
         <div class="{{ ($field['type'] ?? 'text') === 'checkbox' ? 'flex items-end' : '' }}">
-            @if (($field['type'] ?? 'text') === 'select')
+            @if (($field['type'] ?? 'text') === 'image')
+                <x-admin.image-picker :name="$field['name']" :label="$field['label']" :media-items="$mediaItems" :selected="$value" />
+            @elseif (($field['type'] ?? 'text') === 'select')
                 <label for="{{ $field['name'] }}" class="block text-sm font-medium">{{ $field['label'] }}</label>
                 <select id="{{ $field['name'] }}" name="{{ $field['name'] }}" @required($field['required'] ?? false) class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
                     @foreach ($field['options'] as $optionValue => $optionLabel)
@@ -73,19 +75,12 @@
 
 @if ($withMedia)
     <div class="mt-6 grid gap-5 lg:grid-cols-2">
-        <div>
-            <label for="featured_media_id" class="block text-sm font-medium">Featured image</label>
-            <select id="featured_media_id" name="featured_media_id" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
-                <option value="">No image</option>
-                @foreach ($mediaItems as $media)
-                    <option value="{{ $media->id }}" @selected((string) old('featured_media_id', $item->featured_media_id ?? '') === (string) $media->id)>{{ $media->original_name }}</option>
-                @endforeach
-            </select>
-            @error('featured_media_id') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-        </div>
+        <x-admin.image-picker :media-items="$mediaItems" :selected="$item->featured_media_id ?? null" />
+        @if ($withGallery)
         <div>
 <x-admin.gallery-picker :media-items="$mediaItems" :selected="$editing ? $item->gallery->modelKeys() : []" />
         </div>
+        @endif
     </div>
 @endif
 
@@ -117,7 +112,7 @@
                     <div class="{{ $wide ? 'lg:col-span-2' : '' }}">
                         <label for="{{ $field['name'] }}_{{ $locale }}" class="block text-sm font-medium">{{ $field['label'] }}</label>
                         @if ($field['type'] === 'textarea')
-                            <textarea id="{{ $field['name'] }}_{{ $locale }}" name="translations[{{ $locale }}][{{ $field['name'] }}]" rows="3" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">{{ $value }}</textarea>
+                            <textarea id="{{ $field['name'] }}_{{ $locale }}" name="translations[{{ $locale }}][{{ $field['name'] }}]" rows="3" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">{{ $routePrefix === 'admin.programs' ? strip_tags($value ?? '') : $value }}</textarea>
                         @elseif ($field['type'] === 'richtext')
                             <textarea data-rich-text id="{{ $field['name'] }}_{{ $locale }}" name="translations[{{ $locale }}][{{ $field['name'] }}]" rows="9" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 font-mono text-sm">{{ app(\App\Support\RichTextSanitizer::class)->sanitize($value) }}</textarea>
                         @else

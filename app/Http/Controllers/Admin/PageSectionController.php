@@ -30,6 +30,7 @@ class PageSectionController extends Controller
         ]);
 
         $sections = PageSection::query()
+            ->whereHas('page', fn (Builder $query) => $query->withoutCarousel())
             ->with(['translations', 'page.translations'])
             ->when($filters['page_id'] ?? null, fn (Builder $query, int $pageId) => $query->where('page_id', $pageId))
             ->when($filters['type'] ?? null, fn (Builder $query, string $type) => $query->where('type', $type))
@@ -52,9 +53,14 @@ class PageSectionController extends Controller
         ]);
     }
 
-    public function create(Request $request): View
+    public function create(Request $request): View|RedirectResponse
     {
         Gate::authorize('create', PageSection::class);
+
+        $page = Page::find($request->integer('page_id'));
+        if ($page?->carouselSlug()) {
+            return $this->carouselRedirect($page);
+        }
 
         return view('admin.sections.create', [
             'selectedPageId' => $request->integer('page_id') ?: null,
@@ -84,18 +90,26 @@ class PageSectionController extends Controller
         return redirect()->route('admin.sections.show', $section)->with('success', 'Page section created.');
     }
 
-    public function show(PageSection $section): View
+    public function show(PageSection $section): View|RedirectResponse
     {
         Gate::authorize('view', $section);
         $section->load(['translations', 'page.translations', 'primaryMedia', 'secondaryMedia', 'gallery', 'createdBy', 'updatedBy']);
 
+        if ($section->page?->carouselSlug()) {
+            return $this->carouselRedirect($section->page);
+        }
+
         return view('admin.sections.show', compact('section'));
     }
 
-    public function edit(PageSection $section): View
+    public function edit(PageSection $section): View|RedirectResponse
     {
         Gate::authorize('update', $section);
-        $section->load(['translations', 'gallery']);
+        $section->load(['translations', 'gallery', 'page.translations']);
+
+        if ($section->page?->carouselSlug()) {
+            return $this->carouselRedirect($section->page);
+        }
 
         return view('admin.sections.edit', [
             'section' => $section,
@@ -122,6 +136,7 @@ class PageSectionController extends Controller
     public function destroy(PageSection $section): RedirectResponse
     {
         Gate::authorize('delete', $section);
+        abort_if($section->page?->carouselSlug(), 403);
         $section->delete();
 
         return redirect()->route('admin.sections.index')->with('success', 'Page section moved to trash.');
@@ -131,6 +146,7 @@ class PageSectionController extends Controller
     {
         $section = PageSection::onlyTrashed()->findOrFail($section);
         Gate::authorize('restore', $section);
+        abort_if($section->page?->carouselSlug(), 403);
         $section->restore();
 
         return redirect()->route('admin.sections.index')->with('success', 'Page section restored.');
@@ -142,11 +158,20 @@ class PageSectionController extends Controller
     private function formOptions(): array
     {
         return [
-            'pages' => Page::query()->with('translations')->orderBy('display_order')->get(),
+            'pages' => Page::query()->withoutCarousel()->with('translations')->orderBy('display_order')->get(),
             'sectionTypes' => SectionType::cases(),
             'mediaItems' => Media::query()->latest()->get(),
             'locales' => config('cms.locales'),
         ];
+    }
+
+    private function carouselRedirect(Page $page): RedirectResponse
+    {
+        $slug = $page->carouselSlug();
+
+        return redirect()->route($slug === 'business' ? 'admin.businesses.index' : 'admin.programs.index',
+            $slug === 'business' ? [] : ['category' => $slug === 'art' ? 'art_culture' : $slug])
+            ->with('success', 'Manage this carousel using dynamic posts. Legacy sections are retained but no longer used.');
     }
 
     /**

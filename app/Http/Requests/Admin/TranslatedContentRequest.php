@@ -54,7 +54,7 @@ abstract class TranslatedContentRequest extends FormRequest
         ];
 
         if ($withMedia) {
-            $rules['featured_media_id'] = ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')];
+            $rules['featured_media_id'] = ['nullable', Rule::exists('media', 'id')->whereNull('deleted_at')->where('disk', 'public')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))];
             $rules['gallery_media_ids'] = ['nullable', 'array', 'max:30'];
             $rules['gallery_media_ids.*'] = [
                 'integer',

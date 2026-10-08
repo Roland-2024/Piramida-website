@@ -2,6 +2,10 @@
     $editing = isset($page);
 @endphp
 
+@if ($editing && $page->carouselSlug())
+    <x-admin.carousel-notice :page="$page" />
+@endif
+
 <div class="grid gap-6 lg:grid-cols-5">
     <div>
         <label for="status" class="block text-sm font-medium">Status</label>
@@ -25,16 +29,7 @@
         @error('display_order') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
-    <div>
-        <label for="featured_media_id" class="block text-sm font-medium">Featured image</label>
-        <select id="featured_media_id" name="featured_media_id" class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
-            <option value="">No image</option>
-            @foreach ($mediaItems as $media)
-                <option value="{{ $media->id }}" @selected((string) old('featured_media_id', $page->featured_media_id ?? '') === (string) $media->id)>{{ $media->original_name }}</option>
-            @endforeach
-        </select>
-        @error('featured_media_id') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
-    </div>
+    <x-admin.image-picker :media-items="$mediaItems" :selected="$page->featured_media_id ?? null" />
     <div class="flex items-end">
         <label class="flex w-full items-center gap-3 rounded-lg border border-slate-200 px-4 py-3">
             <input type="hidden" name="is_homepage" value="0">
@@ -66,7 +61,8 @@
                 </div>
                 <div>
                     <label for="slug_{{ $locale }}" class="block text-sm font-medium">Slug</label>
-                    <input id="slug_{{ $locale }}" name="translations[{{ $locale }}][slug]" value="{{ old("translations.{$locale}.slug", $translation?->slug) }}" placeholder="Generated from title when blank" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+                    <input id="slug_{{ $locale }}" name="translations[{{ $locale }}][slug]" value="{{ old("translations.{$locale}.slug", $translation?->slug) }}" @readonly($locale === 'en' && $editing && $page->hasTemplateSlug()) placeholder="Generated from title when blank" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">
+                    @if ($locale === 'en' && $editing && $page->hasTemplateSlug())<p class="mt-2 text-xs text-slate-500">Locked template identifier. The title and content remain editable.</p>@endif
                     @error("translations.{$locale}.slug") <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                 </div>
                 <div class="lg:col-span-2">

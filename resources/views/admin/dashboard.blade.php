@@ -16,6 +16,7 @@
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         @foreach ([
             ['label' => 'Pages', 'value' => $metrics['pages']],
+            ['label' => 'Carousel posts', 'value' => $metrics['programs']],
             ['label' => 'News articles', 'value' => $metrics['news']],
             ['label' => 'Events', 'value' => $metrics['events']],
             ['label' => 'Attractions', 'value' => $metrics['attractions']],

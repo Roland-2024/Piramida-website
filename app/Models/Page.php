@@ -15,6 +15,26 @@ class Page extends Model
 {
     use HasFactory, HasLocalizedContent, SoftDeletes;
 
+    public const CAROUSEL_SLUGS = ['education', 'innovation', 'business', 'art'];
+
+    public function carouselSlug(): ?string
+    {
+        $slug = $this->translation('en', false)?->slug;
+
+        return in_array($slug, self::CAROUSEL_SLUGS, true) ? $slug : null;
+    }
+
+    public function hasTemplateSlug(): bool
+    {
+        return $this->carouselSlug() !== null || $this->translation('en', false)?->slug === 'about-us';
+    }
+
+    public function scopeWithoutCarousel(Builder $query): Builder
+    {
+        return $query->whereDoesntHave('translations', fn (Builder $query) => $query
+            ->where('locale', 'en')->whereIn('slug', self::CAROUSEL_SLUGS));
+    }
+
     protected $fillable = [
         'featured_media_id',
         'is_homepage',
