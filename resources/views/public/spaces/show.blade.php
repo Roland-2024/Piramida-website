@@ -16,7 +16,7 @@
               <span aria-hidden="true"></span>
             </button>
 
-            <div class="leasing-form-gallery">@foreach(collect([$item->featuredMedia])->filter()->merge($item->gallery)->unique('id') as $media)<img src="{{ $media->url() }}" alt="{{ $translation->title }}" loading="lazy">@endforeach</div>
+            <div class="leasing-form-gallery">@foreach(collect([$item->featuredMedia])->filter()->merge($item->gallery)->unique('id') as $media)<img src="{{ $media->displayUrl() }}" alt="{{ $translation->title }}" loading="lazy">@endforeach</div>
 
             <button
               class="leasing-form-carousel-arrow leasing-form-carousel-arrow-right"

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'upload_failed' => 'Skedari nuk mund të ruhej. Ju lutemi provoni përsëri.',
     'contact_title_first' => 'Na',
     'contact_title_second' => 'Kontaktoni',
     'related_posts' => 'Artikuj të ngjashëm',

@@ -28,6 +28,7 @@ class StoreSubmissionRequest extends FormRequest
         $common = [
             'privacy' => ['accepted'],
             'website' => ['nullable', 'string', 'max:0'],
+            'attachment' => ['prohibited'],
         ];
 
         $person = [

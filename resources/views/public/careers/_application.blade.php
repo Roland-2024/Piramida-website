@@ -37,7 +37,7 @@
               <span aria-hidden="true"></span>
             </a>@endif
 
-            <h1 class="job-application-title">{{ $translation->title }}</h1>
+            <h{{ ($dialog ?? false) ? 2 : 1 }} class="job-application-title">{{ $translation->title }}</h{{ ($dialog ?? false) ? 2 : 1 }}>
             <p class="job-application-subtitle">{{ __('website.careers__application_please_fill_out_the_form_to_submit_job_application') }}</p>
 
             @if ($item->booking_mode->allowsInternal())<form class="job-application-form" action="{{ route('public.careers.apply', [app()->getLocale(), $translation->slug]) }}" enctype="multipart/form-data" method="post">

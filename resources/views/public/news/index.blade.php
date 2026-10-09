@@ -6,7 +6,7 @@
         <!-- Hero -->
         <div class="max-w-[1600px] w-full mx-auto px-6 mt-[40px]">
             <div class="template-news-hero relative rounded-[20px] overflow-hidden">
-                @if($articles->first()->featuredMedia)<img src="{{ $articles->first()->featuredMedia->url() }}" alt="{{ $articles->first()->translation(app()->getLocale(), false)->title }}" class="max-h-[680px] w-full object-cover">@endif
+                @if($articles->first()->featuredMedia)<img src="{{ $articles->first()->featuredMedia->displayUrl() }}" alt="{{ $articles->first()->translation(app()->getLocale(), false)->title }}" class="max-h-[680px] w-full object-cover">@endif
 
                 <!-- Gradient overlay, left side only -->
                 <div class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/30 to-transparent"></div>

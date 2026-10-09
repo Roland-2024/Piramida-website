@@ -63,6 +63,10 @@ This file records durable decisions that future tasks should preserve. Implement
 
 ## Infrastructure and deployment
 
+- Media pickers load only attached images initially, with authorized paginated image search on demand. Public image variants are optional JSON metadata on Media, not a replacement for original files; GD/WebP creates bounded 480/1600px copies without changing private documents or animations. Leasing plan defaults use lossless WebP copies at unchanged dimensions.
+- WordPress import validates complete pagination and unique IDs for both locales before changing records, and accepts HTTP(S) booking URLs only. Optional event address fields are edited locally and preserved by synchronization; structured data uses only verified stored values.
+- Public forms accept only declared upload fields and must reject failed storage before creating records. Pages cannot use slugs reserved by system routes.
+
 - Docker Compose is the supported local-development environment.
 - The live server runs Laravel directly with PHP, a web server, MySQL, Composer, built frontend assets, and Laravel's scheduler; Docker is not required there.
 - Redis, a queue worker, and a JavaScript framework are intentionally omitted until a measured requirement appears.

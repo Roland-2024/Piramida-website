@@ -47,7 +47,7 @@
         @endphp
         <div class="{{ ($field['type'] ?? 'text') === 'checkbox' ? 'flex items-end' : '' }}">
             @if (($field['type'] ?? 'text') === 'image')
-                <x-admin.image-picker :name="$field['name']" :label="$field['label']" :media-items="$mediaItems" :selected="$value" />
+                <x-admin.image-picker :name="$field['name']" :label="$field['label']" :selected="$value" />
             @elseif (($field['type'] ?? 'text') === 'select')
                 <label for="{{ $field['name'] }}" class="block text-sm font-medium">{{ $field['label'] }}</label>
                 <select id="{{ $field['name'] }}" name="{{ $field['name'] }}" @required($field['required'] ?? false) class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">
@@ -75,10 +75,10 @@
 
 @if ($withMedia)
     <div class="mt-6 grid gap-5 lg:grid-cols-2">
-        <x-admin.image-picker :media-items="$mediaItems" :selected="$item->featured_media_id ?? null" />
+        <x-admin.image-picker :selected="$item->featured_media_id ?? null" />
         @if ($withGallery)
         <div>
-<x-admin.gallery-picker :media-items="$mediaItems" :selected="$editing ? $item->gallery->modelKeys() : []" />
+<x-admin.gallery-picker :selected="$editing ? $item->gallery->modelKeys() : []" />
         </div>
         @endif
     </div>

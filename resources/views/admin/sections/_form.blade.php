@@ -40,7 +40,7 @@
     </div>
     <div></div>
     <div class="lg:col-span-2">
-<x-admin.gallery-picker :media-items="$mediaItems" :selected="isset($section) ? $section->gallery->modelKeys() : []" label="Gallery / partner logos" />
+<x-admin.gallery-picker :selected="isset($section) ? $section->gallery->modelKeys() : []" label="Gallery / partner logos" />
     </div>
     <div>
         <label for="video_url" class="block text-sm font-medium">Video URL</label>
@@ -49,8 +49,8 @@
         <p class="mt-2 text-xs text-slate-500">About History: paste a YouTube link or select an uploaded MP4/WebM. <a href="{{ route('admin.media.create') }}" target="_blank" rel="noopener" class="underline">Upload video in Media</a> (10 MB maximum), then reload this form. Primary image is the poster.</p>
         @error('video_url')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror
     </div>
-    <x-admin.image-picker name="primary_media_id" label="Primary image" :media-items="$mediaItems" :selected="$section->primary_media_id ?? null" />
-    <x-admin.image-picker name="secondary_media_id" label="Secondary image" :media-items="$mediaItems" :selected="$section->secondary_media_id ?? null" />
+    <x-admin.image-picker name="primary_media_id" label="Primary image" :selected="$section->primary_media_id ?? null" />
+    <x-admin.image-picker name="secondary_media_id" label="Secondary image" :selected="$section->secondary_media_id ?? null" />
     <div></div>
     <div>
         <label for="primary_button_url" class="block text-sm font-medium">Primary button URL</label>

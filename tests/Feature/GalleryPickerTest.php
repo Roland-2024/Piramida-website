@@ -14,6 +14,32 @@ class GalleryPickerTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_library_is_paginated_searchable_and_excludes_private_or_deleted_media(): void
+    {
+        $this->getJson('/admin/media/picker')->assertUnauthorized();
+        Media::factory()->count(25)->create();
+        Media::factory()->create(['disk' => 'local', 'original_name' => 'private.jpg']);
+        Media::factory()->create(['mime_type' => 'application/pdf']);
+        Media::factory()->create()->delete();
+        $this->actingAs(User::factory()->create());
+        $first = $this->getJson('/admin/media/picker')->assertOk()->assertJsonCount(24, 'images');
+        $this->getJson($first->json('next_url'))->assertOk()->assertJsonCount(1, 'images');
+        $this->getJson('/admin/media/picker?search=private')->assertOk()->assertJsonCount(0, 'images');
+        $article = News::factory()->create();
+        $this->get(route('admin.news.edit', $article))->assertOk()->assertDontSee('data-media-id=', false);
+    }
+
+    public function test_failed_storage_does_not_create_a_media_record(): void
+    {
+        $disk = \Mockery::mock();
+        $disk->shouldReceive('putFileAs')->once()->andReturn(false);
+        Storage::shouldReceive('disk')->andReturn($disk);
+        $this->actingAs(User::factory()->create())->postJson('/admin/media', [
+            'gallery_upload' => 1, 'file' => UploadedFile::fake()->image('gallery.jpg'),
+        ])->assertUnprocessable()->assertJsonValidationErrors('file');
+        $this->assertDatabaseCount('media', 0);
+    }
+
     public function test_news_removes_empty_editor_paragraphs_without_hiding_text_with_line_breaks(): void
     {
         $article = News::factory()->published()->create();

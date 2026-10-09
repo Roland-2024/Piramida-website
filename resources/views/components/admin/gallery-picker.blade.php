@@ -1,16 +1,11 @@
-@props(['mediaItems', 'selected' => [], 'label' => 'Gallery images', 'single' => false, 'name' => 'gallery_media_ids'])
-@php
-    $images = $mediaItems->filter(fn ($media) => $media->disk === 'public' && str_starts_with($media->mime_type, 'image/'));
-    $ids = array_values(array_filter(array_map('strval', (array) old($name, $selected))));
-@endphp
-<div role="group" aria-label="{{ $label }}" data-gallery-picker @if($single) data-single-image @endif data-field-name="{{ $name }}" data-upload-url="{{ route('admin.media.store') }}">
+<div role="group" aria-label="{{ $label }}" data-gallery-picker @if($single) data-single-image @endif data-field-name="{{ $name }}" data-library-url="{{ route('admin.media.picker') }}" data-upload-url="{{ route('admin.media.store') }}">
     <p class="mb-2 text-sm font-medium">{{ $label }}</p>
     @unless($single)<input type="hidden" name="gallery_media_ids" value="">@endunless
     <div data-gallery-selected class="{{ $single ? 'image-picker-selected' : 'gallery-picker-grid' }}">
         @if($single && !$ids)<input type="hidden" name="{{ $name }}" value=""><img data-image-preview hidden alt="{{ $label }} preview">@endif
         @foreach($ids as $id)
             @if($image = $images->firstWhere('id', $id))
-                <div><img @if($single) data-image-preview @endif src="{{ $image->url() }}" alt="{{ $image->original_name }}" loading="lazy"><input type="hidden" name="{{ $single ? $name : 'gallery_media_ids[]' }}" value="{{ $id }}"></div>
+                <div><img @if($single) data-image-preview @endif src="{{ $image->displayUrl(480) }}" alt="{{ $image->original_name }}" loading="lazy"><input type="hidden" name="{{ $single ? $name : 'gallery_media_ids[]' }}" value="{{ $id }}"></div>
             @endif
         @endforeach
     </div>
@@ -30,13 +25,14 @@
             <p data-gallery-upload-status role="status" class="text-sm text-slate-600"></p>
             <div data-gallery-library class="gallery-picker-grid">
                 @foreach($images as $image)
-                    <label data-media-id="{{ $image->id }}" data-media-name="{{ $image->original_name }}" data-media-url="{{ $image->url() }}" data-media-edit="{{ route('admin.media.edit', $image) }}" class="gallery-library-item">
-                        <img src="{{ $image->url() }}" alt="" loading="lazy">
+                    <label data-media-id="{{ $image->id }}" data-media-name="{{ $image->original_name }}" data-media-url="{{ $image->displayUrl(480) }}" data-media-edit="{{ route('admin.media.edit', $image) }}" class="gallery-library-item">
+                        <img src="{{ $image->displayUrl(480) }}" alt="" loading="lazy">
                         {{-- Library choices are staged, not submitted until Apply updates the record field. --}}
                         <span><input type="{{ $single ? 'radio' : 'checkbox' }}" @if($single) name="picker_{{ $name }}" form="media-picker-controls" @endif value="{{ $image->id }}"> {{ $image->original_name }}</span>
                     </label>
                 @endforeach
             </div>
+            <button type="button" data-gallery-more hidden class="rounded border px-4 py-2">Load more images</button>
         </div>
         <div class="sticky bottom-0 flex justify-end border-t bg-white p-5"><button type="button" data-gallery-apply class="rounded-lg bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white">{{ $single ? 'Use selected image' : 'Use selected images' }}</button></div>
     </dialog>

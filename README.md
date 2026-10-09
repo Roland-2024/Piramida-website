@@ -31,7 +31,7 @@ The CMS manages:
 
 Publishable modules store shared/queryable fields in their parent tables and bilingual content in separate translation tables. Translation tables enforce one translation per locale and database-level slug uniqueness per content type and locale.
 
-Optional section-specific structured data is the only content stored as JSON. Public queries use model scopes and remain independent from Blade presentation.
+Optional section-specific structures and generated image-variant metadata use JSON. Shared/queryable content stays in typed columns. Public queries use model scopes and remain independent from Blade presentation.
 
 Pages and Page Sections manage static presentation templates without coupling their content to the temporary frontend. For example, About Us can be assembled from ordered image/text, feature, gallery, video, and other sections; staff can change the content while the final frontend template controls its appearance. News and Page Sections support ordered reusable-media galleries.
 
@@ -43,7 +43,13 @@ Events, spaces, and careers support internal request forms, external links, both
 
 Events can also be synchronized from Piramida Ime's bilingual WordPress API. Imported translations keep their WordPress IDs, while manually created dashboard events remain independent and are never overwritten by the importer. The initial import pairs Albanian and English records only when their featured image provides an unambiguous match; subsequent runs use the stored WordPress IDs. Events removed from the complete upstream response are moved to draft rather than deleted.
 
-The earlier Program tables remain in the database for reversibility but are not exposed in the dashboard or public routes. The Education, Innovation, Business, and Art & Culture cards seen in the design are presentation content managed through Pages and Page Sections, not a separate program catalogue.
+Media pickers load searchable pages of 24 public images only when opened; content forms initially load only their selected images. Page slugs cannot reuse system URLs such as `news`, `contact`, or `admin`.
+
+Public JPEG/PNG/WebP uploads and imported images receive smaller WebP display copies at up to 480 and 1600 px when beneficial. Originals are retained, including private files, animated GIF/WebP, rotated EXIF photos and images above the 16-megapixel memory guard. PHP GD with WebP and EXIF support is required for optimization (included in the local Docker image). After upgrading, run `docker compose up -d --build app`, `docker compose exec -T app php artisan migrate --force`, then `docker compose exec -T app php artisan media:optimize` to backfill existing images. On a non-Docker production server use the equivalent PHP commands. The checked-in leasing WebP plans are lossless and preserve original coordinates; regenerate with `php scripts/optimize-leasing-plans.php` after updating their PNG sources.
+
+Event translations support optional verified venue street, city, postal code and two-letter uppercase country code. Complete street/city/country details populate the event structured address; the importer preserves these dashboard fields. Do not enter guessed addresses. Apply additive migrations with `php artisan migrate --force` when deploying.
+
+WordPress sync requires consistent `X-WP-Total` and `X-WP-TotalPages` headers and a complete, unique set of source IDs before making changes. Missing/inconsistent pagination fails safely instead of drafting events. Only HTTP(S) registration links are accepted. Public forms reject unexpected attachments and report failed file storage as a validation error rather than a successful submission.
 
 ## Requirements
 

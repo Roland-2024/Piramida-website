@@ -51,6 +51,7 @@ class PageRequest extends FormRequest
                 'string',
                 'max:255',
                 'alpha_dash:ascii',
+                Rule::notIn(['admin', 'al', 'en', 'up', 'storage', 'build', 'template', 'news', 'events', 'attractions', 'businesses', 'leasing', 'event-space', 'spaces', 'rent-space', 'careers', 'contact']),
                 Rule::unique('page_translations', 'slug')
                     ->where('locale', $locale)
                     ->ignore($translationId),
@@ -82,6 +83,9 @@ class PageRequest extends FormRequest
 
     public function messages(): array
     {
-        return ['translations.en.slug.in' => 'This slug is required by the page template. Edit the title instead.'];
+        return [
+            'translations.en.slug.in' => 'This slug is required by the page template. Edit the title instead.',
+            'translations.*.slug.not_in' => 'This URL is reserved for a website feature. Choose a different slug.',
+        ];
     }
 }

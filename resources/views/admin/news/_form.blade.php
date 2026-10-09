@@ -7,8 +7,8 @@
 </div>
 
 <div class="mt-5 grid items-start gap-5 lg:grid-cols-3">
-    <x-admin.image-picker :media-items="$mediaItems" :selected="$article->featured_media_id ?? null" />
-    <div class="lg:col-span-2"><x-admin.gallery-picker :media-items="$mediaItems" :selected="isset($article) ? $article->gallery->modelKeys() : []" label="Article gallery" /></div>
+    <x-admin.image-picker :selected="$article->featured_media_id ?? null" />
+    <div class="lg:col-span-2"><x-admin.gallery-picker :selected="isset($article) ? $article->gallery->modelKeys() : []" label="Article gallery" /></div>
 </div>
 
 <div class="mt-8 space-y-5">

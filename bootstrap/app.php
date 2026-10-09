@@ -19,6 +19,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->dontFlash(['postmark_username', 'postmark_password']);
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*')
-                || ($request->routeIs('admin.media.store') && $request->expectsJson()),
+                || ($request->routeIs('admin.media.store', 'admin.media.picker') && $request->expectsJson()),
         );
     })->create();

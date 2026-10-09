@@ -94,7 +94,14 @@ class Seo
                 'name' => $translation->title, 'description' => $description, 'image' => [$image],
                 'startDate' => $record->starts_at?->toIso8601String(),
                 'endDate' => $record->ends_at?->toIso8601String(),
-                'location' => $translation->location ? ['@type' => 'Place', 'name' => $translation->location] : null,
+                'location' => $translation->location ? array_filter([
+                    '@type' => 'Place', 'name' => $translation->location,
+                    'address' => $translation->street_address && $translation->address_locality && $translation->address_country ? array_filter([
+                        '@type' => 'PostalAddress', 'streetAddress' => $translation->street_address,
+                        'addressLocality' => $translation->address_locality, 'postalCode' => $translation->postal_code,
+                        'addressCountry' => $translation->address_country,
+                    ]) : null,
+                ]) : null,
             ], fn ($value) => $value !== null);
         }
         if ($route === 'home') {

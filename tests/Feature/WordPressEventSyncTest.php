@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Actions\SynchronizeWordPressEvents;
+use App\Enums\BookingMode;
 use App\Enums\ContentStatus;
 use App\Models\Event;
 use App\Models\User;
@@ -16,6 +17,38 @@ use Tests\TestCase;
 class WordPressEventSyncTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_incomplete_feeds_cannot_draft_existing_events(): void
+    {
+        config(['services.wordpress_events.url' => 'https://wordpress.test/wp-json', 'services.wordpress_events.api_key' => 'test-key']);
+        $event = Event::factory()->published()->create();
+        $event->translations()->where('locale', 'al')->update(['wordpress_id' => 999]);
+        foreach ([[], ['X-WP-TotalPages' => '1'], ['X-WP-TotalPages' => '1', 'X-WP-Total' => '1']] as $headers) {
+            Http::fake(['https://wordpress.test/*' => Http::response([], 200, $headers)]);
+            try {
+                app(SynchronizeWordPressEvents::class)->handle();
+                $this->fail('Incomplete feed was accepted.');
+            } catch (\RuntimeException $exception) {
+                $this->assertStringContainsString('WordPress returned', $exception->getMessage());
+            }
+            $this->assertSame(ContentStatus::Published, $event->fresh()->status);
+        }
+    }
+
+    public function test_import_rejects_non_http_booking_urls(): void
+    {
+        config(['services.wordpress_events.url' => 'https://wordpress.test/wp-json', 'services.wordpress_events.api_key' => 'test-key']);
+        Http::fake(function (Request $request) {
+            parse_str((string) parse_url($request->url(), PHP_URL_QUERY), $query);
+            $post = $this->wordPressPost($query['lang'] === 'al' ? 101 : 202, $query['lang'], 'Event');
+            $post['meta']['_event_join_url'] = 'javascript://example.test/%0Aalert(1)';
+
+            return Http::response([$post], 200, ['X-WP-TotalPages' => '1', 'X-WP-Total' => '1']);
+        });
+        app(SynchronizeWordPressEvents::class)->handle();
+        $this->assertNull(Event::firstOrFail()->external_url);
+        $this->assertSame(BookingMode::None, Event::firstOrFail()->booking_mode);
+    }
 
     public function test_image_download_rejects_untrusted_hosts_and_redirects(): void
     {
@@ -71,7 +104,7 @@ class WordPressEventSyncTest extends TestCase
 
             parse_str((string) parse_url($request->url(), PHP_URL_QUERY), $query);
 
-            return Http::response($posts[$query['lang']] ?? [], 200, ['X-WP-TotalPages' => '1']);
+            return Http::response($posts[$query['lang']] ?? [], 200, ['X-WP-TotalPages' => '1', 'X-WP-Total' => count($posts[$query['lang']] ?? [])]);
         });
 
         $first = app(SynchronizeWordPressEvents::class)->handle();
@@ -103,7 +136,9 @@ class WordPressEventSyncTest extends TestCase
         $this->assertNotNull($imported->featuredMedia);
         Storage::disk('public')->assertExists($imported->featuredMedia->path);
 
+        $imported->translations()->where('locale', 'en')->update(['street_address' => 'Confirmed local address']);
         $second = app(SynchronizeWordPressEvents::class)->handle();
+        $this->assertSame('Confirmed local address', $imported->fresh()->translation('en')->street_address);
 
         $this->assertSame(0, $second['created']);
         $this->assertSame(1, $second['updated']);
@@ -129,7 +164,7 @@ class WordPressEventSyncTest extends TestCase
         ]);
 
         Http::fake([
-            'https://wordpress.test/wp-json/wp/v2/event*' => Http::response([], 200, ['X-WP-TotalPages' => '1']),
+            'https://wordpress.test/wp-json/wp/v2/event*' => Http::response([], 200, ['X-WP-TotalPages' => '1', 'X-WP-Total' => '0']),
         ]);
 
         $this->actingAs(User::factory()->create())

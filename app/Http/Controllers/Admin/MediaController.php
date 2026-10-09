@@ -19,6 +19,20 @@ use Illuminate\View\View;
 
 class MediaController extends Controller
 {
+    public function picker(Request $request): JsonResponse
+    {
+        Gate::authorize('viewAny', Media::class);
+        $filters = $request->validate(['search' => ['nullable', 'string', 'max:100'], 'page' => ['nullable', 'integer', 'min:1']]);
+        $images = Media::query()->where('disk', 'public')->where('mime_type', 'like', 'image/%')
+            ->when($filters['search'] ?? null, fn (Builder $query, string $search) => $query->where('original_name', 'like', "%{$search}%"))
+            ->latest('id')->simplePaginate(24)->withQueryString();
+
+        return response()->json([
+            'images' => $images->getCollection()->map(fn (Media $media) => ['id' => $media->id, 'name' => $media->original_name, 'url' => $media->displayUrl(480), 'edit_url' => route('admin.media.edit', $media)]),
+            'next_url' => $images->nextPageUrl(),
+        ]);
+    }
+
     public function index(Request $request): View
     {
         Gate::authorize('viewAny', Media::class);
@@ -59,7 +73,7 @@ class MediaController extends Controller
         );
 
         if ($request->expectsJson()) {
-            return response()->json(['id' => $media->id, 'name' => $media->original_name, 'url' => $media->url(), 'edit_url' => route('admin.media.edit', $media)], 201);
+            return response()->json(['id' => $media->id, 'name' => $media->original_name, 'url' => $media->displayUrl(480), 'edit_url' => route('admin.media.edit', $media)], 201);
         }
 
         return redirect()->route('admin.media.edit', $media)->with('success', 'Media uploaded.');
@@ -108,8 +122,9 @@ class MediaController extends Controller
 
         $disk = $media->disk;
         $path = $media->path;
+        $variants = array_values($media->image_variants ?? []);
         $media->forceDelete();
-        Storage::disk($disk)->delete($path);
+        Storage::disk($disk)->delete([$path, ...$variants]);
 
         return redirect()->route('admin.media.index')->with('success', 'Media permanently deleted.');
     }

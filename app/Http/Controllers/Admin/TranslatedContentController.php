@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\ContentStatus;
 use App\Enums\ProgramCategory;
 use App\Http\Controllers\Controller;
-use App\Models\Media;
 use App\Models\Program;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -171,7 +170,6 @@ abstract class TranslatedContentController extends Controller
     {
         return [
             'statuses' => ContentStatus::cases(),
-            'mediaItems' => Media::query()->latest()->get(),
             'locales' => config('cms.locales'),
             'globalFields' => $this->globalFields(),
             'translationFields' => $this->translationFields(),

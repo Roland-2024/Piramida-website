@@ -4,7 +4,7 @@
 
         <!-- Hero -->
         <div class="text-center">
-            <span class="hero-badge title-60 px-5 py-2 text-white">{{ __('website.careers_index_join') }}<span class="text-[#c6f135]">{{ __('website.careers_index_our') }}</span>{{ __('website.careers_index_team') }}</span>
+            <h1 class="hero-badge title-60 px-5 py-2 text-white">{{ __('website.careers_index_join') }}<span class="text-[#c6f135]">{{ __('website.careers_index_our') }}</span>{{ __('website.careers_index_team') }}</h1>
 
             <div class="title_48-400 text-white md:pt-[120px] pt-[60px]">{{ __('website.careers_index_careers_at_piramida') }}</div>
 

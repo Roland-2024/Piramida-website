@@ -52,7 +52,10 @@ class WebsiteContent
 
     public static function image(string $path): string
     {
-        return app(self::class)->images()[sha1($path)] ?? asset($path);
+        $fallback = preg_match('~^template/images/leasing/(kati-0|kati-3|kati-4|outdoor)\.png$~', $path)
+            ? substr($path, 0, -4).'.webp' : $path;
+
+        return app(self::class)->images()[sha1($path)] ?? asset($fallback);
     }
 
     private function images(): array
@@ -63,7 +66,7 @@ class WebsiteContent
             $this->images = [];
             foreach ($references as $key => $id) {
                 if ($item = $media->get($id)) {
-                    $this->images[$key] = $item->url();
+                    $this->images[$key] = $item->displayUrl();
                 }
             }
         }

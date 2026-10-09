@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\PageRequest;
-use App\Models\Media;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -139,7 +138,6 @@ class PageController extends Controller
     {
         return [
             'statuses' => ContentStatus::cases(),
-            'mediaItems' => Media::query()->latest()->get(),
             'locales' => config('cms.locales'),
         ];
     }

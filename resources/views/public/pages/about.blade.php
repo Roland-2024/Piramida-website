@@ -31,7 +31,7 @@
                     <div class="absolute inset-0" aria-hidden="true"
                         style="clip-path: polygon(8% 0%, 100% 88%, 0% 100%); background: linear-gradient(155deg, #14532d 0%, #4ade80 55%, #cbff00 100%);">
                     </div>
-                    <img src="{{ $overview?->primaryMedia?->url() ?? $page->featuredMedia?->url() ?? \App\Support\WebsiteContent::image('template/images/About/about_piramida.jpg') }}"
+                    <img src="{{ $overview?->primaryMedia?->displayUrl() ?? $page->featuredMedia?->displayUrl() ?? \App\Support\WebsiteContent::image('template/images/About/about_piramida.jpg') }}"
                         alt="{{ __('website.pages_about_the_pyramid_of_tirana_plaza') }}" class="absolute right-0 top-0 object-cover"
                         style="width: 92%; height: 88%;" />
                 </div>
@@ -91,7 +91,7 @@
 
                 <div class="relative overflow-hidden rounded-2xl">
                     <img id="historyThumb"
-                        src="{{ $history?->primaryMedia?->url() ?? \App\Support\WebsiteContent::image('template/images/About/about_piramida.jpg') }}"
+                        src="{{ $history?->primaryMedia?->displayUrl() ?? \App\Support\WebsiteContent::image('template/images/About/about_piramida.jpg') }}"
                         alt="{{ __('website.pages_about_historic_view_of_the_pyramid_of_tirana') }}"
                         class="h-[300px] w-full object-cover grayscale md:h-[680px]" />
 

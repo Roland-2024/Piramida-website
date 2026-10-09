@@ -25,7 +25,7 @@
                     </defs>
                 </svg>
 
-                @if($event->featuredMedia)<img src="{{ $event->featuredMedia->url() }}" alt="{{ $translation->title }}" class="prism-photo" />@endif
+                @if($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="{{ $translation->title }}" class="prism-photo" />@endif
             </div>
 
             <!-- RIGHT: content -->
@@ -44,7 +44,7 @@
                 <div class="mt-5 flex flex-wrap items-center gap-x-8 gap-y-2 text-sm text-white/80">
                     <div class="flex items-center gap-2">
                         <img src="{{ \App\Support\WebsiteContent::image('template/images/Location.svg') }}" />
-                        <span>{{ __('cms.location') }}: {{ $translation->location }}</span>
+                        <span>{{ __('cms.location') }}: {{ $translation->location }}@if($translation->street_address)<br>{{ implode(', ', array_filter([$translation->street_address, $translation->address_locality, $translation->postal_code, $translation->address_country])) }}@endif</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <img src="{{ \App\Support\WebsiteContent::image('template/images/Duration.svg') }}" />
@@ -71,7 +71,7 @@
         @foreach($latestEvents as $latestEvent)
         @php $latestTranslation = $latestEvent->translation(app()->getLocale(), false); @endphp
         <a class="event-card" href="{{ route('public.events.show', [app()->getLocale(), $latestTranslation->slug]) }}">
-            <div class="event-poster relative rounded-xl overflow-hidden">@if($latestEvent->featuredMedia)<img src="{{ $latestEvent->featuredMedia->url() }}" alt="{{ $latestTranslation->title }}" class="w-full h-full object-cover" loading="lazy">@endif</div>
+            <div class="event-poster relative rounded-xl overflow-hidden">@if($latestEvent->featuredMedia)<img src="{{ $latestEvent->featuredMedia->displayUrl() }}" alt="{{ $latestTranslation->title }}" class="w-full h-full object-cover" loading="lazy">@endif</div>
             <div class="pt-3"><p class="title-24">{{ $latestTranslation->title }}</p><p class="text-xs text-white/50">{{ $latestEvent->starts_at->format('d M Y') }}</p></div>
         </a>
         @endforeach

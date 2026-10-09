@@ -18,6 +18,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Throwable;
 
@@ -90,22 +91,24 @@ class SubmissionController extends Controller
         $attachmentPath = null;
 
         try {
-            if ($request->hasFile('attachment')) {
-                $attachmentPath = $request->file('attachment')->store(
+            if ($file = $validated['attachment'] ?? null) {
+                $attachmentPath = $file->store(
                     'submissions/'.now()->format('Y/m'),
                     'local'
                 );
+                if ($attachmentPath === false) {
+                    throw ValidationException::withMessages(['attachment' => __('cms.upload_failed')]);
+                }
             }
 
             $submission = DB::transaction(function () use (
-                $request,
                 $validated,
                 $type,
                 $related,
                 $detailKeys,
                 $attachmentPath,
             ): Submission {
-                $file = $request->file('attachment');
+                $file = $validated['attachment'] ?? null;
                 $submission = new Submission([
                     'type' => $type,
                     'name' => $validated['name'] ?? trim(($validated['first_name'] ?? '').' '.($validated['last_name'] ?? '')),
@@ -153,6 +156,9 @@ class SubmissionController extends Controller
                 }
 
                 $path = $file->store('submissions/'.now()->format('Y/m'), 'local');
+                if ($path === false) {
+                    throw ValidationException::withMessages([$field => __('cms.upload_failed')]);
+                }
                 $storedFiles[] = [
                     'document_type' => $field,
                     'disk' => 'local',

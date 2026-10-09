@@ -24,6 +24,7 @@ class Media extends Model
         'size',
         'width',
         'height',
+        'image_variants',
         'alt_text_al',
         'alt_text_en',
         'created_by',
@@ -43,6 +44,13 @@ class Media extends Model
     public function url(): string
     {
         return Storage::disk($this->disk)->url($this->path);
+    }
+
+    public function displayUrl(int $width = 1600): string
+    {
+        $path = $this->image_variants[$width <= 480 ? 480 : 1600] ?? $this->path;
+
+        return Storage::disk($this->disk)->url($path);
     }
 
     public function isReferenced(): bool
@@ -74,6 +82,7 @@ class Media extends Model
             'size' => 'integer',
             'width' => 'integer',
             'height' => 'integer',
+            'image_variants' => 'array',
         ];
     }
 }

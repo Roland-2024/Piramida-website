@@ -9,7 +9,6 @@ use App\Enums\EventCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\EventRequest;
 use App\Models\Event;
-use App\Models\Media;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -157,7 +156,6 @@ class EventController extends Controller
             'statuses' => ContentStatus::cases(),
             'categories' => EventCategory::cases(),
             'bookingModes' => BookingMode::cases(),
-            'mediaItems' => Media::query()->where('mime_type', 'like', 'image/%')->latest()->get(),
             'locales' => config('cms.locales'),
         ];
     }

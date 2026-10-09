@@ -32,9 +32,9 @@
             <span aria-hidden="true"></span>
           </a>@endif
 
-          <h1 id="space-{{ $item->id }}-title" class="event-space-title">
+          <h{{ ($dialog ?? false) ? 2 : 1 }} id="space-{{ $item->id }}-title" class="event-space-title">
             {{ $translation->title }}
-          </h1>
+          </h{{ ($dialog ?? false) ? 2 : 1 }}>
           <p class="event-space-subtitle hidden md:block">
             {{ __('cms.request_confirmation_notice') }}
           </p>

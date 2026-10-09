@@ -160,7 +160,7 @@ class PageSectionController extends Controller
         return [
             'pages' => Page::query()->withoutCarousel()->with('translations')->orderBy('display_order')->get(),
             'sectionTypes' => SectionType::cases(),
-            'mediaItems' => Media::query()->latest()->get(),
+            'mediaItems' => Media::query()->where('disk', 'public')->whereIn('mime_type', ['video/mp4', 'video/webm'])->latest()->get(),
             'locales' => config('cms.locales'),
         ];
     }

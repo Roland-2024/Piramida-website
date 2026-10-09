@@ -16,16 +16,16 @@ $images = collect([$business->featuredMedia])->filter()->merge($business->galler
 
           >
             <header class="place-popup-header">
-              <div  class="place-popup-logo" aria-hidden="true">@if($business->logoMedia)<img src="{{ $business->logoMedia->url() }}" alt="">@endif</div>
+              <div  class="place-popup-logo" aria-hidden="true">@if($business->logoMedia)<img src="{{ $business->logoMedia->displayUrl() }}" alt="">@endif</div>
               <div>
-                <h1>{{ $businessTranslation->name }}</h1>
+                <h{{ ($dialog ?? false) ? 2 : 1 }}>{{ $businessTranslation->name }}</h{{ ($dialog ?? false) ? 2 : 1 }}>
                 <p>{{ __('website.category_'.$business->category->value) }}</p>
               </div>
             </header>
 
             <div class="place-popup-gallery" data-gallery>
               <div class="place-popup-gallery-frame">
-              @foreach($images as $image)<img data-gallery-image @if(!$loop->first) hidden @endif src="{{ $image->url() }}" alt="{{ app()->getLocale() === 'en' ? $image->alt_text_en : $image->alt_text_al }}" loading="lazy">@endforeach
+              @foreach($images as $image)<img data-gallery-image @if(!$loop->first) hidden @endif src="{{ $image->displayUrl() }}" alt="{{ app()->getLocale() === 'en' ? $image->alt_text_en : $image->alt_text_al }}" loading="lazy">@endforeach
               </div>
 
               <div

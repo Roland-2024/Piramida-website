@@ -9,7 +9,7 @@
     <div class="grid items-center gap-10 {{ $section->primaryMedia ? 'lg:grid-cols-2' : '' }}">
         @if ($section->primaryMedia)<div>
                 @include('public.partials.prism', ['media' => $section->primaryMedia])
-                @if ($section->secondaryMedia)<img src="{{ $section->secondaryMedia->url() }}" alt="{{ $imageAlt($section->secondaryMedia) }}" class="mt-5 max-h-80 w-full rounded-xl object-cover" loading="lazy">@endif
+                @if ($section->secondaryMedia)<img src="{{ $section->secondaryMedia->displayUrl() }}" alt="{{ $imageAlt($section->secondaryMedia) }}" class="mt-5 max-h-80 w-full rounded-xl object-cover" loading="lazy">@endif
             </div>
         @endif
         <div class="{{ $isPillars || $isPartners ? 'mx-auto max-w-2xl text-center' : '' }}">
@@ -37,14 +37,14 @@
         </div>
     @endif
     @if ($section->video_url)<div class="mt-8 overflow-hidden rounded-xl">
-            @if (preg_match('/\.(mp4|webm|ogg)(\?.*)?$/i', $section->video_url))<video controls preload="metadata" @if($section->primaryMedia) poster="{{ $section->primaryMedia->url() }}" @endif class="aspect-video w-full"><source src="{{ $section->video_url }}"></video>
+            @if (preg_match('/\.(mp4|webm|ogg)(\?.*)?$/i', $section->video_url))<video controls preload="metadata" @if($section->primaryMedia) poster="{{ $section->primaryMedia->displayUrl() }}" @endif class="aspect-video w-full"><source src="{{ $section->video_url }}"></video>
             @else
                 <a href="{{ $section->video_url }}" target="_blank" rel="noopener" class="public-button">{{ __('cms.play_video') }} ↗</a>
             @endif
         </div>
     @endif
     @if ($section->gallery->isNotEmpty())<div class="mt-8 {{ $isPartners ? 'grid grid-cols-2 items-center gap-6 sm:grid-cols-3' : 'carousel-track' }}">
-            @foreach ($section->gallery as $media)<img src="{{ $media->url() }}" alt="{{ $imageAlt($media) }}" loading="lazy" class="{{ $isPartners ? 'h-24 w-full bg-white p-4 object-contain' : 'h-80 rounded-xl object-cover' }}">
+            @foreach ($section->gallery as $media)<img src="{{ $media->displayUrl() }}" alt="{{ $imageAlt($media) }}" loading="lazy" class="{{ $isPartners ? 'h-24 w-full bg-white p-4 object-contain' : 'h-80 rounded-xl object-cover' }}">
             @endforeach
         </div>
     @endif

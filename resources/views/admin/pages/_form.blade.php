@@ -29,7 +29,7 @@
         @error('display_order') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
     </div>
 
-    <x-admin.image-picker :media-items="$mediaItems" :selected="$page->featured_media_id ?? null" />
+    <x-admin.image-picker :selected="$page->featured_media_id ?? null" />
     <div class="flex items-end">
         <label class="flex w-full items-center gap-3 rounded-lg border border-slate-200 px-4 py-3">
             <input type="hidden" name="is_homepage" value="0">

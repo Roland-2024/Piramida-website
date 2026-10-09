@@ -8,6 +8,7 @@ use App\Enums\EventCategory;
 use App\Models\Event;
 use App\Models\EventTranslation;
 use App\Models\Media;
+use App\Services\MediaImageOptimizer;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -122,6 +123,8 @@ class SynchronizeWordPressEvents
     {
         $posts = [];
         $page = 1;
+        $expectedTotal = null;
+        $expectedPages = null;
 
         do {
             $response = $this->client()->get('wp/v2/event', [
@@ -136,10 +139,27 @@ class SynchronizeWordPressEvents
                 throw new RuntimeException("WordPress returned invalid {$locale} event data.");
             }
 
+            $total = filter_var($response->header('X-WP-Total'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+            $pages = filter_var($response->header('X-WP-TotalPages'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+            if ($total === false || $pages === false || max(1, $pages) !== max(1, (int) ceil($total / 100))
+                || ($expectedTotal !== null && ($total !== $expectedTotal || $pages !== $expectedPages))) {
+                throw new RuntimeException("WordPress returned incomplete or changing {$locale} pagination metadata.");
+            }
+            $expectedTotal = $total;
+            $expectedPages = $pages;
+            foreach ($items as $item) {
+                if (! is_array($item) || ! isset($item['id']) || ! is_int($item['id']) || $item['id'] < 1) {
+                    throw new RuntimeException("WordPress returned invalid {$locale} event IDs.");
+                }
+            }
             $posts = [...$posts, ...$items];
-            $totalPages = max(1, (int) $response->header('X-WP-TotalPages'));
+            $totalPages = max(1, $pages);
             $page++;
         } while ($page <= $totalPages);
+
+        if (count($posts) !== $expectedTotal || count(array_unique(array_column($posts, 'id'))) !== $expectedTotal) {
+            throw new RuntimeException("WordPress returned an incomplete or duplicated {$locale} event feed.");
+        }
 
         return $posts;
     }
@@ -190,7 +210,9 @@ class SynchronizeWordPressEvents
         $published = collect($posts)->contains(fn (array $post): bool => ($post['status'] ?? null) === 'publish');
         $externalUrl = collect($posts)
             ->map(fn (array $post): ?string => $this->meta($post, '_event_join_url'))
-            ->first(fn (?string $url): bool => filter_var($url, FILTER_VALIDATE_URL) !== false);
+            ->first(fn (?string $url): bool => $url !== null && strlen($url) <= 2048
+                && in_array(strtolower((string) parse_url($url, PHP_URL_SCHEME)), ['http', 'https'], true)
+                && filter_var($url, FILTER_VALIDATE_URL) !== false);
         $media = $this->mediaFor($postsByLocale->first(), $postsByLocale);
         $publishedAt = $published ? $this->publishedAt($posts) : null;
 
@@ -448,6 +470,8 @@ class SynchronizeWordPressEvents
                 'alt_text_al' => $this->plainText(data_get($postsByLocale->get('al'), 'title.rendered')),
                 'alt_text_en' => $this->plainText(data_get($postsByLocale->get('en'), 'title.rendered')),
             ])->save();
+
+            app(MediaImageOptimizer::class)->optimize($media);
 
             return $this->media[$url] = $media;
         } catch (Throwable $exception) {

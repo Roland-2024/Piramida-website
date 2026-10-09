@@ -156,6 +156,7 @@ Route::prefix('admin')
 
         Route::post('media/{medium}/restore', [MediaController::class, 'restore'])->name('media.restore');
         Route::delete('media/{medium}/force', [MediaController::class, 'forceDestroy'])->name('media.force-destroy');
+        Route::get('media/picker', [MediaController::class, 'picker'])->name('media.picker');
         Route::resource('media', MediaController::class)->except('show');
 
         Route::resource('users', UserController::class)

@@ -26,6 +26,61 @@ class SubmissionWorkflowTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_unexpected_attachments_are_rejected_by_non_upload_forms(): void
+    {
+        Storage::fake('local');
+        $event = Event::factory()->published()->create(['booking_mode' => BookingMode::Internal]);
+        $space = Space::factory()->published()->create(['type' => SpaceType::EventSpace, 'booking_mode' => BookingMode::Internal]);
+        foreach ([route('public.contact.store', 'en'), route('public.events.request', ['en', "event-{$event->id}"]), route('public.spaces.event-request', ['en', "space-{$space->id}"])] as $url) {
+            $this->post($url, [
+                'name' => 'Visitor', 'email' => 'visitor@example.test', 'phone' => '+355690000000',
+                'message' => 'Question', 'event_type' => 'Conference', 'attendees' => 1,
+                'preferred_date' => now()->addWeek()->toDateString(), 'preferred_time' => '18:30',
+                'privacy' => '1', 'attachment' => UploadedFile::fake()->create('unexpected.exe', 10),
+            ])->assertSessionHasErrors('attachment');
+        }
+        $this->assertDatabaseCount('submissions', 0);
+        $this->assertSame([], Storage::disk('local')->allFiles());
+    }
+
+    public function test_failed_cv_storage_does_not_create_a_submission(): void
+    {
+        $career = Career::factory()->published()->create(['booking_mode' => BookingMode::Internal]);
+        $disk = \Mockery::mock();
+        $disk->shouldReceive('putFileAs')->once()->andReturn(false);
+        Storage::shouldReceive('disk')->with('local')->andReturn($disk);
+        $this->post(route('public.careers.apply', ['en', "position-{$career->id}"]), [
+            'first_name' => 'Candidate', 'last_name' => 'Name', 'email' => 'candidate@example.test',
+            'phone' => '+355690000000', 'privacy' => '1',
+            'attachment' => UploadedFile::fake()->create('cv.pdf', 10, 'application/pdf'),
+        ])->assertSessionHasErrors('attachment');
+        $this->assertDatabaseCount('submissions', 0);
+    }
+
+    public function test_failed_leasing_upload_cleans_up_earlier_documents(): void
+    {
+        $space = Space::factory()->published()->create([
+            'type' => SpaceType::Leasing, 'leasing_unit_id' => LeasingUnit::where('code', 'A1')->value('id'),
+            'is_available' => true, 'booking_mode' => BookingMode::Internal, 'area_sqm' => 110.2,
+        ]);
+        $documents = collect(StoreSubmissionRequest::leasingDocumentLabels())->except('other_documents')
+            ->mapWithKeys(fn ($label, $field) => [$field => UploadedFile::fake()->create($field.'.pdf', 10, 'application/pdf')])->all();
+        $disk = \Mockery::mock();
+        $disk->shouldReceive('putFileAs')->twice()->andReturn('submissions/test-first.pdf', false);
+        $disk->shouldReceive('delete')->once()->with('submissions/test-first.pdf')->andReturn(true);
+        Storage::shouldReceive('disk')->with('local')->andReturn($disk);
+        $this->post(route('public.spaces.leasing-request', ['en', "space-{$space->id}"]), [
+            'company_name' => 'Example Studio', 'nipt' => 'L12345678A', 'entity_type' => 'llc',
+            'established_year' => 2018, 'company_address' => 'Main Street 10', 'city' => 'Tirana',
+            'employee_count' => 12, 'annual_turnover' => 250000, 'contact_first_name' => 'Business',
+            'contact_last_name' => 'Owner', 'contact_position' => 'Director',
+            'contact_phone' => '+35542222222', 'contact_mobile' => '+355692222222',
+            'contact_email' => 'owner@example.test', 'offer_per_sqm' => 22, 'privacy' => '1', ...$documents,
+        ])->assertSessionHasErrors(array_keys($documents)[1]);
+        $this->assertDatabaseCount('submissions', 0);
+        $this->assertDatabaseCount('submission_attachments', 0);
+    }
+
     public function test_internal_event_form_creates_request_and_notifies_staff(): void
     {
         Mail::fake();

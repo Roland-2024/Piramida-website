@@ -257,7 +257,7 @@
     @php $eventTranslation = $event->translation(app()->getLocale(), false); @endphp
     <div class="card-snap overflow-hidden {{ $loop->index === 1 || $upcomingEvents->count() === 1 ? 'is-active' : '' }}">
         <a href="{{ route('public.events.show', [app()->getLocale(), $eventTranslation->slug]) }}">
-            @if ($event->featuredMedia)<img src="{{ $event->featuredMedia->url() }}" alt="{{ $eventTranslation->title }}" loading="lazy" class="w-full h-[450px] rounded-[12px] object-cover object-center">@endif
+            @if ($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="{{ $eventTranslation->title }}" loading="lazy" class="w-full h-[450px] rounded-[12px] object-cover object-center">@endif
         </a>
         <div class="card-text pt-[40px] sm:p-5 mx-auto">
             <p class="title-green-20 mx-auto text-center">{{ $eventTranslation->title }}</p>
@@ -356,7 +356,7 @@
       <article class="news-card shrink-0 w-full sm:w-auto snap-center rounded-[16px] border border-white/15 p-[30px]">
         <a href="{{ route('public.news.show', [app()->getLocale(), $newsTranslation->slug]) }}">
           <div class="rounded-xl">
-            <img src="{{ $article->featuredMedia?->url() ?: \App\Support\WebsiteContent::image('template/images/piramida_block_1.jpg') }}" alt="{{ $newsTranslation->title }}" loading="lazy"
+            <img src="{{ $article->featuredMedia?->displayUrl() ?: \App\Support\WebsiteContent::image('template/images/piramida_block_1.jpg') }}" alt="{{ $newsTranslation->title }}" loading="lazy"
               class="w-full sm:w-[350px] object-cover h-[380px] rounded-[12px]" />
           </div>
           <div class="pt-4 px-1">

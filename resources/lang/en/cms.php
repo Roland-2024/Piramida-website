@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'upload_failed' => 'The file could not be saved. Please try again.',
     'contact_title_first' => 'Contact',
     'contact_title_second' => 'Us',
     'related_posts' => 'Related posts',

@@ -12,6 +12,18 @@ class PageManagementTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_pages_cannot_shadow_reserved_routes(): void
+    {
+        $this->actingAs(User::factory()->create());
+        foreach (['news', 'contact', 'admin', 'en', 'event-space'] as $slug) {
+            $data = $this->validPageData();
+            $data['translations']['al']['slug'] = $slug;
+            $data['translations']['en']['slug'] = $slug;
+            $this->post(route('admin.pages.store'), $data)->assertSessionHasErrors(['translations.al.slug', 'translations.en.slug']);
+        }
+        $this->assertDatabaseCount('pages', 0);
+    }
+
     public function test_editor_can_create_a_bilingual_page_with_generated_slugs(): void
     {
         $editor = User::factory()->create();

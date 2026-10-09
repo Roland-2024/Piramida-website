@@ -6,6 +6,49 @@ document.querySelectorAll('[data-gallery-picker]').forEach(picker => {
     const status = picker.querySelector('[data-gallery-status]');
     let ids = [...selected.querySelectorAll('input')].map(input => input.value).filter(Boolean);
     const items = () => [...library.querySelectorAll('[data-media-id]')];
+    const known = new Map(items().map(item => [item.dataset.mediaId, item]));
+    let staged = new Set(ids);
+    let nextUrl = null;
+    let controller;
+    const more = picker.querySelector('[data-gallery-more]');
+    const feedback = picker.querySelector('[data-gallery-upload-status]');
+    const addItem = result => {
+        const id = String(result.id);
+        const item = document.createElement('label'); item.className = 'gallery-library-item';
+        Object.assign(item.dataset, {mediaId: id, mediaName: result.name, mediaUrl: result.url, mediaEdit: result.edit_url});
+        const image = document.createElement('img'); image.src = result.url; image.alt = ''; image.loading = 'lazy';
+        const text = document.createElement('span');
+        const input = document.createElement('input'); input.type = single ? 'radio' : 'checkbox'; input.value = id;
+        input.setAttribute('form', 'media-picker-controls');
+        if (single) input.name = `picker_${picker.dataset.fieldName}`;
+        input.checked = staged.has(id);
+        text.append(input, document.createTextNode(` ${result.name}`)); item.append(image, text);
+        known.set(id, item);
+        return item;
+    };
+    const load = async (url, reset = false) => {
+        controller?.abort();
+        controller = new AbortController();
+        more.disabled = true; feedback.textContent = 'Loading images…';
+        try {
+            const response = await fetch(url, {headers: {Accept: 'application/json'}, signal: controller.signal});
+            if (!response.ok) throw new Error('Images could not be loaded. Please try again or sign in again.');
+            const result = await response.json();
+            if (reset) library.replaceChildren();
+            result.images.forEach(image => library.append(addItem(image)));
+            nextUrl = result.next_url; more.hidden = !nextUrl;
+            feedback.textContent = library.children.length ? '' : 'No matching images.';
+        } catch (error) {
+            if (error.name !== 'AbortError') feedback.textContent = error.message;
+        } finally { more.disabled = false; }
+    };
+    library.addEventListener('change', event => {
+        if (!event.target.matches('input')) return;
+        const id = event.target.closest('[data-media-id]').dataset.mediaId;
+        if (single) staged.clear();
+        if (event.target.checked) staged.add(id); else staged.delete(id);
+    });
+    more.addEventListener('click', () => { if (nextUrl) load(nextUrl); });
     const button = (text, label, action) => {
         const element = document.createElement('button');
         element.type = 'button'; element.textContent = text; element.setAttribute('aria-label', label);
@@ -15,7 +58,7 @@ document.querySelectorAll('[data-gallery-picker]').forEach(picker => {
     const render = (focusId, focusAction = 0) => {
         selected.replaceChildren();
         ids.forEach((id, index) => {
-            const source = items().find(item => item.dataset.mediaId === id);
+            const source = known.get(id);
             if (!source) return;
             const card = document.createElement('div');
             card.dataset.selectedId = id;
@@ -50,19 +93,26 @@ document.querySelectorAll('[data-gallery-picker]').forEach(picker => {
         if (focusId) selected.querySelector(`[data-selected-id="${focusId}"]`)?.querySelectorAll('button')[focusAction]?.focus();
     };
     picker.querySelector('[data-gallery-open]').addEventListener('click', () => {
+        staged = new Set(ids);
         items().forEach(item => { item.querySelector('input').checked = ids.includes(item.dataset.mediaId); });
+        picker.querySelector('[data-gallery-search]').value = '';
         dialog.showModal();
+        load(picker.dataset.libraryUrl, true);
     });
     picker.querySelector('[data-gallery-close]').addEventListener('click', () => dialog.close());
     picker.querySelector('[data-gallery-apply]').addEventListener('click', () => {
-        const checked = items().filter(item => item.querySelector('input').checked).map(item => item.dataset.mediaId);
+        const checked = [...staged];
         if (checked.length > 30) { picker.querySelector('[data-gallery-upload-status]').textContent = 'Select at most 30 gallery images.'; return; }
         ids = single ? checked.slice(0, 1) : [...ids.filter(id => checked.includes(id)), ...checked.filter(id => !ids.includes(id))];
         render(); status.textContent = ''; dialog.close();
     });
+    let searchTimer;
     picker.querySelector('[data-gallery-search]').addEventListener('input', event => {
-        const term = event.target.value.toLocaleLowerCase();
-        items().forEach(item => { item.hidden = !item.dataset.mediaName.toLocaleLowerCase().includes(term); });
+        clearTimeout(searchTimer);
+        controller?.abort();
+        const url = new URL(picker.dataset.libraryUrl, location.href);
+        url.searchParams.set('search', event.target.value);
+        searchTimer = setTimeout(() => load(url, true), 250);
     });
     // Enter in the library must not submit the surrounding content form.
     dialog.addEventListener('keydown', event => { if (event.key === 'Enter' && event.target.matches('input')) event.preventDefault(); });
@@ -79,17 +129,12 @@ document.querySelectorAll('[data-gallery-picker]').forEach(picker => {
                 const response = await fetch(picker.dataset.uploadUrl, {method: 'POST', headers: {'Accept': 'application/json'}, body: data});
                 const result = await response.json();
                 if (!response.ok) throw new Error(Object.values(result.errors || {}).flat().join(' ') || result.message || 'Upload failed.');
-                const item = document.createElement('label'); item.className = 'gallery-library-item';
-                Object.assign(item.dataset, {mediaId: String(result.id), mediaName: result.name, mediaUrl: result.url, mediaEdit: result.edit_url});
-                const image = document.createElement('img'); image.src = result.url; image.alt = '';
-                const text = document.createElement('span');
-                const checkbox = document.createElement('input'); checkbox.type = single ? 'radio' : 'checkbox';
                 if (single) {
+                    staged.clear();
                     items().forEach(item => { item.querySelector('input').checked = false; });
-                    checkbox.name = `picker_${picker.dataset.fieldName}`; checkbox.setAttribute('form', 'media-picker-controls');
                 }
-                checkbox.checked = true;
-                text.append(checkbox, document.createTextNode(` ${result.name}`)); item.append(image, text); library.prepend(item);
+                staged.add(String(result.id));
+                library.prepend(addItem(result));
                 feedback.textContent = 'Uploaded. Apply your selection, then save the record.';
             } catch (error) { feedback.textContent = error.message; break; }
         }

@@ -12,7 +12,7 @@
                         @php $item = $event->translation(app()->getLocale(), false); $offset = 2 - $loop->index; @endphp
                         <article class="slot-diagonal absolute overflow-hidden" style="right:calc(var(--card-w) * {{ $offset }});bottom:calc(var(--card-h) * {{ $offset }});left:auto;top:auto;width:var(--card-w);height:var(--card-h);">
                             <a href="{{ route('public.events.show', [app()->getLocale(), $item->slug]) }}" aria-label="{{ $item->title }}">
-                                @if ($event->featuredMedia)<img src="{{ $event->featuredMedia->url() }}" alt="" class="absolute inset-0 w-full h-full object-cover">@endif
+                                @if ($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="" class="absolute inset-0 w-full h-full object-cover">@endif
                             </a>
                             <div class="slot-title title_40">{{ $item->title }}</div>
                             <div class="slot-date title_16">{{ $event->starts_at->format('d M Y · H:i') }}</div>
@@ -28,7 +28,7 @@
         @foreach ($events as $event)
             @php $item = $event->translation(app()->getLocale(), false); @endphp
             <div class="reel-item">
-                <div class="reel-image-wrap"><a href="{{ route('public.events.show', [app()->getLocale(), $item->slug]) }}" aria-label="{{ $item->title }}">@if($event->featuredMedia)<img src="{{ $event->featuredMedia->url() }}" alt="">@endif</a></div>
+                <div class="reel-image-wrap"><a href="{{ route('public.events.show', [app()->getLocale(), $item->slug]) }}" aria-label="{{ $item->title }}">@if($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="">@endif</a></div>
                 <div class="reel-date">{{ $event->starts_at->format('d M · H:i') }}</div><div class="reel-title">{{ $item->title }}</div>
             </div>
         @endforeach

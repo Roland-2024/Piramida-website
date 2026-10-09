@@ -6,6 +6,7 @@ use App\Models\Media;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class MediaUploader
@@ -17,10 +18,13 @@ class MediaUploader
     {
         $disk = config('filesystems.default');
         $path = $file->store('media/'.now()->format('Y/m'), $disk);
+        if ($path === false) {
+            throw ValidationException::withMessages(['file' => 'The file could not be saved. Please try again.']);
+        }
         [$width, $height] = $this->dimensions($file);
 
         try {
-            return Media::query()->create([
+            $media = Media::query()->create([
                 'disk' => $disk,
                 'path' => $path,
                 'original_name' => $file->getClientOriginalName(),
@@ -34,6 +38,9 @@ class MediaUploader
                 'created_by' => $user->id,
                 'updated_by' => $user->id,
             ]);
+            app(MediaImageOptimizer::class)->optimize($media);
+
+            return $media;
         } catch (Throwable $exception) {
             Storage::disk($disk)->delete($path);
 

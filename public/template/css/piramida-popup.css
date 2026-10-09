@@ -101,7 +101,7 @@
   text-transform: lowercase;
 }
 
-.place-popup-header h1 {
+.place-popup-header :is(h1, h2) {
   margin: 0;
   color: #0f0f0f;
   font-size: 12px;
@@ -331,7 +331,7 @@
     font-size: 7px;
   }
 
-  .place-popup-header h1 {
+  .place-popup-header :is(h1, h2) {
     font-size: 18px;
     line-height: 1.05;
   }

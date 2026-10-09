@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\NewsRequest;
-use App\Models\Media;
 use App\Models\News;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -135,7 +134,6 @@ class NewsController extends Controller
     {
         return [
             'statuses' => ContentStatus::cases(),
-            'mediaItems' => Media::query()->latest()->get(),
             'locales' => config('cms.locales'),
         ];
     }

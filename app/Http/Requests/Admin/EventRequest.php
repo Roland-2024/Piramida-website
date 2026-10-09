@@ -69,6 +69,10 @@ class EventRequest extends FormRequest
             $rules["translations.{$locale}.short_description"] = ['nullable', 'string', 'max:2000'];
             $rules["translations.{$locale}.description"] = ['nullable', 'string'];
             $rules["translations.{$locale}.location"] = ['nullable', 'string', 'max:255'];
+            $rules["translations.{$locale}.street_address"] = ['nullable', 'string', 'max:255'];
+            $rules["translations.{$locale}.address_locality"] = ['nullable', 'string', 'max:255'];
+            $rules["translations.{$locale}.postal_code"] = ['nullable', 'string', 'max:32'];
+            $rules["translations.{$locale}.address_country"] = ['nullable', 'string', 'regex:/^[A-Z]{2}$/'];
             $rules["translations.{$locale}.price_label"] = ['nullable', 'string', 'max:255'];
             $rules["translations.{$locale}.seo_title"] = ['nullable', 'string', 'max:255'];
             $rules["translations.{$locale}.seo_description"] = ['nullable', 'string', 'max:2000'];

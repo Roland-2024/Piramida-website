@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Enums\BookingMode;
 use App\Enums\SpaceType;
+use App\Models\Business;
 use App\Models\Career;
 use App\Models\Event;
 use App\Models\News;
@@ -15,6 +17,39 @@ use Tests\TestCase;
 class SeoTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_event_schema_uses_only_confirmed_address_fields(): void
+    {
+        $event = Event::factory()->published()->create();
+        $event->translations()->where('locale', 'en')->update([
+            'location' => 'Venue', 'street_address' => 'Test Street 10',
+            'address_locality' => 'Tirana', 'address_country' => 'AL',
+        ]);
+        $response = $this->get("/en/events/event-$event->id")->assertOk()->assertSee('Test Street 10');
+        preg_match('~<script type="application/ld\+json">(.*?)</script>~s', $response->getContent(), $matches);
+        $address = json_decode($matches[1], true, 512, JSON_THROW_ON_ERROR)['@graph'][1]['location']['address'];
+        $this->assertSame('PostalAddress', $address['@type']);
+        $this->assertSame('Test Street 10', $address['streetAddress']);
+        $this->assertArrayNotHasKey('postalCode', $address);
+    }
+
+    public function test_article_heading_is_an_h1(): void
+    {
+        $news = News::factory()->published()->create();
+        $response = $this->get("/en/news/news-$news->id")->assertOk();
+        $this->assertSame(1, preg_match_all('~<h1\b~', $response->getContent()));
+    }
+
+    public function test_catalog_dialogs_do_not_add_page_level_headings(): void
+    {
+        Business::factory()->published()->count(2)->create();
+        Career::factory()->published()->count(2)->create(['booking_mode' => BookingMode::Internal]);
+        Space::factory()->published()->count(2)->create(['type' => SpaceType::EventSpace, 'booking_mode' => BookingMode::Internal]);
+        foreach (['/businesses', '/careers', '/event-space'] as $url) {
+            $response = $this->get($url)->assertOk();
+            $this->assertSame(1, preg_match_all('~<h1\b~', $response->getContent()), $url);
+        }
+    }
 
     public function test_localized_metadata_and_safe_article_schema_use_the_final_domain(): void
     {

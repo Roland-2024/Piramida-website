@@ -19,7 +19,7 @@
                     @foreach($items as $attraction)
 @php $entry = $attraction->translation(app()->getLocale(), false); @endphp
 <figure class="attraction-card" data-index="{{ $loop->index }}">
-@if($attraction->featuredMedia)<img src="{{ $attraction->featuredMedia->url() }}" alt="{{ $entry->title }}">@endif
+@if($attraction->featuredMedia)<img src="{{ $attraction->featuredMedia->displayUrl() }}" alt="{{ $entry->title }}">@endif
 <div class="attraction-content"><div class="tag">{{ $entry->location }}</div><div class="title">{{ $entry->title }}</div><div class="desc">{{ $entry->short_description }}</div></div>
 </figure>@endforeach
                 </div>

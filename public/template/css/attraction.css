@@ -817,7 +817,7 @@
   font-size: 7px;
 }
 
-.place-popup-header h1 {
+.place-popup-header :is(h1, h2) {
   font-size: 18px;
 }
 
@@ -937,7 +937,7 @@
     font-size: 8px;
   }
 
-  .place-popup-header h1 {
+  .place-popup-header :is(h1, h2) {
     font-size: 20px;
     line-height: 1.05;
   }
