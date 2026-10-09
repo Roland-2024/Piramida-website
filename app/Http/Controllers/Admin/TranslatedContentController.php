@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\ContentStatus;
 use App\Enums\ProgramCategory;
 use App\Http\Controllers\Controller;
+use App\Models\Business;
 use App\Models\Program;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -120,7 +121,7 @@ abstract class TranslatedContentController extends Controller
             $data = $request->validated();
             $translations = $data['translations'];
             $galleryMediaIds = $data['gallery_media_ids'] ?? [];
-            unset($data['translations'], $data['gallery_media_ids']);
+            unset($data['translations'], $data['gallery_media_ids'], $data['category_slugs']);
 
             $modelClass = $this->modelClass;
             $item = $modelClass::query()->create([
@@ -129,6 +130,10 @@ abstract class TranslatedContentController extends Controller
                 'updated_by' => $request->user()->id,
             ]);
             $item->syncTranslations($translations);
+
+            if ($item instanceof Business) {
+                $item->categories()->sync($request->validated('category_slugs'));
+            }
 
             if ($this->withGallery && method_exists($item, 'syncGallery')) {
                 $item->syncGallery($galleryMediaIds);
@@ -149,10 +154,14 @@ abstract class TranslatedContentController extends Controller
             $data = $request->validated();
             $translations = $data['translations'];
             $galleryMediaIds = $data['gallery_media_ids'] ?? [];
-            unset($data['translations'], $data['gallery_media_ids']);
+            unset($data['translations'], $data['gallery_media_ids'], $data['category_slugs']);
 
             $item->update([...$data, 'updated_by' => $request->user()->id]);
             $item->syncTranslations($translations);
+
+            if ($item instanceof Business) {
+                $item->categories()->sync($request->validated('category_slugs'));
+            }
 
             if ($this->withGallery && method_exists($item, 'syncGallery')) {
                 $item->syncGallery($galleryMediaIds);

@@ -15,7 +15,6 @@ class BusinessFactory extends Factory
     public function definition(): array
     {
         return [
-            'category' => fake()->randomElement(BusinessCategory::cases()),
             'status' => ContentStatus::Draft,
             'display_order' => fake()->numberBetween(0, 20),
         ];
@@ -24,6 +23,7 @@ class BusinessFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Business $business): void {
+            $business->categories()->sync([BusinessCategory::SocialSpaces->value]);
             $business->syncTranslations([
                 'al' => [
                     'name' => "Biznesi {$business->id}",

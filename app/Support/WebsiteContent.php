@@ -52,7 +52,7 @@ class WebsiteContent
 
     public static function image(string $path): string
     {
-        $fallback = preg_match('~^template/images/leasing/(kati-0|kati-3|kati-4|outdoor)\.png$~', $path)
+        $fallback = preg_match('~^template/images/leasing/(kati-0|kati-1|kati-3|kati-4|outdoor)\.png$~', $path)
             ? substr($path, 0, -4).'.webp' : $path;
 
         return app(self::class)->images()[sha1($path)] ?? asset($fallback);

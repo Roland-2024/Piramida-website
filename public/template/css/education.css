@@ -30,7 +30,12 @@
   will-change: transform;
 }
 
-@media (min-width: 767px) {
+@media (min-width: 768px) {
+  #viewport {
+    /* Remove the empty 20% below the desktop track without moving the images. */
+    margin-bottom: -108px;
+  }
+
   #track {
     position: relative;
     z-index: 1;

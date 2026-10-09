@@ -19,7 +19,7 @@
 <a class="exp-card" href="{{ route('public.businesses.show', [app()->getLocale(), $businessTranslation->slug]) }}" data-dialog-open="business-{{ $business->id }}" aria-haspopup="dialog">
 <div class="exp-card-media">@if($business->featuredMedia)<img src="{{ $business->featuredMedia->displayUrl(480) }}" alt="{{ $businessTranslation->name }}" loading="lazy">@endif</div>
 <div class="exp-card-meta"><span class="exp-avatar">@if($business->logoMedia)<img src="{{ $business->logoMedia->displayUrl(480) }}" alt="">@endif</span>
-<span class="exp-meta-text"><span class="exp-label">{{ $businessTranslation->name }}</span><span class="exp-sublabel">{{ __('website.category_'.$business->category->value) }}</span></span></div>
+<span class="exp-meta-text"><span class="exp-label">{{ $businessTranslation->name }}</span><span class="exp-sublabel">{{ $business->categoryLabels() }}</span></span></div>
 </a>@endforeach
             </div>
 

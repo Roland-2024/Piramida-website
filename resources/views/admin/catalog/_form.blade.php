@@ -48,6 +48,18 @@
         <div class="{{ ($field['type'] ?? 'text') === 'checkbox' ? 'flex items-end' : '' }}">
             @if (($field['type'] ?? 'text') === 'image')
                 <x-admin.image-picker :name="$field['name']" :label="$field['label']" :selected="$value" />
+            @elseif (($field['type'] ?? 'text') === 'checkboxes')
+                <fieldset class="rounded-lg border border-slate-200 p-3">
+                    <legend class="px-1 text-sm font-medium">{{ $field['label'] }}</legend>
+                    <p class="mb-2 text-xs text-slate-500">Select one or more categories.</p>
+                    @foreach ($field['options'] as $optionValue => $optionLabel)
+                        <label class="flex items-center gap-2 py-1 text-sm">
+                            <input type="checkbox" name="{{ $field['name'] }}[]" value="{{ $optionValue }}" @checked(in_array($optionValue, (array) $value, true)) class="rounded border-slate-300">
+                            {{ $optionLabel }}
+                        </label>
+                    @endforeach
+                    @error($field['name'].'.*') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                </fieldset>
             @elseif (($field['type'] ?? 'text') === 'select')
                 <label for="{{ $field['name'] }}" class="block text-sm font-medium">{{ $field['label'] }}</label>
                 <select id="{{ $field['name'] }}" name="{{ $field['name'] }}" @required($field['required'] ?? false) class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">

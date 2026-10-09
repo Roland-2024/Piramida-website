@@ -16,7 +16,7 @@ class LeasingMapTest extends TestCase
 
     public function test_real_inventory_and_all_floor_templates_render_in_both_languages(): void
     {
-        $this->assertDatabaseCount('leasing_units', 40);
+        $this->assertDatabaseCount('leasing_units', 52);
         $this->assertDatabaseMissing('leasing_units', ['code' => 'A16']);
         $this->assertDatabaseHas('leasing_units', ['code' => 'BE1/1', 'svg_id' => 'unit-BE1-1']);
         foreach (['al', 'en'] as $locale) {
@@ -27,7 +27,7 @@ class LeasingMapTest extends TestCase
                 ->assertSee('piramida-map-lines--desktop')
                 ->assertSee('piramida-map-lines--mobile')
                 ->assertDontSee('Piramida_map.png')
-                ->assertDontSee('data-floor="minus-one"', false);
+                ->assertSee('data-floor="minus-one"', false);
             foreach (LeasingUnit::FLOORS as $floor => $info) {
                 $response = $this->get("$prefix/leasing/floors/$floor")->assertOk();
                 $response->assertSee(__('cms.unit_unavailable_notice', [], $locale))
@@ -117,6 +117,28 @@ class LeasingMapTest extends TestCase
         $this->get(route('admin.leasing.edit', $event))->assertNotFound();
         $this->actingAs(User::factory()->create(['is_active' => false]))
             ->get(route('admin.leasing.index'))->assertRedirect();
+    }
+
+    public function test_editor_can_assign_a_basement_unit_and_only_publish_available_translated_leases(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $unit = LeasingUnit::where('code', 'U12')->firstOrFail();
+        $this->get(route('admin.leasing.create'))->assertOk()->assertSee('-1 Floor');
+        $this->post(route('admin.leasing.store'), $this->payload([
+            'leasing_unit_id' => $unit->id, 'is_available' => '1',
+        ]))->assertSessionHasNoErrors()->assertRedirect();
+        $space = Space::firstOrFail();
+        $url = route('public.spaces.show', ['en', 'test-leasing']);
+        $this->get('/en/leasing/floors/minus-one')->assertOk()
+            ->assertSee('kati-1.webp')->assertSee('href="'.$url.'"', false);
+        $this->get($url)->assertOk()->assertSee('-1 Floor')->assertSee('U12');
+        $space->update(['is_available' => false]);
+        $this->get('/en/leasing/floors/minus-one')->assertOk()->assertDontSee('data-status="available"', false);
+        $this->get($url)->assertNotFound();
+        $space->update(['is_available' => true]);
+        $space->translations()->where('locale', 'en')->delete();
+        $this->get('/en/leasing/floors/minus-one')->assertDontSee('data-status="available"', false);
+        $this->get('/leasing/floors/minus-one')->assertSee('data-status="available"', false);
     }
 
     private function payload(array $overrides = []): array

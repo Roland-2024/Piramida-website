@@ -34,7 +34,7 @@ class BusinessController extends TranslatedContentController
     protected function globalFields(): array
     {
         return [
-            ['name' => 'category', 'label' => 'Category', 'type' => 'select', 'required' => true, 'options' => collect(BusinessCategory::cases())->mapWithKeys(fn ($case) => [$case->value => $case->label()])->all()],
+            ['name' => 'category_slugs', 'label' => 'Categories', 'type' => 'checkboxes', 'options' => collect(BusinessCategory::cases())->mapWithKeys(fn ($case) => [$case->value => $case->label()])->all()],
             ['name' => 'logo_media_id', 'label' => 'Logo', 'type' => 'image'],
             ['name' => 'website_url', 'label' => 'Website URL', 'type' => 'url'],
             ['name' => 'email', 'label' => 'Public email', 'type' => 'email'],

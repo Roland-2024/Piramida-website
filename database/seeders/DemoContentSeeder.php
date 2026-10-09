@@ -444,17 +444,16 @@ class DemoContentSeeder extends Seeder
     private function seedBusinesses(?int $ownerId, array $media): void
     {
         $items = [
-            ['name' => 'DV8', 'slug' => 'dv8', 'category' => BusinessCategory::Cafe, 'image' => 'meeting', 'address_al' => 'Kati 0', 'address_en' => 'Floor 0', 'hours' => '08:00–22:00', 'al' => 'Kafe e qetë për pushime të shkurtra, takime dhe biseda.', 'en' => 'A relaxed café for quick breaks, meetings and conversation.'],
-            ['name' => 'Mulliri', 'slug' => 'mulliri', 'category' => BusinessCategory::Cafe, 'image' => 'creative_hub', 'address_al' => 'Kati 4', 'address_en' => 'Floor 4', 'hours' => '07:30–22:30', 'al' => 'Kafe, ushqime të lehta dhe një vend i rehatshëm brenda Piramidës.', 'en' => 'Coffee, light food and a comfortable place inside Piramida.'],
-            ['name' => 'Banas', 'slug' => 'banas', 'category' => BusinessCategory::Restaurant, 'image' => 'tumo', 'address_al' => 'Kati 1', 'address_en' => 'Floor 1', 'hours' => '11:00–23:00', 'al' => 'Shije të freskëta dhe një atmosferë e hapur për drekë ose darkë.', 'en' => 'Fresh flavours and an open atmosphere for lunch or dinner.'],
-            ['name' => 'Piramida Store', 'slug' => 'piramida-store', 'category' => BusinessCategory::Shop, 'image' => 'yellow_house', 'address_al' => 'Hyrja kryesore', 'address_en' => 'Main entrance', 'hours' => '09:00–20:00', 'al' => 'Objekte, botime dhe kujtime të frymëzuara nga Piramida dhe Tirana.', 'en' => 'Objects, publications and souvenirs inspired by Piramida and Tirana.'],
+            ['name' => 'DV8', 'slug' => 'dv8', 'category' => BusinessCategory::SocialSpaces, 'image' => 'meeting', 'address_al' => 'Kati 0', 'address_en' => 'Floor 0', 'hours' => '08:00–22:00', 'al' => 'Kafe e qetë për pushime të shkurtra, takime dhe biseda.', 'en' => 'A relaxed café for quick breaks, meetings and conversation.'],
+            ['name' => 'Mulliri', 'slug' => 'mulliri', 'category' => BusinessCategory::SocialSpaces, 'image' => 'creative_hub', 'address_al' => 'Kati 4', 'address_en' => 'Floor 4', 'hours' => '07:30–22:30', 'al' => 'Kafe, ushqime të lehta dhe një vend i rehatshëm brenda Piramidës.', 'en' => 'Coffee, light food and a comfortable place inside Piramida.'],
+            ['name' => 'Banas', 'slug' => 'banas', 'category' => BusinessCategory::SocialSpaces, 'image' => 'tumo', 'address_al' => 'Kati 1', 'address_en' => 'Floor 1', 'hours' => '11:00–23:00', 'al' => 'Shije të freskëta dhe një atmosferë e hapur për drekë ose darkë.', 'en' => 'Fresh flavours and an open atmosphere for lunch or dinner.'],
+            ['name' => 'Piramida Store', 'slug' => 'piramida-store', 'category' => BusinessCategory::SocialSpaces, 'image' => 'yellow_house', 'address_al' => 'Hyrja kryesore', 'address_en' => 'Main entrance', 'hours' => '09:00–20:00', 'al' => 'Objekte, botime dhe kujtime të frymëzuara nga Piramida dhe Tirana.', 'en' => 'Objects, publications and souvenirs inspired by Piramida and Tirana.'],
         ];
 
         foreach ($items as $index => $item) {
             /** @var Business $business */
             $business = $this->upsertTranslated(Business::class, [$item['slug']], [
                 'featured_media_id' => $media[$item['image']]->id,
-                'category' => $item['category'],
                 'status' => ContentStatus::Published,
                 'published_at' => now()->subMonth(),
                 'website_url' => null,
@@ -468,6 +467,7 @@ class DemoContentSeeder extends Seeder
                 'al' => ['name' => $item['name'], 'slug' => $item['slug'], 'short_description' => $item['al'], 'description' => '<p>'.$item['al'].'</p><p>Hapni kartën për të parë imazhet, vendndodhjen dhe orarin.</p>', 'address' => $item['address_al'], 'opening_hours' => $item['hours'], 'seo_title' => $item['name'].' në Piramidë', 'seo_description' => $item['al']],
                 'en' => ['name' => $item['name'], 'slug' => $item['slug'], 'short_description' => $item['en'], 'description' => '<p>'.$item['en'].'</p><p>Open the card to view images, location and opening hours.</p>', 'address' => $item['address_en'], 'opening_hours' => $item['hours'], 'seo_title' => $item['name'].' at Piramida', 'seo_description' => $item['en']],
             ]);
+            $business->categories()->sync([$item['category']->value]);
             $business->syncGallery([$media[$item['image']]->id, $media[$index % 2 === 0 ? 'creative_hub' : 'meeting']->id]);
         }
     }

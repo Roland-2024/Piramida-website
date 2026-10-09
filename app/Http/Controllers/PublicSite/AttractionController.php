@@ -15,7 +15,7 @@ class AttractionController extends TranslatedCatalogController
     {
         return parent::index($locale)->with('businesses', Business::query()->published()
             ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
-            ->with(['translations', 'featuredMedia', 'logoMedia', 'gallery'])
+            ->with(['translations', 'featuredMedia', 'logoMedia', 'gallery', 'categories'])
             ->orderBy('display_order')->orderBy('id')->limit(12)->get());
     }
 

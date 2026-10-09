@@ -36,6 +36,10 @@
                   <path d="M425 412 H80" />
                   <circle cx="80" cy="412" r="5" />
                 </g>
+                <g data-line="minus-one">
+                  <path d="M575 358 H605 V490" />
+                  <circle cx="605" cy="490" r="5" />
+                </g>
               </svg>
 
               <!-- Mobile connector lines: viewBox matches the 4:5 mobile frame,
@@ -61,6 +65,10 @@
                   <path d="M132 358 H36" />
                   <circle cx="36" cy="358" r="4" />
                 </g>
+                <g data-line="minus-one">
+                  <path d="M268 312 H292 V444" />
+                  <circle cx="292" cy="444" r="4" />
+                </g>
               </svg>
 
               <nav class="piramida-map-floors" aria-label="{{ __('cms.leasing_map') }}">
@@ -79,6 +87,11 @@
                   class="piramida-map-floor is-active"
                   data-floor="ground"
                 >{{ $floors['ground'][app()->getLocale()] }}</a>
+                <a
+                  href="{{ route('public.leasing.floor', [app()->getLocale(), 'minus-one']) }}"
+                  class="piramida-map-floor"
+                  data-floor="minus-one"
+                >{{ $floors['minus-one'][app()->getLocale()] }}</a>
                 <a
                   href="{{ route('public.leasing.floor', [app()->getLocale(), 'exterior']) }}"
                   class="piramida-map-floor"

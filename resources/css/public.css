@@ -70,7 +70,7 @@
     .request-panel input:not([type=checkbox]),.request-panel textarea,.request-panel select { background:#f7f8fb; color:#14182a; }
     .intro { position:fixed; inset:0; z-index:1000; background:#050a1c; overflow:hidden; text-align:center; }
     .intro-content { position:relative; z-index:1; width:100%; max-width:900px; margin:auto; padding:0 24px; top:50%; transform:translateY(calc(-50% - 90px)); }
-    .intro h2 { font-family:Anton,sans-serif; font-size:100px; line-height:100px; text-transform:uppercase; letter-spacing:-.03em; }
+    .intro h2 { font-family:Anton,sans-serif; font-size:100px; line-height:1.2; text-transform:uppercase; letter-spacing:-.03em; }
     .intro-word { color:#1c2440; transition:color .35s,text-shadow .35s; }
     .intro-word.lit { color:var(--word-color); text-shadow:0 0 30px color-mix(in srgb,var(--word-color) 45%,transparent); }
     .intro-stripes { position:absolute; bottom:0; width:100%; height:260px; display:flex; mask-image:radial-gradient(circle farthest-corner at 50% 100%,white 0%,white var(--reveal-inner,0%),transparent var(--reveal-outer,0%)); }

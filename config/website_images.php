@@ -34,6 +34,7 @@ return [
     'template/images/green-gradient.svg',
     'template/images/innovation.png',
     'template/images/leasing/kati-0.png',
+    'template/images/leasing/kati-1.png',
     'template/images/leasing/kati-3.png',
     'template/images/leasing/kati-4.png',
     'template/images/leasing/outdoor.png',

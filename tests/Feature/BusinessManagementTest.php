@@ -6,8 +6,10 @@ use App\Enums\BusinessCategory;
 use App\Enums\ContentStatus;
 use App\Models\Business;
 use App\Models\Media;
+use App\Models\Page;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class BusinessManagementTest extends TestCase
@@ -22,7 +24,7 @@ class BusinessManagementTest extends TestCase
 
         $this->actingAs($editor)
             ->post(route('admin.businesses.store'), [
-                'category' => BusinessCategory::Shop->value,
+                'category_slugs' => [BusinessCategory::Education->value, BusinessCategory::SocialSpaces->value],
                 'status' => ContentStatus::Published->value,
                 'published_at' => now()->subMinute()->format('Y-m-d H:i:s'),
                 'website_url' => 'https://example.test/shop',
@@ -57,6 +59,74 @@ class BusinessManagementTest extends TestCase
         $this->assertSame($logo->id, $business->logo_media_id);
         $this->assertSame([$cover->id], $business->gallery()->pluck('media.id')->all());
         $this->assertSame($editor->id, $business->created_by);
+        $this->assertSame(['education', 'social_spaces'], $business->category_slugs);
+        $this->get(route('admin.businesses.edit', $business))->assertOk()
+            ->assertSee('name="category_slugs[]"', false)->assertSee('Social Spaces')
+            ->assertDontSee('value="cafe"', false);
+    }
+
+    public function test_editor_can_replace_categories_but_cannot_submit_empty_unknown_or_duplicate_categories(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $business = Business::factory()->published()->create();
+        $payload = [
+            'category_slugs' => ['innovation', 'art_culture'],
+            'status' => 'published', 'published_at' => now()->subDay()->toDateTimeString(),
+            'is_featured' => false, 'display_order' => 0,
+            'translations' => [
+                'al' => ['name' => 'Test biznes', 'slug' => 'test-biznes'],
+                'en' => ['name' => 'Test business', 'slug' => 'test-business'],
+            ],
+        ];
+        $url = route('admin.businesses.update', $business);
+        $this->put($url, $payload)->assertSessionHasNoErrors()->assertRedirect();
+        $this->assertSame(['innovation', 'art_culture'], $business->fresh()->category_slugs);
+        foreach ([[], ['cafe'], ['custom_category'], ['education', 'education']] as $invalid) {
+            $this->put($url, [...$payload, 'category_slugs' => $invalid])->assertSessionHasErrors();
+            $this->assertSame(['innovation', 'art_culture'], $business->fresh()->category_slugs);
+        }
+    }
+
+    public function test_directory_only_lists_social_spaces_while_business_carousel_keeps_all_categories(): void
+    {
+        $social = Business::factory()->published()->create();
+        $social->categories()->sync(['social_spaces', 'education']);
+        $innovation = Business::factory()->published()->create();
+        $innovation->categories()->sync(['innovation']);
+        $future = Business::factory()->published()->create(['published_at' => now()->addDay()]);
+        $page = Page::factory()->published()->create();
+        $page->translations()->where('locale', 'en')->update(['slug' => 'business']);
+        foreach (['al', 'en'] as $locale) {
+            $this->get(route('public.businesses.index', $locale))->assertOk()
+                ->assertViewHas('items', fn ($items) => $items->modelKeys() === [$social->id]);
+            $this->get(route('public.pages.show', [$locale, $page->translation($locale, false)->slug]))->assertOk()
+                ->assertViewHas('slides', fn ($slides) => $slides->count() === 2);
+        }
+        $social->translations()->where('locale', 'en')->delete();
+        $this->get('/en/businesses')->assertOk()->assertViewHas('items', fn ($items) => $items->isEmpty());
+        $this->assertNotNull($future->fresh());
+    }
+
+    public function test_category_migration_preserves_existing_businesses_and_maps_legacy_values(): void
+    {
+        $migration = require database_path('migrations/2026_10_09_000001_add_business_categories.php');
+        $migration->down();
+        $ids = [];
+        foreach (['cafe' => 'social_spaces', 'restaurant' => 'social_spaces', 'shop' => 'social_spaces', 'technology' => 'innovation', 'art' => 'art_culture'] as $old => $new) {
+            $id = DB::table('businesses')->insertGetId(['category' => $old, 'deleted_at' => now()]);
+            $ids[$id] = [$old, $new];
+        }
+        $migration->up();
+        $this->assertDatabaseCount('business_categories', 5);
+        foreach ($ids as $id => [$old, $new]) {
+            $this->assertDatabaseHas('businesses', ['id' => $id, 'legacy_category' => $old]);
+            $this->assertDatabaseHas('business_category', ['business_id' => $id, 'category_slug' => $new]);
+        }
+        $migration->down();
+        foreach ($ids as $id => [$old]) {
+            $this->assertDatabaseHas('businesses', ['id' => $id, 'category' => $old]);
+        }
+        $migration->up();
     }
 
     public function test_editor_cannot_delete_business_but_admin_can_restore_it(): void

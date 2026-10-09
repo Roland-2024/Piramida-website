@@ -4,20 +4,20 @@ namespace App\Enums;
 
 enum BusinessCategory: string
 {
-    case Cafe = 'cafe';
-    case Restaurant = 'restaurant';
-    case Shop = 'shop';
-    case Technology = 'technology';
-    case Art = 'art';
+    case Education = 'education';
+    case Innovation = 'innovation';
+    case Business = 'business';
+    case ArtCulture = 'art_culture';
+    case SocialSpaces = 'social_spaces';
 
     public function label(): string
     {
         return match ($this) {
-            self::Cafe => 'Café',
-            self::Restaurant => 'Restaurant',
-            self::Shop => 'Shop',
-            self::Technology => 'Technology',
-            self::Art => 'Art',
+            self::Education => 'Education',
+            self::Innovation => 'Innovation',
+            self::Business => 'Business',
+            self::ArtCulture => 'Art & Culture',
+            self::SocialSpaces => 'Social Spaces',
         };
     }
 }

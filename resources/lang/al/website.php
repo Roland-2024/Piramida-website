@@ -2,14 +2,11 @@
 
 return [
     'floor_ground' => 'Kati 0',
+    'floor_minus-one' => 'Kati -1',
     'floor_third' => 'Kati 3',
     'floor_roof' => 'Tarraca L+4',
     'floor_exterior' => 'Hapësirat e jashtme',
-    'category_cafe' => 'Kafe',
-    'category_restaurant' => 'Restorant',
-    'category_shop' => 'Dyqan',
-    'category_technology' => 'Teknologji',
-    'category_art' => 'Art',
+    'category_social_spaces' => 'Hapësira sociale',
     'category_event' => 'Event',
     'category_exhibition' => 'Ekspozitë',
     'category_guided_tour' => 'Tur me guidë',

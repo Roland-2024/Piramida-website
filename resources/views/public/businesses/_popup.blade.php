@@ -19,7 +19,7 @@ $images = collect([$business->featuredMedia])->filter()->merge($business->galler
               <div  class="place-popup-logo" aria-hidden="true">@if($business->logoMedia)<img src="{{ $business->logoMedia->displayUrl() }}" alt="">@endif</div>
               <div>
                 <h{{ ($dialog ?? false) ? 2 : 1 }}>{{ $businessTranslation->name }}</h{{ ($dialog ?? false) ? 2 : 1 }}>
-                <p>{{ __('website.category_'.$business->category->value) }}</p>
+                <p>{{ $business->categoryLabels() }}</p>
               </div>
             </header>
 

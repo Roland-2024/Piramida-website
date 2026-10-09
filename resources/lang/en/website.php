@@ -2,14 +2,11 @@
 
 return [
     'floor_ground' => 'Ground Floor',
+    'floor_minus-one' => '-1 Floor',
     'floor_third' => '3rd Floor',
     'floor_roof' => 'Roof L+4',
     'floor_exterior' => 'Exterior Boxes',
-    'category_cafe' => 'Café',
-    'category_restaurant' => 'Restaurant',
-    'category_shop' => 'Shop',
-    'category_technology' => 'Technology',
-    'category_art' => 'Art',
+    'category_social_spaces' => 'Social Spaces',
     'category_event' => 'Event',
     'category_exhibition' => 'Exhibition',
     'category_guided_tour' => 'Guided tour',

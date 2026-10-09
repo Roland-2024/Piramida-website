@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\PublicSite;
 
+use App\Enums\BusinessCategory;
 use App\Models\Business;
+use Illuminate\Database\Eloquent\Builder;
 
 class BusinessController extends TranslatedCatalogController
 {
@@ -18,5 +20,10 @@ class BusinessController extends TranslatedCatalogController
 
     protected string $showView = 'public.businesses.show';
 
-    protected array $with = ['translations', 'featuredMedia', 'logoMedia', 'gallery'];
+    protected array $with = ['translations', 'featuredMedia', 'logoMedia', 'gallery', 'categories'];
+
+    protected function indexQuery(Builder $query): Builder
+    {
+        return $query->whereHas('categories', fn (Builder $categories) => $categories->where('slug', BusinessCategory::SocialSpaces->value));
+    }
 }
