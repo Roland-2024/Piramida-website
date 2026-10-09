@@ -34,6 +34,7 @@ return [
     'world_of_piramida' => 'Botën e Piramidës',
     'events_intro' => 'Zbulo çfarë po ndodh në Piramidë.',
     'latest_events' => 'EVENTET E FUNDIT',
+    'event_ended' => 'Event i përfunduar',
     'previous' => 'E mëparshme',
     'next' => 'Tjetra',
     'explore_all' => 'Shiko të gjitha',

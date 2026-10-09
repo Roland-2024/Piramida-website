@@ -5,33 +5,23 @@ namespace App\Http\Controllers\PublicSite;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class EventController extends Controller
 {
-    public function index(Request $request): View
+    public function index(): View
     {
-        $filters = $request->validate([
-            'period' => ['nullable', Rule::in(['upcoming', 'past'])],
-        ]);
-        $period = $filters['period'] ?? 'upcoming';
-
         return view('public.events.index', [
             'events' => Event::query()
                 ->published()
                 ->whereHas('translations', fn (Builder $query) => $query->where('locale', app()->getLocale()))
-                ->when($period === 'upcoming', fn (Builder $query) => $query->upcoming()->orderBy('starts_at'))
-                ->when($period === 'past', fn (Builder $query) => $query->past()->latest('starts_at'))
+                ->latest('starts_at')
                 ->with(['translations', 'featuredMedia'])
                 ->orderBy('id')
-                ->paginate(9)
-                ->withQueryString(),
-            'period' => $period,
+                ->paginate(9),
             'languageUrls' => collect(config('cms.locales'))
                 ->mapWithKeys(fn (string $name, string $locale) => [
-                    $locale => route('public.events.index', [$locale, 'period' => $period]),
+                    $locale => route('public.events.index', $locale),
                 ])
                 ->all(),
         ]);
@@ -50,9 +40,9 @@ class EventController extends Controller
         return view('public.events.show', [
             'event' => $event,
             'translation' => $event->translation($locale, false),
-            'latestEvents' => Event::query()->published()->upcoming()->whereKeyNot($event->id)
+            'latestEvents' => Event::query()->published()->whereKeyNot($event->id)
                 ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
-                ->with(['translations', 'featuredMedia'])->orderBy('starts_at')->orderBy('id')->limit(6)->get(),
+                ->with(['translations', 'featuredMedia'])->latest('starts_at')->orderBy('id')->limit(10)->get(),
             'languageUrls' => collect(config('cms.locales'))
                 ->mapWithKeys(function (string $name, string $targetLocale) use ($event): array {
                     $translation = $event->translation($targetLocale, false);

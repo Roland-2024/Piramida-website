@@ -41,10 +41,6 @@ class Seo
         $description = self::text($translation?->seo_description ?: ($default[1] ?? $description) ?: $translation?->description ?: $translation?->content ?: __('seo.description'));
         $description = Str::limit($description, 160);
         $query = [];
-        if ($route === 'events.index' && request('period') === 'past') {
-            $query['period'] = 'past';
-            $title = __('seo.past_events');
-        }
         if (str_ends_with($route, '.index') && filter_var(request('page'), FILTER_VALIDATE_INT) > 1) {
             $query['page'] = (int) request('page');
             $title .= ' — '.__('seo.page').' '.$query['page'];

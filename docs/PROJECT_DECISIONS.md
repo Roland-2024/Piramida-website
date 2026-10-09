@@ -34,7 +34,7 @@ This file records durable decisions that future tasks should preserve. Implement
 - Imported translations retain their WordPress IDs. The initial import pairs translations only when the available data gives an unambiguous match; later runs update by stored ID.
 - Synchronization retrieves both language feeds before changing removal state. Failed or partial retrieval leaves existing imports unchanged.
 - Records absent from a complete upstream response move to draft rather than being deleted.
-- Upcoming and past events returned by WordPress are retained for public filtering and content history.
+- Upcoming and past events returned by WordPress are retained for content history. The public archive lists both together, ordered by event start date descending, with pagination; old period filters no longer affect its content or canonical URL. The single-event carousel lists up to ten other published, localized events in the same order. Ended events have a navy image overlay and a localized label, based on their end time.
 - Synchronization runs daily at 06:00 and 18:00 in `Europe/Tirane` and can also be run manually.
 - The WordPress API key stays in the server environment and is never exposed to the browser or committed.
 - The event design and current API require one featured image. Event galleries were removed and should return only if a final template or upstream contract requires them.

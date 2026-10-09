@@ -1,9 +1,5 @@
 <x-layouts.public :title="__('cms.events')" :language-urls="$languageUrls" :styles="['event']" body-class="event-background-page" :footer="false">
     <h1 class="sr-only">{{ __('cms.events') }}</h1>
-    <nav class="template-event-filters" aria-label="{{ __('cms.events') }}">
-        <a href="{{ route('public.events.index', app()->getLocale()) }}" @if($period === 'upcoming') aria-current="page" @endif>{{ __('cms.upcoming') }}</a>
-        <a href="{{ route('public.events.index', [app()->getLocale(), 'period' => 'past']) }}" @if($period === 'past') aria-current="page" @endif>{{ __('cms.past') }}</a>
-    </nav>
     @if ($events->isEmpty())<p class="template-empty">{{ __('cms.no_content') }}</p>@else
     <section id="eventsSection" tabindex="0" aria-label="{{ __('cms.events') }}" class="relative h-[100vh]">
         <div id="eventsTrack" class="relative w-full h-full">
@@ -13,6 +9,7 @@
                         <article class="slot-diagonal absolute overflow-hidden" style="right:calc(var(--card-w) * {{ $offset }});bottom:calc(var(--card-h) * {{ $offset }});left:auto;top:auto;width:var(--card-w);height:var(--card-h);">
                             <a href="{{ route('public.events.show', [app()->getLocale(), $item->slug]) }}" aria-label="{{ $item->title }}">
                                 @if ($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="" class="absolute inset-0 w-full h-full object-cover">@endif
+                                <x-event-ended-overlay :event="$event" />
                             </a>
                             <div class="slot-title title_40">{{ $item->title }}</div>
                             <div class="slot-date title_16">{{ $event->starts_at->format('d M Y · H:i') }}</div>
@@ -28,7 +25,7 @@
         @foreach ($events as $event)
             @php $item = $event->translation(app()->getLocale(), false); @endphp
             <div class="reel-item">
-                <div class="reel-image-wrap"><a href="{{ route('public.events.show', [app()->getLocale(), $item->slug]) }}" aria-label="{{ $item->title }}">@if($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="">@endif</a></div>
+                <div class="reel-image-wrap"><a href="{{ route('public.events.show', [app()->getLocale(), $item->slug]) }}" aria-label="{{ $item->title }}">@if($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="">@endif<x-event-ended-overlay :event="$event" /></a></div>
                 <div class="reel-date">{{ $event->starts_at->format('d M · H:i') }}</div><div class="reel-title">{{ $item->title }}</div>
             </div>
         @endforeach

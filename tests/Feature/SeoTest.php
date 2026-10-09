@@ -77,7 +77,8 @@ class SeoTest extends TestCase
     public function test_pagination_and_archive_canonicals_preserve_only_content_parameters(): void
     {
         $this->get('/en/events?period=past&page=2&utm_source=example')->assertOk()
-            ->assertSee('href="https://piramida.edu.al/en/events?period=past&amp;page=2"', false);
+            ->assertSee('href="https://piramida.edu.al/en/events?page=2"', false)
+            ->assertDontSee('period=past');
         $this->get('/news?page=1&utm_source=example')->assertOk()
             ->assertSee('<link rel="canonical" href="https://piramida.edu.al/news">', false);
     }

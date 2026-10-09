@@ -34,6 +34,7 @@ return [
     'world_of_piramida' => 'World of Piramida',
     'events_intro' => 'Discover what is happening at Piramida.',
     'latest_events' => 'LATEST EVENTS',
+    'event_ended' => 'Event ended',
     'previous' => 'Previous',
     'next' => 'Next',
     'explore_all' => 'Explore all',

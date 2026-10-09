@@ -78,22 +78,29 @@ class PublicContentTest extends TestCase
         $this->get(route('public.news.show', ['en', "news-{$future->id}"]))->assertNotFound();
     }
 
-    public function test_event_listing_separates_upcoming_and_past_published_events(): void
+    public function test_event_listing_includes_all_dates_newest_first_and_ignores_old_filters(): void
     {
         $upcoming = Event::factory()->published()->create();
         $past = Event::factory()->published()->past()->create();
         $draft = Event::factory()->create();
+        Event::factory()->published()->create(['published_at' => now()->addDay()]);
+        $untranslated = Event::factory()->published()->create();
+        $untranslated->translations()->where('locale', 'en')->delete();
 
         $this->get(route('public.events.index', 'en'))
             ->assertOk()
             ->assertSee("Event {$upcoming->id}")
-            ->assertDontSee("Event {$past->id}")
+            ->assertSee("Event {$past->id}")
+            ->assertSee('Event ended')
+            ->assertDontSee('template-event-filters')
+            ->assertViewHas('events', fn ($events) => $events->modelKeys() === [$upcoming->id, $past->id])
             ->assertDontSee("Event {$draft->id}");
 
         $this->get(route('public.events.index', ['en', 'period' => 'past']))
             ->assertOk()
             ->assertSee("Event {$past->id}")
-            ->assertDontSee("Event {$upcoming->id}");
+            ->assertSee("Event {$upcoming->id}")
+            ->assertViewHas('events', fn ($events) => $events->modelKeys() === [$upcoming->id, $past->id]);
     }
 
     public function test_language_switch_uses_the_corresponding_localized_slug(): void
@@ -105,11 +112,11 @@ class PublicContentTest extends TestCase
             ->assertSee(route('public.pages.show', ['al', "faqja-{$page->id}"]), false);
     }
 
-    public function test_event_recommendations_exclude_unpublished_past_and_untranslated_records(): void
+    public function test_event_recommendations_include_past_but_exclude_unpublished_and_untranslated_records(): void
     {
         $event = Event::factory()->published()->create();
         $next = Event::factory()->published()->create();
-        Event::factory()->published()->past()->create();
+        $past = Event::factory()->published()->past()->create();
         Event::factory()->create();
         Event::factory()->published()->create(['published_at' => now()->addDay()]);
         $untranslated = Event::factory()->published()->create();
@@ -117,6 +124,33 @@ class PublicContentTest extends TestCase
 
         $this->get(route('public.events.show', ['en', "event-{$event->id}"]))
             ->assertOk()
-            ->assertViewHas('latestEvents', fn ($events) => $events->modelKeys() === [$next->id]);
+            ->assertSee('Event ended')
+            ->assertViewHas('latestEvents', fn ($events) => $events->modelKeys() === [$next->id, $past->id]);
+    }
+
+    public function test_latest_events_are_limited_to_ten_and_remain_populated_when_all_have_ended(): void
+    {
+        $event = Event::factory()->published()->past()->create();
+        $others = Event::factory()->published()->count(12)->sequence(
+            fn ($sequence) => [
+                'starts_at' => now()->subDays($sequence->index + 3),
+                'ends_at' => now()->subDays($sequence->index + 2),
+            ],
+        )->create();
+
+        $this->get(route('public.events.show', ['en', "event-{$event->id}"]))
+            ->assertOk()
+            ->assertViewHas('latestEvents', fn ($events) => $events->modelKeys() === $others->take(10)->modelKeys());
+    }
+
+    public function test_ended_overlay_uses_end_time_and_does_not_dim_ongoing_or_upcoming_events(): void
+    {
+        $this->travelTo(now()->startOfSecond());
+        $event = Event::factory()->published()->create(['starts_at' => now()->subHour(), 'ends_at' => now()->addHour()]);
+        $this->blade('<x-event-ended-overlay :event="$event" />', ['event' => $event])->assertDontSee('event-ended-overlay');
+        $event->ends_at = now();
+        $this->blade('<x-event-ended-overlay :event="$event" />', ['event' => $event])->assertDontSee('event-ended-overlay');
+        $event->ends_at = now()->subSecond();
+        $this->blade('<x-event-ended-overlay :event="$event" />', ['event' => $event])->assertSee('event-ended-overlay');
     }
 }
