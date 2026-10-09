@@ -112,6 +112,19 @@ class PublicContentTest extends TestCase
             ->assertSee(route('public.pages.show', ['al', "faqja-{$page->id}"]), false);
     }
 
+    public function test_event_archive_alternates_diagonals_across_slides_and_paginated_pages(): void
+    {
+        Event::factory()->published()->count(16)->create();
+
+        foreach ([1 => [false, true, false], 2 => [true, false, true]] as $page => $expected) {
+            $response = $this->get(route('public.events.index', ['en', 'page' => $page]))->assertOk();
+            preg_match_all('/class="events-slide ([^"]+)"/', $response->getContent(), $slides);
+
+            $this->assertSame($expected, array_map(fn ($classes) => str_contains($classes, 'is-reversed'), $slides[1]));
+            $this->assertStringContainsString('is-active', $slides[1][0]);
+        }
+    }
+
     public function test_event_recommendations_include_past_but_exclude_unpublished_and_untranslated_records(): void
     {
         $event = Event::factory()->published()->create();

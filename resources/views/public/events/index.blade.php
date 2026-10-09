@@ -3,10 +3,12 @@
     @if ($events->isEmpty())<p class="template-empty">{{ __('cms.no_content') }}</p>@else
     <section id="eventsSection" tabindex="0" aria-label="{{ __('cms.events') }}" class="relative h-[100vh]">
         <div id="eventsTrack" class="relative w-full h-full">
-            @foreach ($events->getCollection()->chunk(3) as $group)<div class="events-slide {{ $loop->first ? 'is-active' : 'is-next' }} absolute inset-0 w-full h-full flex md:block flex-col items-center justify-center gap-4 py-20 md:py-0" @if(!$loop->first) inert @endif>
+            @foreach ($events->getCollection()->chunk(3) as $group)
+                @php $reversed = (intdiv($events->firstItem() - 1, 3) + $loop->index) % 2 === 1; @endphp
+                <div class="events-slide {{ $loop->first ? 'is-active' : 'is-next' }} {{ $reversed ? 'is-reversed' : '' }} absolute inset-0 w-full h-full flex md:block flex-col items-center justify-center gap-4 py-20 md:py-0" @if(!$loop->first) inert @endif>
                     @foreach ($group as $event)
                         @php $item = $event->translation(app()->getLocale(), false); $offset = 2 - $loop->index; @endphp
-                        <article class="slot-diagonal absolute overflow-hidden" style="right:calc(var(--card-w) * {{ $offset }});bottom:calc(var(--card-h) * {{ $offset }});left:auto;top:auto;width:var(--card-w);height:var(--card-h);">
+                        <article class="slot-diagonal absolute overflow-hidden" style="--card-offset:{{ $offset }};">
                             <a href="{{ route('public.events.show', [app()->getLocale(), $item->slug]) }}" aria-label="{{ $item->title }}">
                                 @if ($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="" class="absolute inset-0 w-full h-full object-cover">@endif
                                 <x-event-ended-overlay :event="$event" />

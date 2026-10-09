@@ -15,6 +15,15 @@
 
 .slot-diagonal {
     cursor: pointer;
+    right: calc(var(--card-w) * var(--card-offset));
+    bottom: calc(var(--card-h) * var(--card-offset));
+    width: var(--card-w);
+    height: var(--card-h);
+}
+
+.events-slide.is-reversed .slot-diagonal {
+    right: auto;
+    left: calc(var(--card-w) * var(--card-offset));
 }
 
 .slot-diagonal a {
@@ -54,6 +63,13 @@
     transform: translateY(0);
 }
 
+@media (min-width: 769px) {
+    #eventsSection:has(.events-slide.is-active.is-reversed) .events-info {
+        left: auto;
+        right: 6%;
+    }
+}
+
 .events-info-title {
     color: #D6FF3F;
     font-family: inherit;
@@ -85,9 +101,20 @@
     background-size: cover;
 }
 
+/* Keep navigation in the empty bottom-center area for either diagonal. */
+#eventsSection .template-event-controls {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
 /* only what Tailwind's default utility set genuinely can't express */
 .events-slide {
+    --entry-x: 3%;
     transition: transform .85s cubic-bezier(.22, .9, .25, 1), opacity .6s ease;
+}
+
+.events-slide.is-reversed {
+    --entry-x: -3%;
 }
 
 .events-slide.is-active {
@@ -100,14 +127,14 @@
 .events-slide.is-prev {
     opacity: 0;
     pointer-events: none;
-    transform: translateY(-6%);
+    transform: translate(calc(-1 * var(--entry-x)), -6%);
     z-index: 5;
 }
 
 .events-slide.is-next {
     opacity: 0;
     pointer-events: none;
-    transform: translateY(6%);
+    transform: translate(var(--entry-x), 6%);
     z-index: 5;
 }
 
