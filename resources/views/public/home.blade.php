@@ -236,7 +236,7 @@
 
         <!-- Left arrow -->
         <button id="prevBtn" aria-label="{{ __('website.home_previous') }}" type="button"
-          class="hidden md:flex absolute -left-2 md:-left-5 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-[#cbff00] hover:text-[#000929] focus-visible:bg-[#cbff00] focus-visible:text-[#000929] active:bg-[#cbff00] active:text-[#000929] transition-colors duration-300">
+          class="hidden md:flex absolute -left-2 md:-left-5 top-[225px] -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-[#cbff00] hover:text-[#000929] focus-visible:bg-[#cbff00] focus-visible:text-[#000929] active:bg-[#cbff00] active:text-[#000929] transition-colors duration-300">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
@@ -244,7 +244,7 @@
 
         <!-- Right arrow -->
         <button id="nextBtn" aria-label="{{ __('website.home_next') }}" type="button"
-          class="hidden md:flex absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-[#cbff00] hover:text-[#000929] focus-visible:bg-[#cbff00] focus-visible:text-[#000929] active:bg-[#cbff00] active:text-[#000929] transition-colors duration-300">
+          class="hidden md:flex absolute -right-2 md:-right-5 top-[225px] -translate-y-1/2 z-20 h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur hover:bg-[#cbff00] hover:text-[#000929] focus-visible:bg-[#cbff00] focus-visible:text-[#000929] active:bg-[#cbff00] active:text-[#000929] transition-colors duration-300">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
@@ -261,7 +261,7 @@
         </a>
         <div class="card-text pt-[40px] sm:p-5 mx-auto">
             <p class="title-green-20 mx-auto text-center">{{ $eventTranslation->title }}</p>
-            <p class="title-16 fw-[500] mx-auto text-center w-[70%]">{{ $eventTranslation->short_description }}</p>
+            <p class="title-16 fw-[500] mx-auto text-center line-clamp-2">{{ $eventTranslation->short_description }}</p>
         </div>
     </div>
 @empty <p class="template-empty">{{ __('cms.no_content') }}</p> @endforelse
