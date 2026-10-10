@@ -1,5 +1,6 @@
 <x-layouts.public :title="__('cms.events')" :language-urls="$languageUrls" :styles="['event']" body-class="event-background-page" :footer="false">
     <h1 class="sr-only">{{ __('cms.events') }}</h1>
+    <div id="eventsArchive" data-loading="{{ __('cms.events_loading') }}" data-error="{{ __('cms.events_load_error') }}">
     @if ($events->isEmpty())<p class="template-empty">{{ __('cms.no_content') }}</p>@else
     <section id="eventsSection" tabindex="0" aria-label="{{ __('cms.events') }}" class="relative h-[100vh]">
         <div id="eventsTrack" class="relative w-full h-full">
@@ -21,7 +22,6 @@
             @endforeach
         </div>
         <div id="eventsInfo" class="events-info" aria-hidden="true"><div class="events-info-title"></div><div class="events-info-date"></div></div>
-        @if($events->count() > 3)<div class="template-event-controls"><button data-event-step="-1" aria-label="{{ __('cms.previous') }}">↑</button><button data-event-step="1" aria-label="{{ __('cms.next') }}">↓</button></div>@endif
     </section>
     <section id="eventsMobile" aria-label="{{ __('cms.events') }}">
         @foreach ($events as $event)
@@ -33,5 +33,9 @@
         @endforeach
     </section>
     @endif
-    <div class="template-pagination">{{ $events->links() }}</div>
+    <div class="events-load-control">
+        <span id="eventsLoadStatus" role="status"></span>
+        @if($events->hasMorePages())<a id="eventsLoadMore" href="{{ $events->nextPageUrl() }}" rel="next">{{ __('cms.events_load_more') }}</a>@endif
+    </div>
+    </div>
 </x-layouts.public>

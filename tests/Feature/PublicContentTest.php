@@ -116,13 +116,40 @@ class PublicContentTest extends TestCase
     {
         Event::factory()->published()->count(16)->create();
 
-        foreach ([1 => [false, true, false], 2 => [true, false, true]] as $page => $expected) {
+        foreach ([1 => [false], 2 => [true], 3 => [false]] as $page => $expected) {
             $response = $this->get(route('public.events.index', ['en', 'page' => $page]))->assertOk();
             preg_match_all('/class="events-slide ([^"]+)"/', $response->getContent(), $slides);
 
             $this->assertSame($expected, array_map(fn ($classes) => str_contains($classes, 'is-reversed'), $slides[1]));
             $this->assertStringContainsString('is-active', $slides[1][0]);
         }
+    }
+
+    public function test_event_scroll_batches_have_three_records_and_a_real_next_link(): void
+    {
+        $events = Event::factory()->published()->count(7)->sequence(
+            fn ($sequence) => ['starts_at' => now()->subDays($sequence->index + 1)],
+        )->create();
+        Event::factory()->create();
+        Event::factory()->published()->create(['published_at' => now()->addDay()]);
+        $untranslated = Event::factory()->published()->create();
+        $untranslated->translations()->where('locale', 'en')->delete();
+
+        foreach ([1, 2, 3] as $page) {
+            $response = $this->get(route('public.events.index', ['en', 'page' => $page]), ['Accept' => 'text/html'])
+                ->assertOk()
+                ->assertViewHas('events', fn ($batch) => $batch->modelKeys() === $events->slice(($page - 1) * 3, 3)->values()->modelKeys())
+                ->assertDontSee('data-event-step', false)
+                ->assertDontSee('template-pagination', false);
+            $this->assertSame(min(3, 7 - ($page - 1) * 3), substr_count($response->getContent(), 'class="reel-item"'));
+            if ($page < 3) {
+                $response->assertSee(route('public.events.index', ['en', 'page' => $page + 1]), false);
+            } else {
+                $response->assertDontSee('id="eventsLoadMore"', false);
+            }
+        }
+        $this->get('/en/events?page=4')->assertOk()->assertSee('id="eventsArchive"', false)
+            ->assertDontSee('id="eventsLoadMore"', false);
     }
 
     public function test_event_recommendations_include_past_but_exclude_unpublished_and_untranslated_records(): void

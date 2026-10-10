@@ -1,6 +1,7 @@
 import { initHome } from './template-home';
 import { scrollCarousel } from './carousel-scroll';
 import { initEducation } from './template-education';
+import { initEventsArchive } from './events-archive';
 import './template-attractions';
 import './template-leasing';
 initHome();
@@ -187,48 +188,7 @@ if (video && playBadge) {
     video.addEventListener('pause', () => playBadge.classList.remove('is-playing'));
 }
 
-const eventSection = document.querySelector('#eventsSection');
-if (eventSection) {
-    const slides = [...eventSection.querySelectorAll('.events-slide')];
-    const info = eventSection.querySelector('#eventsInfo');
-    let active = 0;
-    const show = index => {
-        active = Math.max(0, Math.min(slides.length - 1, index));
-        slides.forEach((slide, i) => {
-            slide.classList.toggle('is-active', i === active);
-            slide.classList.toggle('is-prev', i < active);
-            slide.classList.toggle('is-next', i > active);
-            slide.inert = i !== active;
-        });
-        info.classList.remove('is-visible');
-        eventSection.querySelector('[data-event-step="-1"]')?.toggleAttribute('disabled', active === 0);
-        eventSection.querySelector('[data-event-step="1"]')?.toggleAttribute('disabled', active === slides.length - 1);
-    };
-    eventSection.querySelectorAll('[data-event-step]').forEach(button => button.addEventListener('click', () => show(active + Number(button.dataset.eventStep))));
-    eventSection.addEventListener('keydown', event => {
-        if (['ArrowDown', 'ArrowUp'].includes(event.key)) { event.preventDefault(); show(active + (event.key === 'ArrowDown' ? 1 : -1)); }
-    });
-    let lastWheel = 0;
-    eventSection.addEventListener('wheel', event => {
-        const next = active + Math.sign(event.deltaY);
-        if (!event.deltaY || next < 0 || next >= slides.length) return;
-        event.preventDefault();
-        if (Date.now() - lastWheel > 900) { show(next); lastWheel = Date.now(); }
-    }, { passive: false });
-    eventSection.querySelectorAll('.slot-diagonal').forEach(card => {
-        const enter = () => {
-            card.parentElement.classList.add('has-hover');
-            card.classList.add('is-hovered');
-            info.querySelector('.events-info-title').textContent = card.querySelector('.slot-title').textContent;
-            info.querySelector('.events-info-date').textContent = card.querySelector('.slot-date').textContent;
-            info.classList.add('is-visible');
-        };
-        const leave = () => { card.parentElement.classList.remove('has-hover'); card.classList.remove('is-hovered'); info.classList.remove('is-visible'); };
-        card.addEventListener('mouseenter', enter); card.addEventListener('focusin', enter);
-        card.addEventListener('mouseleave', leave); card.addEventListener('focusout', leave);
-    });
-    show(0);
-}
+initEventsArchive();
 document.querySelectorAll('.event-spaces-carousel').forEach(carousel => {
     const track = carousel.querySelector('.event-spaces-card-track');
     const previous = carousel.querySelector('.event-spaces-carousel-arrow-left');

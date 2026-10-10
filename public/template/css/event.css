@@ -97,44 +97,31 @@
 }
 
 #eventsSection {
+    overflow: hidden;
     background: url(/template/images/BG.png) no-repeat center center;
     background-size: cover;
 }
 
-/* Keep navigation in the empty bottom-center area for either diagonal. */
-#eventsSection .template-event-controls {
-    left: 50%;
-    transform: translateX(-50%);
-}
-
 /* only what Tailwind's default utility set genuinely can't express */
 .events-slide {
-    --entry-x: 3%;
-    transition: transform .85s cubic-bezier(.22, .9, .25, 1), opacity .6s ease;
-}
-
-.events-slide.is-reversed {
-    --entry-x: -3%;
+    transition: transform .85s cubic-bezier(.22, .9, .25, 1);
 }
 
 .events-slide.is-active {
-    opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
     z-index: 10;
 }
 
 .events-slide.is-prev {
-    opacity: 0;
     pointer-events: none;
-    transform: translate(calc(-1 * var(--entry-x)), -6%);
+    transform: translateY(110%);
     z-index: 5;
 }
 
 .events-slide.is-next {
-    opacity: 0;
     pointer-events: none;
-    transform: translate(var(--entry-x), 6%);
+    transform: translateY(-110%);
     z-index: 5;
 }
 
@@ -153,6 +140,22 @@
 .animate-bob {
     animation: bob 1.6s ease-in-out infinite;
 }
+
+.events-load-control {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 40;
+    max-width: 90vw;
+    padding: 8px 16px;
+    border-radius: 12px;
+    background: #07122e;
+    color: white;
+    text-align: center;
+}
+.events-load-control a { color: #d6ff3f; text-decoration: underline; }
+.events-load-control:has(#eventsLoadStatus:empty):not(:has(a:not([hidden]))) { display: none; }
 
 @media (max-width:768px) {
     .slot-diagonal {
