@@ -12,7 +12,7 @@ return [
         'business' => ['Businesses at the Pyramid of Tirana', 'Explore the businesses and services at the Pyramid of Tirana. Discover places to meet, connect and enjoy your visit.'],
         'art' => ['Art & Culture at the Pyramid of Tirana', 'Explore art, culture and creative experiences at the Pyramid of Tirana. Discover activities and spaces that connect people and ideas.'],
         'news.index' => ['News | Pyramid of Tirana', 'Read the latest news from the Pyramid of Tirana: updates on education, innovation, culture, events and community activities.'],
-        'events.index' => ['Events at the Pyramid of Tirana', 'Discover upcoming events at the Pyramid of Tirana, from workshops and exhibitions to cultural activities. Explore dates and participation details.'],
+        'events.index' => ['Events at the Pyramid of Tirana', 'Explore upcoming and past events at the Pyramid of Tirana: workshops, exhibitions and cultural activities. Find dates and participation details.'],
         'attractions.index' => ['Attractions & Experiences | Pyramid of Tirana', 'Explore the Pyramid of Tirana, its public spaces and city views. Discover attractions, cafés, restaurants and experiences for your visit.'],
         'businesses.index' => ['Cafés, Restaurants & Shops | Pyramid of Tirana', 'Discover cafés, restaurants, shops and on-site businesses at the Pyramid of Tirana. Explore places to eat, meet and spend time.'],
         'leasing.index' => ['Spaces for Lease | Pyramid of Tirana', 'Explore spaces for lease at the Pyramid of Tirana. View interactive floor plans, check available units and submit an application.'],

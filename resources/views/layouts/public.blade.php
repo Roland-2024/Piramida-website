@@ -14,6 +14,7 @@
     <title>{{ $seo['title'] }}</title>
     <meta name="description" content="{{ $seo['description'] }}">
     <link rel="canonical" href="{{ $seo['canonical'] }}">
+    <link rel="describedby" href="{{ \App\Support\Seo::url('/llms.txt') }}" type="text/plain">
     @foreach($seo['alternates'] as $language =>$url)<link rel="alternate" hreflang="{{ $language }}" href="{{ $url }}">
     @endforeach
     @if(isset($seo['alternates']['sq']))<link rel="alternate" hreflang="x-default" href="{{ $seo['alternates']['sq'] }}">@endif

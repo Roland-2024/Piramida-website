@@ -112,6 +112,43 @@ class SeoTest extends TestCase
         $this->get('https://piramida.edu.al/admin/login')->assertHeader('X-Robots-Tag', 'noindex, nofollow');
     }
 
+    public function test_llms_guide_uses_public_localized_pages_and_cms_copy(): void
+    {
+        $page = Page::factory()->published()->create();
+        $page->translations()->where('locale', 'en')->update(['slug' => 'education', 'title' => "Learning [together]\n<b>today</b>"]);
+        DB::table('website_texts')->insert(['locale' => 'en', 'key' => 'seo.description', 'text' => 'A CMS-managed introduction.']);
+        $response = $this->get('/llms.txt')->assertOk()->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertHeader('X-Robots-Tag', 'noindex, nofollow')
+            ->assertSee('> A CMS-managed introduction.', false)
+            ->assertSee('[Learning \\[together\\] today](https://piramida.edu.al/en/education)', false)
+            ->assertSee('https://piramida.edu.al/faqja-'.$page->id, false)
+            ->assertSee('https://piramida.edu.al/sitemap.xml', false)
+            ->assertDontSee('<b>', false)->assertDontSee('localhost')->assertDontSee('/admin');
+        $this->assertStringStartsWith('# ', $response->getContent());
+        $page->translations()->where('locale', 'al')->delete();
+        $this->get('/llms.txt')->assertOk()->assertDontSee('/faqja-'.$page->id, false);
+        $page->update(['published_at' => now()->addDay()]);
+        $this->get('/llms.txt')->assertOk()->assertDontSee('/en/education', false);
+        $page->update(['published_at' => now()->subDay()]);
+        $page->delete();
+        $this->get('/llms.txt')->assertOk()->assertDontSee('/en/education', false);
+    }
+
+    public function test_discovery_files_and_link_work_on_production_without_static_shadows(): void
+    {
+        config(['seo.indexable' => true]);
+        $this->get('https://piramida.edu.al/llms.txt')->assertOk()->assertHeaderMissing('X-Robots-Tag');
+        $this->get('https://piramida.edu.al/robots.txt')->assertOk()
+            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertSee("User-agent: *\nAllow: /", false)
+            ->assertSee('Sitemap: https://piramida.edu.al/sitemap.xml', false);
+        $this->get('https://piramida.edu.al/')->assertOk()
+            ->assertSee('rel="describedby" href="https://piramida.edu.al/llms.txt"', false);
+        foreach (['robots.txt', 'sitemap.xml', 'llms.txt'] as $file) {
+            $this->assertFileDoesNotExist(public_path($file), 'Discovery files must stay dynamic.');
+        }
+    }
+
     public function test_news_listing_query_count_does_not_grow_per_article(): void
     {
         News::factory()->published()->create();
@@ -135,6 +172,14 @@ class SeoTest extends TestCase
             ->assertSee('Piramida e Tiranës | Teknologji, Kulturë &amp; Evente', false)
             ->assertSee('fetchpriority="high"', false)
             ->assertSee('piramida-hero-960.jpg 960w', false);
+    }
+
+    public function test_homepage_fallback_does_not_canonicalize_to_another_page(): void
+    {
+        Page::factory()->published()->create(['is_homepage' => false]);
+        $this->get('/')->assertOk()
+            ->assertSee('<link rel="canonical" href="https://piramida.edu.al/">', false)
+            ->assertSee('<link rel="alternate" hreflang="en" href="https://piramida.edu.al/en">', false);
     }
 
     public function test_event_schema_uses_stored_dates_without_inventing_ticket_information(): void

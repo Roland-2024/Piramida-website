@@ -24,6 +24,7 @@ use App\Http\Controllers\PublicSite\BusinessController as PublicBusinessControll
 use App\Http\Controllers\PublicSite\CareerController as PublicCareerController;
 use App\Http\Controllers\PublicSite\EventController as PublicEventController;
 use App\Http\Controllers\PublicSite\HomeController;
+use App\Http\Controllers\PublicSite\LlmsController;
 use App\Http\Controllers\PublicSite\NewsController as PublicNewsController;
 use App\Http\Controllers\PublicSite\PageController as PublicPageController;
 use App\Http\Controllers\PublicSite\SitemapController;
@@ -48,6 +49,7 @@ Route::model('career', Career::class);
 Route::model('program', Program::class);
 
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/llms.txt', LlmsController::class)->name('llms');
 Route::get('/robots.txt', function (Request $request) {
     $rules = SearchIndexing::allowed($request)
         ? "User-agent: *\nAllow: /\nSitemap: ".Seo::url('/sitemap.xml')."\n"

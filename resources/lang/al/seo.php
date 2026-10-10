@@ -12,7 +12,7 @@ return [
         'business' => ['Bizneset në Piramidën e Tiranës', 'Eksploroni bizneset dhe shërbimet në Piramidën e Tiranës. Zbuloni vende për takime, bashkëpunim dhe për të shijuar vizitën tuaj.'],
         'art' => ['Art & Kulturë në Piramidën e Tiranës', 'Eksploroni artin, kulturën dhe përvojat krijuese në Piramidën e Tiranës. Zbuloni aktivitete dhe hapësira që lidhin njerëzit dhe idetë.'],
         'news.index' => ['Lajme | Piramida e Tiranës', 'Lexoni lajmet nga Piramida e Tiranës: të rejat mbi edukimin, inovacionin, kulturën, eventet dhe aktivitetet e komunitetit.'],
-        'events.index' => ['Evente në Piramidën e Tiranës', 'Zbuloni eventet e ardhshme në Piramidën e Tiranës, nga punëtoritë dhe ekspozitat te aktivitetet kulturore. Shikoni datat dhe detajet e pjesëmarrjes.'],
+        'events.index' => ['Evente në Piramidën e Tiranës', 'Eksploroni eventet e ardhshme dhe të kaluara në Piramidën e Tiranës: punëtori, ekspozita dhe aktivitete kulturore. Shikoni datat dhe detajet e pjesëmarrjes.'],
         'attractions.index' => ['Atraksione & Eksperienca | Piramida e Tiranës', 'Eksploroni Piramidën e Tiranës, hapësirat publike dhe pamjet e qytetit. Zbuloni atraksione, kafene, restorante dhe përvoja për vizitën tuaj.'],
         'businesses.index' => ['Kafene, Restorante & Dyqane | Piramida e Tiranës', 'Zbuloni kafenetë, restorantet, dyqanet dhe bizneset në Piramidën e Tiranës. Eksploroni vende për të ngrënë, për t’u takuar dhe për të kaluar kohën.'],
         'leasing.index' => ['Hapësira me Qira | Piramida e Tiranës', 'Eksploroni hapësirat me qira në Piramidën e Tiranës. Shikoni planimetritë interaktive, njësitë e disponueshme dhe dërgoni aplikimin tuaj.'],

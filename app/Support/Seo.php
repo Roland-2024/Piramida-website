@@ -16,6 +16,8 @@ class Seo
 {
     public const MODELS = [Page::class => 'pages', News::class => 'news', Event::class => 'events', Attraction::class => 'attractions', Business::class => 'businesses', Space::class => 'spaces', Career::class => 'careers'];
 
+    public const INDEX_ROUTES = ['home', 'news.index', 'events.index', 'attractions.index', 'businesses.index', 'leasing.index', 'spaces.index', 'spaces.overview', 'careers.index', 'contact'];
+
     public static function url(string $url): string
     {
         return rtrim(config('seo.url'), '/').(parse_url($url, PHP_URL_PATH) ?: '/');
@@ -33,6 +35,10 @@ class Seo
         $locale = app()->getLocale();
         $language = $locale === 'al' ? 'sq' : 'en';
         $route = Str::after(request()->route()?->getName() ?? '', 'public.');
+        // The home view can borrow fallback content, but not another page's SEO identity.
+        if ($route === 'home' && $record instanceof Page && ! $record->is_homepage) {
+            $record = null;
+        }
         $translation = $record?->translation($locale, false);
         $key = $record instanceof Page ? ($record->is_homepage ? 'home' : $record->translation('en', false)?->slug) : $route;
         $defaults = trans('seo.pages');

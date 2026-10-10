@@ -19,7 +19,7 @@ class SitemapController
                 echo '<url><loc>'.htmlspecialchars($url, ENT_XML1 | ENT_QUOTES, 'UTF-8').'</loc></url>';
             };
             foreach (array_keys(config('cms.locales')) as $locale) {
-                foreach (['home', 'news.index', 'events.index', 'attractions.index', 'businesses.index', 'leasing.index', 'spaces.index', 'spaces.overview', 'careers.index', 'contact'] as $route) {
+                foreach (Seo::INDEX_ROUTES as $route) {
                     $write(Seo::url(route('public.'.$route, $locale)));
                 }
                 foreach (array_keys(LeasingUnit::FLOORS) as $floor) {

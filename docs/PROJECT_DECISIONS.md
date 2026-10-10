@@ -74,6 +74,7 @@ This file records durable decisions that future tasks should preserve. Implement
 - Secrets and production configuration stay outside Git.
 - Search metadata is server-rendered from actual locale translations and existing CMS SEO fields, with bilingual defaults for catalogue/presentation pages. Canonical and social URLs use `SEO_URL` (the final `https://piramida.edu.al` origin), independent of the preview host. Published records alone enter the streamed sitemap; the existing career/space accessibility scopes also apply.
 - Indexing requires `SEO_INDEXABLE` and the configured production hostname. Local/staging responses and admin/auth pages are marked noindex; Laravel serves robots.txt dynamically. No AI-only content or new SEO dependency is introduced. Website/organization, news and event structured data describe existing content, without inventing ratings, addresses or ticket offers.
+- `/llms.txt` is an optional dynamic guide, not a ranking or crawler-permission mechanism. It reuses CMS SEO copy, public catalogue routes and only published, translated presentation Pages; the sitemap remains the complete URL inventory. All discovery files are Laravel routes, and prelaunch previews keep `SEO_INDEXABLE=false` even on the final hostname. No full-content export or duplicated AI-only article pages are generated.
 
 ## Current boundary
 
