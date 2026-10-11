@@ -57,14 +57,22 @@ class PageManagementTest extends TestCase
         $editor = User::factory()->create();
         $admin = User::factory()->admin()->create();
 
+        $this->actingAs($editor)->get(route('admin.pages.show', $page))
+            ->assertOk()->assertDontSee('data-confirm="Move this page to trash?"', false);
         $this->actingAs($editor)
             ->delete(route('admin.pages.destroy', $page))
             ->assertForbidden();
+        $this->assertNotSoftDeleted($page);
 
+        $this->actingAs($admin)->get(route('admin.pages.show', $page))
+            ->assertOk()->assertSee('data-confirm="Move this page to trash?"', false);
         $this->actingAs($admin)
             ->delete(route('admin.pages.destroy', $page))
             ->assertRedirect(route('admin.pages.index'));
 
+        $this->assertSoftDeleted($page);
+
+        $this->actingAs($editor)->post(route('admin.pages.restore', $page->id))->assertForbidden();
         $this->assertSoftDeleted($page);
 
         $this->actingAs($admin)

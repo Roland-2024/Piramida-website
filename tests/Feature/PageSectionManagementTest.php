@@ -14,6 +14,28 @@ class PageSectionManagementTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_only_admin_can_trash_and_restore_page_sections(): void
+    {
+        $section = PageSection::factory()->create();
+        $editor = User::factory()->create();
+        $admin = User::factory()->admin()->create();
+
+        $this->actingAs($editor)->get(route('admin.sections.show', $section))
+            ->assertOk()->assertDontSee('data-confirm="Move this section to trash?"', false);
+        $this->delete(route('admin.sections.destroy', $section))->assertForbidden();
+        $this->assertNotSoftDeleted($section);
+
+        $this->actingAs($admin)->get(route('admin.sections.show', $section))
+            ->assertOk()->assertSee('data-confirm="Move this section to trash?"', false);
+        $this->delete(route('admin.sections.destroy', $section))->assertRedirect(route('admin.sections.index'));
+        $this->assertSoftDeleted($section);
+
+        $this->actingAs($editor)->post(route('admin.sections.restore', $section->id))->assertForbidden();
+        $this->assertSoftDeleted($section);
+        $this->actingAs($admin)->post(route('admin.sections.restore', $section->id))->assertRedirect(route('admin.sections.index'));
+        $this->assertNotSoftDeleted($section);
+    }
+
     public function test_editor_can_create_a_bilingual_section_with_structured_data(): void
     {
         $page = Page::factory()->create();
