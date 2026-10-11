@@ -9,9 +9,11 @@ use App\Models\Event;
 use App\Models\EventTranslation;
 use App\Models\Media;
 use App\Services\MediaImageOptimizer;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -32,6 +34,18 @@ class SynchronizeWordPressEvents
      * @return array{created: int, updated: int, drafted: int, skipped: int, warnings: array<int, string>}
      */
     public function handle(): array
+    {
+        // shortcut: imports must finish within one hour; renew the lease if they outgrow this limit.
+        $result = Cache::lock('wordpress-events-sync', 3600)->get(fn () => $this->synchronize());
+
+        if ($result === false) {
+            throw new LockTimeoutException('WordPress synchronization is already running. Please try again later.');
+        }
+
+        return $result;
+    }
+
+    private function synchronize(): array
     {
         $this->warnings = [];
         $this->media = [];
@@ -273,7 +287,7 @@ class SynchronizeWordPressEvents
                 if (preg_match('/^\d{2}\/\d{2}\/\d{4}(?: \d{2}:\d{2}(?::\d{2})?)?$/', $value)) {
                     $format = strlen($value) === 10 ? 'd/m/Y' : (strlen($value) === 16 ? 'd/m/Y H:i' : 'd/m/Y H:i:s');
 
-                    return Carbon::createFromFormat($format, $value, config('app.timezone'));
+                    return Carbon::createFromFormat('!'.$format, $value, config('app.timezone'));
                 }
 
                 return Carbon::parse($value, config('app.timezone'));

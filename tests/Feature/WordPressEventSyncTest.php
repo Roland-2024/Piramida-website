@@ -10,6 +10,8 @@ use App\Models\User;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -17,6 +19,63 @@ use Tests\TestCase;
 class WordPressEventSyncTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_import_dates_do_not_inherit_the_sync_time(): void
+    {
+        config(['app.timezone' => 'Europe/Tirane']);
+        $method = new \ReflectionMethod(SynchronizeWordPressEvents::class, 'firstDate');
+        foreach (['2026-10-11 06:00:17', '2026-10-11 18:00:49'] as $clock) {
+            $this->travelTo(Carbon::parse($clock));
+            foreach (['_event_start_date', '_event_end_date'] as $key) {
+                foreach ([
+                    '12/10/2026' => '2026-10-12 00:00:00',
+                    '2026-10-12' => '2026-10-12 00:00:00',
+                    '12/10/2026 14:30' => '2026-10-12 14:30:00',
+                    '12/10/2026 14:30:25' => '2026-10-12 14:30:25',
+                ] as $input => $expected) {
+                    $date = $method->invoke(new SynchronizeWordPressEvents, [[$key => $input]], $key);
+                    $this->assertSame($expected, $date->format('Y-m-d H:i:s'));
+                    $this->assertSame('Europe/Tirane', $date->timezoneName);
+                }
+            }
+        }
+    }
+
+    public function test_dashboard_and_command_share_the_sync_lock(): void
+    {
+        config(['cache.default' => 'database']);
+        Http::fake();
+        $lock = Cache::lock('wordpress-events-sync', 3600);
+        $this->assertTrue($lock->get());
+        try {
+            $this->actingAs(User::factory()->create())
+                ->post(route('admin.events.sync-wordpress'))
+                ->assertRedirect()->assertSessionHas('warning', 'WordPress synchronization is already running. Please try again later.');
+            $this->artisan('events:sync-wordpress')->assertFailed();
+            Http::assertNothingSent();
+            $this->assertDatabaseCount('events', 0);
+            $this->assertFalse(Cache::lock('wordpress-events-sync', 3600)->get());
+        } finally {
+            $lock->release();
+        }
+    }
+
+    public function test_sync_lock_is_released_after_failure_and_success(): void
+    {
+        config(['cache.default' => 'database', 'services.wordpress_events.api_key' => '']);
+        Http::fake(['*' => Http::response([], 200, ['X-WP-TotalPages' => '0', 'X-WP-Total' => '0'])]);
+        try {
+            app(SynchronizeWordPressEvents::class)->handle();
+            $this->fail('Missing configuration was accepted.');
+        } catch (\RuntimeException $exception) {
+            $this->assertSame('WordPress event URL and API key must be configured.', $exception->getMessage());
+        }
+        config(['services.wordpress_events.url' => 'https://wordpress.test/wp-json', 'services.wordpress_events.api_key' => 'test-key']);
+        $this->assertSame(0, app(SynchronizeWordPressEvents::class)->handle()['skipped']);
+        $lock = Cache::lock('wordpress-events-sync', 3600);
+        $this->assertTrue($lock->get());
+        $lock->release();
+    }
 
     public function test_incomplete_feeds_cannot_draft_existing_events(): void
     {

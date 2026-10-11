@@ -18,6 +18,18 @@ class PrelaunchSafetyTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_security_headers_cover_public_admin_redirects_and_errors(): void
+    {
+        foreach (['/', '/admin/login', '/admin', '/missing-page-for-security-check'] as $path) {
+            $this->get($path)
+                ->assertHeader('X-Content-Type-Options', 'nosniff')
+                ->assertHeader('X-Frame-Options', 'SAMEORIGIN')
+                ->assertHeader('Content-Security-Policy', "frame-ancestors 'self'");
+        }
+        $this->actingAs(User::factory()->admin()->create())->get('/admin')->assertOk()
+            ->assertHeader('Content-Security-Policy', "frame-ancestors 'self'");
+    }
+
     public function test_career_editor_opens_without_a_gallery_relation(): void
     {
         $career = Career::factory()->create();

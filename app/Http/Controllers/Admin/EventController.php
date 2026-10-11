@@ -9,6 +9,7 @@ use App\Enums\EventCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\EventRequest;
 use App\Models\Event;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -59,6 +60,8 @@ class EventController extends Controller
 
         try {
             $result = $synchronizer->handle();
+        } catch (LockTimeoutException $exception) {
+            return back()->with('warning', $exception->getMessage());
         } catch (Throwable $exception) {
             report($exception);
 

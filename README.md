@@ -92,6 +92,20 @@ docker compose exec app php artisan db:seed --class=DemoContentSeeder
 
 Alternatively set `SEED_DEMO_CONTENT=true` before `migrate --seed` for a fresh local installation. Keep it disabled in production unless this demonstration content is intentionally required.
 
+A clean server database can use these seeders without copying the local database. They recreate the checked-in examples, not a snapshot of current dashboard edits, uploads, users, settings or imported WordPress events. For an exact copy, transfer the database and associated storage files securely instead; preserve `APP_KEY` when transferring encrypted settings. Do not run `migrate:fresh` against existing content.
+
+On a new, empty server database, after configuring the environment (including the initial Admin credentials and `FILESYSTEM_DISK=public`), the demo installation is:
+
+```bash
+php artisan migrate --force
+php artisan db:seed --class=InitialAdminSeeder --force
+php artisan db:seed --class=DemoContentSeeder --force
+php artisan db:seed --class=PresentationPageSeeder --force
+php artisan storage:link
+```
+
+The presentation seeder supplies the additional carousel pages and imports their demo posts. WordPress events require a separate synchronization with the server-side API key. Do not rerun the demo seeder over edited content: it updates its known demo records. Keep indexing disabled until demo content has been reviewed for publication.
+
 ## Local URLs and ports
 
 | Service | Default URL or host port | Environment variable |
@@ -220,6 +234,8 @@ Laravel schedules the same command daily at 06:00 and 18:00 in the application t
 
 The API key remains server-side and is never exposed to the browser. A failed or incomplete API request does not draft existing imported events; events are drafted only after both language feeds have been retrieved successfully.
 
+Dashboard, CLI and scheduled imports share a cache lock (`wordpress-events-sync`), released on success or failure. Use the shared database cache in production (`CACHE_STORE=database`). The recovery lease expires after one hour; imports exceeding that duration need a renewed lease before this limit is reached. Dates supplied as `d/m/Y` without a time use midnight in the application timezone; omitted seconds are zero, never the sync time.
+
 ## Creating the first Admin
 
 Set the three `INITIAL_ADMIN_*` values, then run:
@@ -253,6 +269,8 @@ Editors may also manage attractions, businesses, spaces, and careers. Submission
 Email delivery uses Laravel's configured mailer. A mail failure is reported to the application log but does not discard a successfully stored request.
 
 ### Pre-live security and upload configuration
+
+Laravel responses include `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN` and CSP `frame-ancestors 'self'`. These prevent other origins from framing the site; they do not restrict the site's own YouTube embeds. Apply equivalent headers to static files and server-generated errors in the production web-server configuration. HSTS/HTTPS configuration remains a deployment step, not a local HTTP setting.
 
 Use PHP `post_max_size=50M` and Nginx `client_max_body_size 50M` on the production server, then reload the services. Leasing accepts up to eleven 4 MB documents; the total request needs more than the previous 20 MB limit. Individual file validation remains unchanged. Docker configuration is for local development only.
 

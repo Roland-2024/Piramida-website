@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Actions\SynchronizeWordPressEvents;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Throwable;
 
 class SyncWordPressEvents extends Command
@@ -16,6 +17,10 @@ class SyncWordPressEvents extends Command
     {
         try {
             $result = $synchronizer->handle();
+        } catch (LockTimeoutException $exception) {
+            $this->warn($exception->getMessage());
+
+            return self::FAILURE;
         } catch (Throwable $exception) {
             report($exception);
             $this->error($exception->getMessage());
