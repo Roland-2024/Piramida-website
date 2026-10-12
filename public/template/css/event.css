@@ -115,13 +115,13 @@
 
 .events-slide.is-prev {
     pointer-events: none;
-    transform: translateY(110%);
+    transform: translateY(-110%);
     z-index: 5;
 }
 
 .events-slide.is-next {
     pointer-events: none;
-    transform: translateY(-110%);
+    transform: translateY(110%);
     z-index: 5;
 }
 
