@@ -18,7 +18,7 @@ class EventController extends Controller
                 ->latest('starts_at')
                 ->with(['translations', 'featuredMedia'])
                 ->orderBy('id')
-                ->paginate(3),
+                ->paginate(9),
             'languageUrls' => collect(config('cms.locales'))
                 ->mapWithKeys(fn (string $name, string $locale) => [
                     $locale => route('public.events.index', $locale),

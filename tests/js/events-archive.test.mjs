@@ -21,7 +21,8 @@ const section = element(), track = element(), mobile = element(), info = element
 const status = element(), more = element(), archive = element();
 more.href = '/events?page=2';
 archive.dataset = { loading: 'Loading', error: 'Retry' };
-track.children.push(element(['is-active']));
+track.children.push(element(['is-active']), element(['is-next']), element(['is-next']));
+mobile.children.push(...Array.from({ length: 9 }, () => element()));
 section.querySelector = selector => ({ '#eventsTrack': track, '#eventsInfo': info })[selector];
 archive.querySelector = selector => ({ '#eventsSection': section, '#eventsMobile': mobile, '#eventsLoadStatus': status, '#eventsLoadMore': more })[selector];
 globalThis.document = { querySelector: () => archive };
@@ -38,14 +39,18 @@ globalThis.DOMParser = class {
     parseFromString() {
         return {
             querySelector: selector => selector === '#eventsArchive' ? {} : batch.next ? { href: batch.next } : null,
-            querySelectorAll: selector => selector.includes('eventsTrack') ? [batch.slide] : batch.cards,
+            querySelectorAll: selector => selector.includes('eventsTrack') ? batch.slides : batch.cards,
         };
     }
 };
 const flush = () => new Promise(resolve => setImmediate(resolve));
 const wheel = direction => section.handlers.wheel({ deltaY: direction, deltaX: 0, preventDefault() {} });
-const complete = async next => {
-    batch = { next, slide: element(['is-active']), cards: [element(), element(), element()] };
+const complete = async (next, count = 9) => {
+    batch = {
+        next,
+        slides: Array.from({ length: Math.ceil(count / 3) }, (_, index) => element([index === 0 ? 'is-active' : 'is-next'])),
+        cards: Array.from({ length: count }, () => element()),
+    };
     resolveRequest({ ok: true, text: async () => 'HTML' });
     await flush();
 };
@@ -54,16 +59,25 @@ initEventsArchive();
 assert.equal(more.hidden, true);
 wheel(1);
 wheel(1);
+assert.equal(requests.length, 0, 'The first nine events must already be loaded');
+assert.equal(track.children[2].classList.contains('is-active'), true);
+wheel(1);
+wheel(1);
 assert.equal(requests.length, 1, 'Concurrent scrolls must share one request');
 await complete('/events?page=3');
-assert.equal(track.children.length, 2);
-assert.equal(mobile.children.length, 3);
-assert.equal(track.children[1].classList.contains('is-active'), true);
+assert.equal(track.children.length, 6);
+assert.equal(mobile.children.length, 18);
+assert.equal(track.children[3].classList.contains('is-active'), true);
+assert.equal(track.children[4].inert, true);
+assert.equal(track.children[5].inert, true);
 assert.equal(track.children[0].inert, true);
 wheel(-1);
-assert.equal(track.children[0].classList.contains('is-active'), true);
+assert.equal(track.children[2].classList.contains('is-active'), true);
 assert.equal(requests.length, 1, 'Backwards scrolling must use loaded groups');
 wheel(1);
+wheel(1);
+wheel(1);
+assert.equal(requests.length, 1, 'All nine newly loaded events must be available without another request');
 wheel(1);
 resolveRequest({ ok: false });
 await flush();
@@ -74,7 +88,8 @@ assert.equal(requests.length, 2, 'Scroll must not repeatedly retry a failed requ
 more.handlers.click({ preventDefault() {} });
 assert.equal(requests[2], '/events?page=3', 'Retry must not skip the failed page');
 await complete('/events?page=4');
-assert.equal(track.children.length, 3);
+assert.equal(track.children.length, 9);
+assert.equal(mobile.children.length, 27);
 assert.equal(status.textContent, '');
 
 mobileMode = true;
@@ -82,9 +97,10 @@ Object.assign(mobile, { scrollTop: 1700, clientHeight: 800, scrollHeight: 2400 }
 mobile.handlers.scroll();
 mobile.handlers.scroll();
 assert.equal(requests.length, 4, 'Mobile near-end scroll loads a single batch');
-await complete(null);
-assert.equal(track.children.length, 4);
-assert.equal(track.children[2].classList.contains('is-active'), true, 'Mobile loading must not move the desktop group');
+await complete(null, 1);
+assert.equal(track.children.length, 10);
+assert.equal(mobile.children.length, 28);
+assert.equal(track.children[6].classList.contains('is-active'), true, 'Mobile loading must not move the desktop group');
 mobile.handlers.scroll();
 assert.equal(requests.length, 4, 'The final batch stops requests');
 assert.equal(more.hidden, true);

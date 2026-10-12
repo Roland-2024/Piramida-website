@@ -114,9 +114,9 @@ class PublicContentTest extends TestCase
 
     public function test_event_archive_alternates_diagonals_across_slides_and_paginated_pages(): void
     {
-        Event::factory()->published()->count(16)->create();
+        Event::factory()->published()->count(19)->create();
 
-        foreach ([1 => [false], 2 => [true], 3 => [false]] as $page => $expected) {
+        foreach ([1 => [false, true, false], 2 => [true, false, true], 3 => [false]] as $page => $expected) {
             $response = $this->get(route('public.events.index', ['en', 'page' => $page]))->assertOk();
             preg_match_all('/class="events-slide ([^"]+)"/', $response->getContent(), $slides);
 
@@ -125,9 +125,9 @@ class PublicContentTest extends TestCase
         }
     }
 
-    public function test_event_scroll_batches_have_three_records_and_a_real_next_link(): void
+    public function test_event_scroll_batches_have_nine_records_and_a_real_next_link(): void
     {
-        $events = Event::factory()->published()->count(7)->sequence(
+        $events = Event::factory()->published()->count(19)->sequence(
             fn ($sequence) => ['starts_at' => now()->subDays($sequence->index + 1)],
         )->create();
         Event::factory()->create();
@@ -138,10 +138,10 @@ class PublicContentTest extends TestCase
         foreach ([1, 2, 3] as $page) {
             $response = $this->get(route('public.events.index', ['en', 'page' => $page]), ['Accept' => 'text/html'])
                 ->assertOk()
-                ->assertViewHas('events', fn ($batch) => $batch->modelKeys() === $events->slice(($page - 1) * 3, 3)->values()->modelKeys())
+                ->assertViewHas('events', fn ($batch) => $batch->modelKeys() === $events->slice(($page - 1) * 9, 9)->values()->modelKeys())
                 ->assertDontSee('data-event-step', false)
                 ->assertDontSee('template-pagination', false);
-            $this->assertSame(min(3, 7 - ($page - 1) * 3), substr_count($response->getContent(), 'class="reel-item"'));
+            $this->assertSame(min(9, 19 - ($page - 1) * 9), substr_count($response->getContent(), 'class="reel-item"'));
             if ($page < 3) {
                 $response->assertSee(route('public.events.index', ['en', 'page' => $page + 1]), false);
             } else {
