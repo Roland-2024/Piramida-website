@@ -1,0 +1,48 @@
+@font-face {
+    font-family: Anton;
+    src: url('../fonts/Anton-Regular.ttf') format('truetype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Plus Jakarta Sans';
+    src: url('../fonts/PlusJakartaSans-VariableFont_wght.ttf') format('truetype');
+    font-weight: 200 800;
+    font-display: swap;
+}
+
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(ellipse at 50% 45%, #162553, #000929 70%);
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+}
+a { color: inherit; text-decoration: none; }
+a:focus-visible { outline: 3px solid #cbff00; outline-offset: 6px; }
+.skip-link { position: absolute; top: 12px; left: 12px; padding: 12px; background: #000929; transform: translateY(-200%); z-index: 1; }
+.skip-link:focus { transform: none; }
+.error-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 32px 8%; }
+.error-header img { display: block; object-fit: contain; }
+.error-header nav { display: flex; gap: 8px; }
+.error-header nav a { padding: 12px; font-size: 14px; font-weight: 700; }
+.error-header nav a:hover { color: #cbff00; }
+main { flex: 1; width: 100%; text-align: center; padding: 24px 24px 64px; align-content: center; }
+.error-code { margin: 0; color: #cbff00; font: 400 clamp(120px, 24vw, 280px)/1 Anton, Impact, sans-serif; letter-spacing: .02em; }
+.error-label { margin: 24px 0 12px; font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #cbff00; }
+h1 { margin: 0; font: 400 clamp(32px, 5vw, 58px)/1.15 Anton, Impact, sans-serif; text-transform: uppercase; overflow-wrap: anywhere; }
+.error-description { max-width: 560px; margin: 24px auto 32px; font-size: 16px; line-height: 1.75; color: #c5ccdd; }
+.home-button { display: inline-flex; align-items: center; justify-content: center; gap: 24px; min-height: 52px; padding: 16px 24px; border-radius: 4px; background: #cbff00; color: #000929; font-size: 14px; font-weight: 700; }
+.home-button:hover { background: #e0ff66; }
+.home-button span { font-size: 24px; }
+footer { padding: 24px; text-align: center; font-size: 10px; letter-spacing: .18em; color: #a4adc4; }
+@media (max-width: 480px) {
+    .error-header { padding: 24px; }
+    .error-header img { width: 72px; height: 42px; }
+    main { padding-bottom: 32px; }
+    .home-button { width: 100%; max-width: 360px; }
+}
