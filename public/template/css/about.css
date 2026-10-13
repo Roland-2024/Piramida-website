@@ -9,6 +9,12 @@
     margin-top: 1rem;
 }
 
+.about-page .prose-content.title-16-400 p,
+.about-page #timelineCarousel p {
+    text-align: justify;
+    text-align-last: left;
+}
+
 .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
