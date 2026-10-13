@@ -34,6 +34,7 @@
                 <div class="rounded-xl bg-white p-5">
                     <img src="{{ \App\Support\WebsiteContent::image($path) }}" alt="" class="mb-3 h-28 w-full rounded bg-slate-100 object-contain">
                     <label for="image-{{ $key }}" class="block text-sm font-medium break-all">{{ str_replace(['template/images/', '_'], ['', ' '], $path) }}</label>
+                    @if($usage = config('content_usage.images')[$path] ?? null)<p class="mt-2 text-sm text-slate-600">{{ $usage }}</p>@endif
                     <select id="image-{{ $key }}" name="images[{{ $key }}]" class="mt-2 w-full rounded-lg border border-slate-300 p-3">
                         <option value="">Original template image</option>
                         @foreach($media as $item)<option value="{{ $item->id }}" @selected((string) old("images.$key", $images[$key] ?? '') === (string) $item->id)>{{ $item->original_name }}</option>@endforeach
@@ -47,7 +48,7 @@
                 @php $id = sha1($key); @endphp
                 <fieldset class="rounded-xl border border-slate-200 bg-white p-5">
                     <legend class="px-2 text-sm font-semibold">{{ str_replace(['website.', 'cms.', '_', '.'], ['', '', ' ', ' / '], $key) }}</legend>
-                    @if($usage = config('content_usage.texts')[$key] ?? null)<p class="mb-3 rounded-lg bg-blue-50 p-3 text-sm text-slate-700">{{ $usage }} @if($key === 'cms.step_into_piramida')<a class="underline" href="{{ route('admin.attractions.index') }}">Open Attractions</a>@else<a class="underline" href="{{ route('admin.sections.index') }}">Open Page sections</a>@endif</p>@endif
+                    @if($usage = config('content_usage.texts')[$key] ?? null)<p class="mb-3 rounded-lg bg-blue-50 p-3 text-sm text-slate-700">{{ $usage }} <a class="underline" href="{{ route('admin.sections.index') }}">Open Page sections</a></p>@endif
                     @if(in_array($key, config('content_usage.retained_texts', []), true))<p class="mb-3 rounded-lg bg-slate-100 p-3 text-sm text-slate-600">Retained legacy label: not displayed by the current public templates. Its saved translations are preserved; changing it does not create a new website element.</p>@endif
                     <div class="grid gap-4 md:grid-cols-2">
                     @foreach(['al', 'en'] as $locale)

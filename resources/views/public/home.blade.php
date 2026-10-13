@@ -9,6 +9,10 @@
     $pillarItems = data_get($pillars?->structured_data, app()->getLocale().'.items', []);
     $videoSection = $page?->sections->first(fn ($section) => filled($section->video_url));
     $youtubeId = \App\Rules\YouTubeUrl::videoId($page?->homepage_video_url);
+    $attractionPromotion = $homepagePromotions->get('Homepage - Attraction');
+    $experiencePromotion = $homepagePromotions->get('Homepage - Experiences');
+    $attractionHeading = !$attractionPromotion ? __('cms.attractions') : ($attractionPromotion->is_active ? $attractionPromotion->translation(app()->getLocale())?->subtitle : null);
+    $experienceHeading = !$experiencePromotion ? __('cms.experiences') : ($experiencePromotion->is_active ? $experiencePromotion->translation(app()->getLocale())?->subtitle : null);
 @endphp
 <x-layouts.public :record="$page" :title="$translation?->seo_title ?: $translation?->title" :description="$translation?->seo_description ?: $translation?->short_description" :language-urls="$languageUrls" :styles="['homepage']" body-class="">
     @if($youtubeId)
@@ -109,7 +113,7 @@
       <!-- Card: Business -->
       <a @if($presentationUrls['business']) href="{{ $presentationUrls['business'] }}" @else aria-disabled="true" @endif
         id="business" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
-        <img src="{{ \App\Support\WebsiteContent::image('template/images/innovation.png') }}" alt="{{ __('website.home_innovation_spaces_at_piramida') }}"
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/business.png') }}" alt="{{ data_get($pillarItems, '2.title', __('cms.business')) }}"
           class="w-full h-full object-cover object-center" />
 
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
@@ -127,7 +131,7 @@
       <!-- Card: Art & Culture -->
       <a @if($presentationUrls['art']) href="{{ $presentationUrls['art'] }}" @else aria-disabled="true" @endif
         id="art" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
-        <img src="{{ \App\Support\WebsiteContent::image('template/images/innovation.png') }}" alt="{{ __('website.home_innovation_spaces_at_piramida') }}"
+        <img src="{{ \App\Support\WebsiteContent::image('template/images/art.png') }}" alt="{{ data_get($pillarItems, '3.title', __('cms.art')) }}"
           class="w-full h-full object-cover object-center" />
 
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
@@ -303,55 +307,24 @@
       <img src="{{ \App\Support\WebsiteContent::image('template/images/bg-low.jpg') }}" alt="{{ __('website.home_rose_gradient') }}" class="w-full h-full object-cover" />
     </div>
 
+    @if(!$attractionPromotion || $attractionPromotion->is_active || !$experiencePromotion || $experiencePromotion->is_active)
     <section class="relative z-10 py-16 sm:py-24 px-[30px] md:px-[80px] lg:px-[120px]">
 
       <!-- Heading -->
-      <div class="title-60 text-center uppercase tracking-wide leading-[1.1] mb-10">
-        {{ __('cms.attractions') }} <br> &amp; {{ __('cms.experiences') }}
-      </div>
+      @if($attractionHeading || $experienceHeading)<div class="title-60 text-center uppercase tracking-wide leading-[1.1] mb-10">
+        {{ $attractionHeading }}@if($attractionHeading && $experienceHeading)<br> &amp;@endif {{ $experienceHeading }}
+      </div>@endif
 
       <!-- Attraction cards -->
       <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 mb-24">
 
-        <div class="rounded-3xl overflow-hidden bg-[#D9F044] rounded-[20px] max-h-[645px]">
-          <div class="overflow-hidden">
-            <img src="{{ $featuredAttractions->first()?->featuredMedia?->displayUrl() ?: \App\Support\WebsiteContent::image('template/images/piramida_block.jpg') }}" alt="{{ $featuredAttractions->first()?->translation(app()->getLocale(), false)?->title ?: __('website.home_piramida_staircase_from_above') }}" loading="lazy"
-              class="w-full h-full object-cover max-h-[400px] p-[10px] rounded-[20px]" />
-          </div>
-          <div class="py-[50px] px-[40px]">
-            <div class=" uppercase title-36 text-black mb-2">{{ $featuredAttractions->first()?->translation(app()->getLocale(), false)?->title ?: __('cms.step_into_piramida') }}</div>
-            <p class="home-attraction-description title-16 mb-5">
-              {{ $featuredAttractions->first()?->translation(app()->getLocale(), false)?->short_description }}
-            </p>
-            <a href="{{ route('public.attractions.index', app()->getLocale()) }}"
-              class="inline-flex items-center gap-2 bg-white text-black title-14-bold px-[20px] py-[16px] rounded-full hover:bg-white/90 transition">
-              {{ __('cms.step_into_piramida') }}
-              <img src="{{ \App\Support\WebsiteContent::image('template/images/arrow right black.svg') }}" alt="{{ __('website.home_arrow_icon') }}" class="w-3.5 h-3.5 mt-1" />
-            </a>
-          </div>
-        </div>
-
-        <div class="rounded-3xl overflow-hidden bg-[#BEE3FF] rounded-[20px] max-h-[645px]">
-          <div class="overflow-hidden">
-            <img src="{{ \App\Support\WebsiteContent::image('template/images/piramida_block_1.jpg') }}" alt="{{ __('website.home_piramida_staircase_from_above') }}" loading="lazy"
-              class="w-full h-full object-cover max-h-[400px] p-[10px] rounded-[20px]" />
-          </div>
-          <div class="py-[50px] px-[40px]">
-            <div class=" uppercase title-36 text-black mb-2">{{ __('cms.social_spaces') }}</div>
-            <p class="home-attraction-description title-16 mb-5">
-              {{ __('cms.businesses_intro') }}
-            </p>
-            <a href="{{ route('public.businesses.index', app()->getLocale()) }}"
-              class="inline-flex items-center gap-2 bg-white text-black title-14-bold px-[20px] py-[16px] rounded-full hover:bg-white/90 transition">
-              {{ __('cms.explore_corners') }}
-              <img src="{{ \App\Support\WebsiteContent::image('template/images/arrow right black.svg') }}" alt="{{ __('website.home_arrow_icon') }}" class="w-3.5 h-3.5 mt-1" />
-            </a>
-          </div>
-        </div>
+        @include('public.partials.home-promotion', ['section' => $attractionPromotion, 'color' => '#D9F044', 'defaultTitle' => $featuredAttractions->first()?->translation(app()->getLocale(), false)?->title ?: __('cms.step_into_piramida'), 'defaultDescription' => $featuredAttractions->first()?->translation(app()->getLocale(), false)?->short_description, 'defaultImage' => $featuredAttractions->first()?->featuredMedia?->displayUrl() ?: \App\Support\WebsiteContent::image('template/images/piramida_block.jpg'), 'templateImage' => 'template/images/piramida_block.jpg', 'defaultUrl' => route('public.attractions.index', app()->getLocale()), 'defaultButton' => __('cms.step_into_piramida')])
+        @include('public.partials.home-promotion', ['section' => $experiencePromotion, 'color' => '#BEE3FF', 'defaultTitle' => __('cms.social_spaces'), 'defaultDescription' => __('cms.businesses_intro'), 'defaultImage' => \App\Support\WebsiteContent::image('template/images/piramida_block_1.jpg'), 'templateImage' => 'template/images/piramida_block_1.jpg', 'defaultUrl' => route('public.businesses.index', app()->getLocale()), 'defaultButton' => __('cms.explore_corners')])
 
       </div>
 
     </section>
+    @endif
 
   </div>
   <!-- End Events + Attractions wrapper -->

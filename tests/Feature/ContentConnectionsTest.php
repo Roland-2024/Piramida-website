@@ -18,6 +18,104 @@ class ContentConnectionsTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_homepage_promotions_use_editor_saved_sections_without_changing_catalogue_records(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $page = Page::factory()->published()->create(['is_homepage' => true]);
+        $attraction = Attraction::factory()->published()->create(['is_featured' => true]);
+        $originalTitle = $attraction->translation('en', false)->title;
+        $sections = [];
+        foreach (['Homepage - Attraction', 'Homepage - Experiences'] as $name) {
+            $section = PageSection::factory()->for($page)->create(['internal_name' => $name]);
+            $image = Media::factory()->create();
+            $translations = [];
+            foreach (['al', 'en'] as $locale) {
+                $translations[$locale] = [
+                    'title' => "$locale card $section->id title", 'subtitle' => "$locale card $section->id heading",
+                    'description' => "<p>$locale card $section->id body</p>",
+                    'primary_button_label' => "$locale card $section->id action",
+                    'secondary_button_label' => "$locale card $section->id secondary",
+                ];
+            }
+            $this->put(route('admin.sections.update', $section), [
+                'page_id' => $page->id, 'internal_name' => $name, 'type' => 'text_image',
+                'display_order' => 10, 'is_active' => true, 'primary_media_id' => $image->id,
+                'primary_button_url' => '/events', 'secondary_button_url' => '/contact', 'translations' => $translations,
+            ])->assertSessionHasNoErrors()->assertRedirect();
+            $sections[] = $section;
+            foreach (['/' => 'al', '/en' => 'en'] as $url => $locale) {
+                $this->get($url)->assertOk()->assertSee("$locale card $section->id title")
+                    ->assertSee("$locale card $section->id heading")->assertSee("$locale card $section->id body")
+                    ->assertSee("$locale card $section->id action")->assertSee("$locale card $section->id secondary")
+                    ->assertSee($image->url(), false);
+            }
+            $this->get(route('admin.sections.show', $section))->assertSee('promotional card');
+            $this->put(route('admin.sections.update', $section), [
+                'page_id' => $page->id, 'internal_name' => 'Renamed section', 'type' => 'text_image',
+                'display_order' => 10, 'is_active' => true, 'translations' => $translations,
+            ])->assertSessionHasErrors('internal_name');
+        }
+        $this->assertSame($originalTitle, $attraction->fresh()->translation('en', false)->title);
+        foreach ($sections as $section) {
+            $section->update(['is_active' => false]);
+        }
+        $this->get('/en')->assertOk()->assertDontSee('data-home-promotion=', false);
+        $this->assertSame('en card '.$sections[0]->id.' title', $sections[0]->fresh()->translation('en', false)->title);
+    }
+
+    public function test_footer_partners_use_published_homepage_section_and_ordered_gallery_across_pages(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $page = Page::factory()->published()->create(['is_homepage' => true]);
+        $partners = PageSection::factory()->for($page)->create(['internal_name' => 'Homepage - Partners']);
+        $first = Media::factory()->create(['path' => 'media/first-partner.png']);
+        $second = Media::factory()->create(['path' => 'media/second-partner.png']);
+        $this->put(route('admin.sections.update', $partners), [
+            'page_id' => $page->id, 'internal_name' => $partners->internal_name, 'type' => 'partners',
+            'display_order' => 50, 'is_active' => true, 'gallery_media_ids' => [$second->id, $first->id],
+            'translations' => [
+                'al' => ['title' => 'Partnerë të zgjedhur', 'subtitle' => 'Bashkëpunim', 'description' => '<p>Partnerët tanë AL</p>'],
+                'en' => ['title' => 'Selected partners', 'subtitle' => 'Collaboration', 'description' => '<p>Our partners EN</p>'],
+            ],
+        ])->assertSessionHasNoErrors();
+        foreach (['' => 'Partnerë të zgjedhur', '/en' => 'Selected partners'] as $prefix => $title) {
+            foreach (['/', '/news', '/contact', '/attractions'] as $path) {
+                $this->get($prefix.$path)->assertOk()->assertSee($title)
+                    ->assertSeeInOrder([$second->url(), $first->url()], false)
+                    ->assertDontSee('aadffinalk-logo 1.svg', false);
+            }
+        }
+        $partners->update(['is_active' => false]);
+        $this->get('/en/news')->assertOk()->assertDontSee('data-footer-partners', false)->assertDontSee('Selected partners');
+        $partners->update(['is_active' => true]);
+        foreach (['draft', 'published'] as $status) {
+            $page->update(['status' => $status, 'published_at' => $status === 'draft' ? now()->subDay() : now()->addDay()]);
+            $this->get('/en/news')->assertOk()->assertDontSee('Selected partners')->assertDontSee($second->url(), false);
+        }
+        $page->update(['status' => 'published', 'published_at' => now()->subDay()]);
+        $partners->syncGallery([]);
+        $this->get('/en/news')->assertOk()->assertSee('Selected partners')->assertSee('aadffinalk-logo 1.svg', false);
+    }
+
+    public function test_four_pillar_backgrounds_have_independent_website_content_image_controls(): void
+    {
+        $this->actingAs(User::factory()->create());
+        Page::factory()->published()->create(['is_homepage' => true]);
+        $images = [];
+        foreach (['education', 'innovation', 'business', 'art'] as $pillar) {
+            $media = Media::factory()->create(['path' => "media/$pillar-pillar.png"]);
+            $images[sha1("template/images/$pillar.png")] = $media->id;
+        }
+        $this->put(route('admin.website-content.update'), ['group' => 'images', 'images' => $images])->assertSessionHasNoErrors();
+        foreach (['/', '/en'] as $url) {
+            $response = $this->get($url)->assertOk();
+            foreach (['education', 'innovation', 'business', 'art'] as $pillar) {
+                $response->assertSee("media/$pillar-pillar.png");
+            }
+        }
+        $this->get(route('admin.website-content.edit', ['group' => 'images']))->assertSee('Homepage pillar background: Business')->assertSee('Homepage pillar background: Art');
+    }
+
     public function test_retained_label_guidance_does_not_mark_literal_public_template_keys_as_unused(): void
     {
         $source = collect(File::allFiles(resource_path('views/public')))->map(fn ($file) => $file->getContents())->implode("\n");

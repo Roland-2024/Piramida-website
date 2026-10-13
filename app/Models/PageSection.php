@@ -18,7 +18,7 @@ class PageSection extends Model
 
     public function hasTemplateName(): bool
     {
-        return in_array($this->internal_name, ['About - Overview', 'About - Mission', 'About - History', 'About - Timeline'], true);
+        return in_array($this->internal_name, ['About - Overview', 'About - Mission', 'About - History', 'About - Timeline', 'Homepage - Attraction', 'Homepage - Experiences', 'Homepage - Partners'], true);
     }
 
     protected $fillable = [

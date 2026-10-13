@@ -47,17 +47,7 @@
         </div>
       </div>
 
-      <div class="mt-16">
-        <h2 class="text-center text-[12px] font-normal uppercase tracking-wide">{{ __('website.partials_footer_partner_t_tan') }}</h2>
-
-        <div class="relative left-1/2 mt-3 w-screen -translate-x-1/2 border-t border-white/10" aria-hidden="true"></div>
-
-        <div class="mt-4 flex items-center justify-center gap-3">
-          <img src="{{ \App\Support\WebsiteContent::image('template/images/tumo-finale2 1.svg') }}" class="h-8 w-[75px] object-contain" alt="{{ __('website.partials_footer_tumo') }}" />
-          <img src="{{ \App\Support\WebsiteContent::image('template/images/aadffinalk-logo 1.svg') }}" class="h-8 w-[75px] object-contain" alt="{{ __('website.partials_footer_aadf') }}" />
-          <img src="{{ \App\Support\WebsiteContent::image('template/images/bashkia2 1.svg') }}" class="h-8 w-[75px] object-contain" alt="{{ __('website.partials_footer_bashkia_tiran') }}" />
-        </div>
-      </div>
+      @include('public.partials.footer-partners')
 
       <p class="mt-8 text-center text-[11px] tracking-wide text-white/30">
         {{ __('website.copyright', ['year' => now()->year]) }}
@@ -77,16 +67,7 @@
             {{ $siteSettings?->translation()?->footer_text }}
           </p>
 
-          <div class="mt-16">
-            <h2 class="text-[12px] font-normal uppercase tracking-wide text-white/90">{{ __('website.partials_footer_partner_t_tan') }}</h2>
-
-            <div class="-ml-[25px] mt-5 flex items-start justify-start">
-              <img src="{{ \App\Support\WebsiteContent::image('template/images/aadffinalk-logo 1.svg') }}" class="h-[40px] w-[102px] object-contain" alt="{{ __('website.partials_footer_aadf') }}" />
-              <img src="{{ \App\Support\WebsiteContent::image('template/images/bashkia2 1.svg') }}" class="h-[40px] w-[102px] object-contain"
-                alt="{{ __('website.partials_footer_bashkia_tiran') }}" />
-              <img src="{{ \App\Support\WebsiteContent::image('template/images/tumo-finale2 1.svg') }}" class="h-[40px] w-[102px] object-contain" alt="{{ __('website.partials_footer_tumo') }}" />
-            </div>
-          </div>
+          @include('public.partials.footer-partners')
         </div>
 
         <div class="min-w-[170px]">

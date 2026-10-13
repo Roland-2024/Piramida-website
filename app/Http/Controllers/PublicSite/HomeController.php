@@ -21,7 +21,6 @@ class HomeController extends Controller
                 'translations',
                 'featuredMedia',
                 'sections' => fn (HasMany $query) => $query
-                    ->active()
                     ->with(['translations', 'primaryMedia', 'secondaryMedia', 'gallery']),
             ])
             ->orderBy('display_order')
@@ -29,6 +28,10 @@ class HomeController extends Controller
 
         $page = (clone $pageQuery)->where('is_homepage', true)->first()
             ?? $pageQuery->first();
+
+        $homepagePromotions = $page?->sections->whereIn('internal_name', ['Homepage - Attraction', 'Homepage - Experiences'])->unique('internal_name')->keyBy('internal_name') ?? collect();
+        // Keep inactive promotion records to distinguish hiding a card from a missing-section fallback.
+        $page?->setRelation('sections', $page->sections->where('is_active', true));
 
         $presentationPages = Page::query()->published()
             ->whereHas('translations', fn (Builder $query) => $query->whereIn('slug', ['education', 'innovation', 'business', 'art', 'about-us']))
@@ -41,6 +44,7 @@ class HomeController extends Controller
             });
 
         return view('public.home', [
+            'homepagePromotions' => $homepagePromotions,
             'presentationUrls' => $presentationUrls,
             'aboutUrl' => ($about = $presentationPages->first(fn ($page) => $page->translations->contains('slug', 'about-us')))?->translation($locale, false)
                 ? route('public.pages.show', [$locale, $about->translation($locale, false)->slug])

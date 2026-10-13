@@ -99,7 +99,7 @@ class PageSectionController extends Controller
             return $this->carouselRedirect($section->page);
         }
 
-        return view('admin.sections.show', compact('section'));
+        return view('admin.sections.show', ['section' => $section, 'contentUsage' => $this->contentUsage($section, $section->page)]);
     }
 
     public function edit(PageSection $section): View|RedirectResponse
@@ -157,16 +157,21 @@ class PageSectionController extends Controller
      */
     private function formOptions(?PageSection $section = null, ?Page $page = null): array
     {
-        $template = $page?->is_homepage ? 'home' : $page?->translation('en', false)?->slug;
-        $usage = config('content_usage.sections.'.$template, []);
-
         return [
-            'contentUsage' => $usage[$section?->internal_name] ?? $usage['*'] ?? 'Generic pages display active sections in Display order. Title, Subtitle, Description, images, gallery, button pairs and supported JSON items are displayed when filled. Fixed homepage/About templates use only their documented fields.',
+            'contentUsage' => $this->contentUsage($section, $page),
             'pages' => Page::query()->withoutCarousel()->with('translations')->orderBy('display_order')->get(),
             'sectionTypes' => SectionType::cases(),
             'mediaItems' => Media::query()->where('disk', 'public')->whereIn('mime_type', ['video/mp4', 'video/webm'])->latest()->get(),
             'locales' => config('cms.locales'),
         ];
+    }
+
+    private function contentUsage(?PageSection $section, ?Page $page): string
+    {
+        $template = $page?->is_homepage ? 'home' : $page?->translation('en', false)?->slug;
+        $usage = config('content_usage.sections.'.$template, []);
+
+        return $usage[$section?->internal_name] ?? $usage['*'] ?? 'Generic pages display active sections in Display order. Title, Subtitle, Description, images, gallery, button pairs and supported JSON items are displayed when filled. Fixed homepage/About templates use only their documented fields.';
     }
 
     private function carouselRedirect(Page $page): RedirectResponse

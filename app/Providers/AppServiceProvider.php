@@ -68,6 +68,12 @@ class AppServiceProvider extends ServiceProvider
                 ->get();
 
             $view->with([
+                'footerPartners' => PageSection::query()
+                    ->where('internal_name', 'Homepage - Partners')
+                    ->where('page_id', Page::query()->published()->where('is_homepage', true)
+                        ->orderBy('display_order')->orderBy('id')->select('id')->limit(1))
+                    ->with(['translations', 'gallery'])
+                    ->orderBy('display_order')->orderBy('id')->first(),
                 'siteSettings' => SiteSetting::query()->with('translations')->first(),
                 'headerPages' => $pages->where('display_order', '<', 100),
                 'footerPages' => $pages->where('display_order', '>=', 100),
