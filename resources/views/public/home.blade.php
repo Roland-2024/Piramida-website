@@ -1,5 +1,10 @@
 @php
     $translation = $page?->translation(app()->getLocale());
+    $discover = $page?->sections->firstWhere('internal_name', 'Homepage - Discover')
+        ?? $page?->sections->firstWhere('type', \App\Enums\SectionType::Hero)
+        ?? $page?->sections->firstWhere('type', \App\Enums\SectionType::TextImage);
+    $discoverTranslation = $discover?->translation(app()->getLocale());
+    $headlineParts = explode(' ', \Illuminate\Support\Str::squish($discoverTranslation?->subtitle ?? ''), 2);
     $pillars = $page?->sections->firstWhere('type', \App\Enums\SectionType::Features);
     $pillarItems = data_get($pillars?->structured_data, app()->getLocale().'.items', []);
     $videoSection = $page?->sections->first(fn ($section) => filled($section->video_url));
@@ -21,7 +26,7 @@
     <div class="intro-swipe" data-intro-swipe aria-hidden="true" hidden></div>
 
 <span class="sr-only">{{ $translation?->title }}</span>
-    <section class="relative w-full h-[110vh] overflow-hidden">
+    <section class="relative w-full min-h-[110vh] overflow-hidden pb-28">
       <!-- Background image -->
       <img src="{{ \App\Support\WebsiteContent::image('template/images/piramida-hero-1920.jpg') }}" @if (\App\Support\WebsiteContent::image('template/images/piramida-hero-1920.jpg') === asset('template/images/piramida-hero-1920.jpg')) srcset="/template/images/piramida-hero-960.jpg 960w, /template/images/piramida-hero-1920.jpg 1920w" @endif sizes="100vw" width="1920" height="1232" fetchpriority="high" alt="{{ __('website.home_piramida_of_tirana') }}"
         class="absolute inset-0 w-full h-full object-cover" />
@@ -37,21 +42,35 @@
       <!-- Content -->
       <div class="relative z-10 flex flex-col items-center pt-[160px] px-4 text-center">
         <h1
-          class="uppercase leading-[0.95] tracking-tight text-white drop-shadow-lg text-4xl sm:text-5xl md:text-6xl lg:text-[80px]">
+          class="max-w-4xl break-words uppercase leading-[0.95] tracking-tight text-white drop-shadow-lg text-4xl sm:text-5xl md:text-6xl lg:text-[80px]">
+          @if($discoverTranslation?->subtitle)
+            <span class="block">{{ $headlineParts[0] }}</span>
+            @if(isset($headlineParts[1]))<span class="block">{{ \Illuminate\Support\Str::contains($headlineParts[1], ' ') ? \Illuminate\Support\Str::beforeLast($headlineParts[1], ' ') : '' }} <span class="text-lime-400">{{ \Illuminate\Support\Str::afterLast($headlineParts[1], ' ') }}</span></span>@endif
+          @else
           <span class="block">{{ __('cms.discover') }}</span>
           <span class="block">
             {{ __('cms.world_of') }} <span class="text-lime-400">{{ __('website.home_piramida') }}</span>
           </span>
+          @endif
         </h1>
+        @if($discoverTranslation?->title)<p class="mt-6 max-w-2xl text-xl sm:text-2xl">{{ $discoverTranslation->title }}</p>@endif
+        @if($discoverTranslation?->description)<div class="prose-content mt-4 max-w-2xl text-base text-white/85">{!! $discoverTranslation->description !!}</div>@endif
+        @if($discover)<div class="mt-6 flex flex-wrap justify-center gap-3">
+            @if($discover->primary_button_url && $discoverTranslation?->primary_button_label)<a class="public-button" href="{{ $discover->primary_button_url }}">{{ $discoverTranslation->primary_button_label }}</a>@endif
+            @if($discover->secondary_button_url && $discoverTranslation?->secondary_button_label)<a class="outline-button" href="{{ $discover->secondary_button_url }}">{{ $discoverTranslation->secondary_button_label }}</a>@endif
+        </div>@endif
       </div>
     </section>
   <!-- ============= END HERO ============= -->
 
   <section class="relative bg-[#0a1435] pb-10 pt-10 sm:pt-16 md:pt-5 px-4 md:px-12">
+    @if($pillars?->translation(app()->getLocale())?->subtitle)<p class="mb-3 text-center text-lime-400">{{ $pillars->translation(app()->getLocale())->subtitle }}</p>@endif
     <div
       class="text-center text-white text-2xl sm:text-3xl md:text-4xl font-light leading-snug max-w-2xl mx-auto mb-10 sm:mb-14">
       {{ $pillars?->translation(app()->getLocale())?->title ?: __('cms.pillars_title') }}
     </div>
+
+    @if($pillars?->translation(app()->getLocale())?->description)<div class="prose-content mx-auto mb-10 max-w-2xl text-center text-white/85">{!! $pillars->translation(app()->getLocale())->description !!}</div>@endif
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-7xl mx-auto">
 
@@ -296,7 +315,7 @@
 
         <div class="rounded-3xl overflow-hidden bg-[#D9F044] rounded-[20px] max-h-[645px]">
           <div class="overflow-hidden">
-            <img src="{{ \App\Support\WebsiteContent::image('template/images/piramida_block.jpg') }}" alt="{{ __('website.home_piramida_staircase_from_above') }}" loading="lazy"
+            <img src="{{ $featuredAttractions->first()?->featuredMedia?->displayUrl() ?: \App\Support\WebsiteContent::image('template/images/piramida_block.jpg') }}" alt="{{ $featuredAttractions->first()?->translation(app()->getLocale(), false)?->title ?: __('website.home_piramida_staircase_from_above') }}" loading="lazy"
               class="w-full h-full object-cover max-h-[400px] p-[10px] rounded-[20px]" />
           </div>
           <div class="py-[50px] px-[40px]">

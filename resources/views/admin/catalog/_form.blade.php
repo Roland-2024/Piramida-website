@@ -17,6 +17,10 @@
     };
 @endphp
 
+@if($usage = config('content_usage.catalogs')[$routePrefix] ?? null)
+    <aside class="mb-5 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700"><p class="font-semibold">Where this content appears</p><p class="mt-2">{{ $usage }}</p></aside>
+@endif
+
 @if ($routePrefix === 'admin.leasing')
     <p class="mb-5 rounded-lg bg-slate-50 p-4 text-sm text-slate-600">Select a real map unit; its floor is assigned automatically. Each unit can belong to only one post (including trashed posts). Only published, available posts with a map unit and a translation are green and clickable. Unassigned or unavailable units stay red.</p>
 @endif

@@ -68,5 +68,6 @@ $images = collect([$business->featuredMedia])->filter()->merge($business->galler
             </p>
           <div class="template-business-links">@if($businessTranslation->opening_hours)<p>{{ $businessTranslation->opening_hours }}</p>@endif
 @if($business->website_url)<a href="{{ $business->website_url }}" target="_blank" rel="noopener">{{ __('cms.website') }} ↗</a>@endif
-@if($business->phone)<a href="tel:{{ $business->phone }}">{{ $business->phone }}</a>@endif</div></article>
+@if($business->phone)<a href="tel:{{ $business->phone }}">{{ $business->phone }}</a>@endif
+@if($business->email)<a href="mailto:{{ $business->email }}">{{ $business->email }}</a>@endif</div></article>
         </section>

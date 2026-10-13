@@ -15,6 +15,7 @@
             </div>
         @endif
         <div class="prose-content mt-10 ">{!! $translation->description !!}</div>
+        @if ($item instanceof \App\Models\Attraction && $translation->visitor_information)<p class="mt-6 whitespace-pre-line">{{ $translation->visitor_information }}</p>@endif
         @if ($translation->requirements)<div class="prose-content mt-8 border-t border-white/20 pt-6"><h2 class="mb-3 text-xl font-semibold">{{ __('cms.requirements') }}</h2>{!! $translation->requirements !!}</div>@endif
         @if ($translation->features)<div class="prose-content mt-8 border-t border-white/20 pt-6"><h2 class="mb-3 text-xl font-semibold">{{ __('cms.features') }}</h2>{!! $translation->features !!}</div>@endif
 

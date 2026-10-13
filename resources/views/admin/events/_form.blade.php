@@ -1,5 +1,7 @@
 @php $editing = isset($event); @endphp
 
+<p class="mb-5 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">The public detail uses Title, Featured image, Full description, dates/duration, Location and verified address. Short description is used on homepage cards and as a SEO fallback. Booking options control registration links/forms. Category, Featured, Capacity and Price label are retained but not displayed by the current event template. The archive orders by start date, not Display order. Imported event edits may be replaced by WordPress sync.</p>
+
 <div class="grid gap-5 lg:grid-cols-4">
     <div><label class="block text-sm font-medium" for="status">Status</label><select id="status" name="status" required class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">@foreach ($statuses as $status)<option value="{{ $status->value }}" @selected(old('status', $event->status->value ?? 'draft') === $status->value)>{{ $status->label() }}</option>@endforeach</select></div>
     <div><label class="block text-sm font-medium" for="category">Category</label><select id="category" name="category" required class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">@foreach ($categories as $category)<option value="{{ $category->value }}" @selected(old('category', $event->category->value ?? 'event') === $category->value)>{{ $category->label() }}</option>@endforeach</select></div>

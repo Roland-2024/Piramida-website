@@ -411,6 +411,8 @@ Keep public route names and controller inputs stable, or update links consistent
 
 ## Editing public website content
 
+See [the content editing map](docs/CONTENT_EDITING_MAP.md) for the editing location, fallback precedence and retained fields of each current template. Forms explain fixed-template usage; homepage Discover/Pillars copy belongs in Page sections, while Website content manages shared labels, template assets and fallbacks. Existing fields/data are retained without reseeding.
+
 Admins and Editors can use **Website content** (`/admin/website-content`) for bilingual shared labels, navigation, form labels, feedback and validation messages, template copy, default SEO/social metadata, and template images/logos. Existing Pages, Page Sections and individual content modules still manage their own records and media. Public contact details/footer copy are editable here; SMTP credentials, notification recipients, users and submission management remain Admin-only (Editors can read submission details).
 
 Run `php artisan migrate --force` when deploying this update. The additive `website_texts` and `website_images` tables store overrides; existing content and file-based defaults are preserved without reseeding. Text is escaped, not HTML. Preserve placeholders such as `:year`, `:attribute` and `:max`. Images are selected from public Media; private uploads cannot be selected, and referenced media cannot be deleted. Shared template assets update wherever used. Restoring “Original template image” removes its override. Replacing a leasing plan must preserve its proportions and unit positions; map geometry is not CMS content. Browser-native date/file-picker text remains controlled by the visitor's browser.

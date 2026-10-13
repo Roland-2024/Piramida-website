@@ -2,6 +2,7 @@
     <div class="mb-6">
         <h2 class="text-2xl font-semibold">Site settings</h2>
         <p class="mt-1 text-sm text-slate-500">Global contact details, social links, opening hours, and footer content.</p>
+        <p class="mt-2 text-sm text-slate-600">Public details here share the same storage as <a class="underline" href="{{ route('admin.website-content.edit', ['group' => 'contact']) }}">Website content > Public contact and footer</a>. Editors should use that screen. Notification recipients and SMTP/Postmark remain Admin-only; they do not control public contact text.</p>
     </div>
 
     <form method="POST" action="{{ route('admin.settings.update') }}" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

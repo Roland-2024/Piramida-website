@@ -1,5 +1,10 @@
 <x-layouts.admin title="Website content">
     <p class="mb-5 text-sm text-slate-600">Public website content in Albanian and English. Existing page/post content is still edited in its own module. Technical settings and WordPress synchronization are unchanged.</p>
+    <aside class="mb-5 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">
+        <p class="font-semibold">One editing location for each piece of content</p>
+        <p class="mt-2">Use <a class="underline" href="{{ route('admin.pages.index') }}">Pages</a> for page headings/SEO and <a class="underline" href="{{ route('admin.sections.index') }}">Page sections</a> for homepage/About copy. Use the individual News, Events, Programs, Attractions, Businesses and Spaces modules for their records. This screen manages shared labels, template images, default SEO and public contact details.</p>
+        <p class="mt-2">A fallback is used only when the corresponding record/section field is empty. Some legacy labels are retained for older templates; saving them does not add a new element to the current design.</p>
+    </aside>
     <nav class="mb-6 flex flex-wrap gap-2" aria-label="Content groups">
         @foreach($groups as $key => $label)
             <a href="{{ route('admin.website-content.edit', ['group' => $key]) }}" @class(['rounded-lg border px-3 py-2 text-sm', 'bg-slate-900 text-white' => $group === $key, 'bg-white' => $group !== $key])>{{ $label }}</a>
@@ -10,6 +15,7 @@
         @csrf @method('PUT')
         <input type="hidden" name="group" value="{{ $group }}">
         @if($group === 'contact')
+            <p class="text-sm text-slate-600">Public email/phone, Address, Footer text, Facebook and Instagram appear in the current templates; Map embed URL appears on Contact. X, LinkedIn and Opening hours are retained but not currently displayed. These are public details, not the notification recipient or SMTP credentials. Admin Site settings edits the same stored public values, not a second copy.</p>
             <div class="grid gap-5 rounded-xl bg-white p-5 md:grid-cols-2">
             @foreach(['email' => 'Public email', 'phone' => 'Phone', 'facebook_url' => 'Facebook URL', 'x_url' => 'X URL', 'instagram_url' => 'Instagram URL', 'linkedin_url' => 'LinkedIn URL', 'map_url' => 'Map embed URL'] as $key => $label)
                 <label class="block text-sm font-medium">{{ $label }}<input name="{{ $key }}" value="{{ old($key, $settings->{$key}) }}" class="mt-2 block w-full rounded-lg border border-slate-300 p-3"></label>
@@ -41,6 +47,8 @@
                 @php $id = sha1($key); @endphp
                 <fieldset class="rounded-xl border border-slate-200 bg-white p-5">
                     <legend class="px-2 text-sm font-semibold">{{ str_replace(['website.', 'cms.', '_', '.'], ['', '', ' ', ' / '], $key) }}</legend>
+                    @if($usage = config('content_usage.texts')[$key] ?? null)<p class="mb-3 rounded-lg bg-blue-50 p-3 text-sm text-slate-700">{{ $usage }} @if($key === 'cms.step_into_piramida')<a class="underline" href="{{ route('admin.attractions.index') }}">Open Attractions</a>@else<a class="underline" href="{{ route('admin.sections.index') }}">Open Page sections</a>@endif</p>@endif
+                    @if(in_array($key, config('content_usage.retained_texts', []), true))<p class="mb-3 rounded-lg bg-slate-100 p-3 text-sm text-slate-600">Retained legacy label: not displayed by the current public templates. Its saved translations are preserved; changing it does not create a new website element.</p>@endif
                     <div class="grid gap-4 md:grid-cols-2">
                     @foreach(['al', 'en'] as $locale)
                         <label class="block text-sm font-medium">{{ strtoupper($locale) }}

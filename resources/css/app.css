@@ -114,6 +114,11 @@ textarea {
 .admin-ui :is(input,textarea,select):focus { outline:2px solid #5267b5; outline-offset:2px; box-shadow:none; }
 .admin-ui :is(input[type=checkbox],input[type=radio]) { accent-color:#33467f; }
 .admin-ui :is(a,button,summary):focus-visible { outline:3px solid #7387d1; outline-offset:3px; }
+.admin-ui :is(button,input[type=submit],input[type=button],summary):not(:disabled):not([aria-disabled=true]) { cursor:pointer; }
+.admin-ui :is(button,input[type=submit],input[type=button],a[href],summary):not(:disabled):not([aria-disabled=true]) { transition:background-color .15s,color .15s,filter .15s,box-shadow .15s; }
+.admin-ui :is(button,input[type=submit],input[type=button]):not(:disabled):not([aria-disabled=true]):hover { filter:brightness(.94); }
+.admin-ui :is(button,input[type=submit],input[type=button],a[href],summary):not(:disabled):not([aria-disabled=true]):active { filter:brightness(.86); box-shadow:inset 0 2px 4px #00000026; }
+.admin-ui :is(button,input[type=submit],input[type=button]):disabled,.admin-ui [aria-disabled=true] { cursor:not-allowed; opacity:.5; }
 .admin-ui :is(button,a).bg-slate-950 { background:#cbff00; color:#000929; border-color:#cbff00; }
 .admin-ui :is(button,a).bg-slate-950:hover { background:#b9e800; }
 .admin-ui main :is(a.text-amber-700,a.text-amber-800) { color:#394a87; }

@@ -1,5 +1,7 @@
 @php $editing = isset($article); @endphp
 
+<p class="mb-5 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">Title, publication date, Featured image, Article content and Gallery are displayed publicly. Excerpt is used on listing cards and as a SEO fallback. Author name is retained but the current template has no visible byline.</p>
+
 <div class="grid gap-5 lg:grid-cols-3">
     <div><label class="block text-sm font-medium" for="status">Status</label><select id="status" name="status" required class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm">@foreach ($statuses as $status)<option value="{{ $status->value }}" @selected(old('status', $article->status->value ?? 'draft') === $status->value)>{{ $status->label() }}</option>@endforeach</select>@error('status')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror</div>
     <div><label class="block text-sm font-medium" for="published_at">Publication date</label><input id="published_at" name="published_at" type="datetime-local" value="{{ old('published_at', isset($article) ? $article->published_at?->format('Y-m-d\TH:i') : '') }}" class="mt-2 block w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm">@error('published_at')<p class="mt-2 text-sm text-red-600">{{ $message }}</p>@enderror</div>

@@ -45,3 +45,10 @@ form.entries.pop();
 form.file = new File('photo.jpg', 123, 1);
 assert.equal(warns(), true, 'Selected uploads must warn');
 console.log('Admin unsaved-change checks passed');
+
+const css = fs.readFileSync('resources/css/app.css', 'utf8');
+assert.match(css, /\.admin-ui .*:not\(:disabled\).*cursor:pointer/, 'Enabled dashboard buttons need a pointer cursor');
+assert.match(css, /\.admin-ui .*:active .*filter:brightness/, 'Dashboard controls need pressed feedback');
+assert.match(css, /cursor:not-allowed/, 'Disabled controls must remain distinguishable');
+assert.match(css, /prefers-reduced-motion:reduce/, 'Reduced-motion support must remain');
+console.log('Admin interaction style checks passed');

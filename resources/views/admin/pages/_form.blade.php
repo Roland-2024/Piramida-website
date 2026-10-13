@@ -2,6 +2,8 @@
     $editing = isset($page);
 @endphp
 
+<p class="mb-5 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">Pages manage titles, localized URLs, SEO and publication. Generic pages also display Main content and active Page sections. The homepage uses its Discover/Pillars sections, shared template images and Homepage YouTube video; its Page title labels the record, SEO fields control metadata, and Short description appears in the desktop intro. About uses its named sections. Carousel pages use Programs / Carousel posts (Businesses for Business); Main content is a fallback only when no slides exist. Other saved page fields are retained, not automatically added to fixed templates.</p>
+
 @if ($editing && $page->carouselSlug())
     <x-admin.carousel-notice :page="$page" />
 @endif
