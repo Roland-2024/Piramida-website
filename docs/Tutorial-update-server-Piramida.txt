@@ -1,0 +1,283 @@
+PIRAMIDA — TUTORIAL PËR PËRDITËSIMIN E SERVERIT LIVE
+Përgatitur më 13 tetor 2026
+
+QËLLIMI
+Ndryshimet bëhen lokalisht, testohen, bëhen commit dhe push në GitHub/main.
+Më pas serveri shkarkon kodin dhe ndërton asetet. Nuk kopjohet databaza lokale.
+
+Ky tutorial vlen për konfigurimin aktual:
+  Përdorues SSH: deploy
+  Projekti: /var/www/piramida
+  Branch: main
+  MySQL: host 127.0.0.1, port 3306, databaza piramida, user piramida_user
+  Prodhimi përdor PHP/Composer/Node direkt, JO Docker.
+
+Kujdes: nëse infrastruktura, kredencialet ose procesi i deploy ndryshojnë,
+konfirmo hapat përpara përdorimit. Tutoriali nuk është script automatik.
+Ekzekuto çdo komandë veçmas. Nëse një komandë dështon, NDALO.
+Mos vazhdo me hapat e tjerë dhe mos e hap faqen nëse deploy është i paplotë.
+
+KUJDES I VEÇANTË — ROUTE CACHE
+Në versionin aktual është konfirmuar një bug: route:cache bën që disa
+Edit/Trash të Attractions, Businesses, Spaces, Leasing, Careers dhe Programs
+të mos zgjidhin rekordet. Deri sa të publikohet dhe testohet rregullimi:
+  përdor php artisan route:clear
+  MOS përdor php artisan route:cache ose php artisan optimize.
+Config cache dhe view cache mund të përdoren veçmas, si më poshtë.
+
+============================================================
+0. PËRGATITJA LOKALE, PARA SERVERIT
+============================================================
+1. Implemento dhe testo ndryshimin lokalisht.
+2. Kontrollo diff-in; mos përfshi .env, çelësa SSH, passwords ose uploads private.
+3. Bëj commit dhe push në main, sipas procesit të projektit.
+4. Ruaj hash-in e commit-it që do të publikohet (git log -1 --oneline).
+5. Lexo udhëzimet specifike të këtij ndryshimi:
+   - A ka migrime ose ndryshime të konfigurimit?
+   - A prek përmbajtje ekzistuese?
+   - A ndryshon PHP/Node ose kërkon ndonjë hap tjetër të konfirmuar?
+   Migrimet mund të ndryshojnë të dhëna: mos supozo se çdo migrim është pa rrezik.
+6. Nëse ke bërë CSS/kod me WinSCP në live, pasqyroje lokalisht dhe në Git
+   përpara deploy. Mos i fshi automatikisht ndryshimet e serverit.
+7. Zgjidh një orar me trafik të ulët. Maintenance nuk ndalon cron-in.
+   Shmang oraret e sinkronizimit 06:00 dhe 18:00 në Europe/Tirane;
+   nëse ndonjë proces shkrimi po punon, koordino përfundimin e tij.
+
+============================================================
+1. HYR NË SSH DHE KONTROLLO CHECKOUT-IN
+============================================================
+Hyr me lidhjen ekzistuese SSH si deploy. Komandat më poshtë janë Bash
+në server, jo PowerShell në Windows.
+
+cd /var/www/piramida
+umask 022
+pwd
+git branch --show-current
+git status --short
+git log -1 --oneline
+git remote -v
+df -h /var/www/piramida
+
+Pritet: path /var/www/piramida, branch main dhe status bosh.
+Nëse ka ndryshime lokale, veçanërisht CSS të ndryshuar me WinSCP, NDALO.
+Ruaj një kopje private të tyre dhe pajtoji me Git para se të vazhdosh.
+Mos përdor git reset --hard, git checkout -- ose stash pa e kuptuar çfarë ruan.
+Sigurohu që ka hapësirë për backup, node_modules dhe build.
+
+Shkarko informacionin e versionit të ri, pa ndryshuar kodin aktiv:
+
+git fetch origin main
+git log -1 --oneline origin/main
+git log --oneline HEAD..origin/main
+git diff --name-only HEAD origin/main
+
+Kontrollo që commit-i i fundit përputhet me versionin e miratuar lokalisht.
+Nëse je në branch tjetër, historia është e papritur ose versioni nuk përputhet,
+NDALO dhe kërko kontroll. Mos vazhdo vetëm sepse fetch doli me sukses.
+
+============================================================
+2. MAINTENANCE DHE BACKUP I RI
+============================================================
+php artisan down
+
+Faqja publike do të jetë përkohësisht në maintenance gjatë deploy.
+
+Krijo një folder privat jashtë web root:
+
+backup_dir=$(umask 077; mktemp -d /home/deploy/piramida-backup-XXXXXXXX)
+echo "$backup_dir"
+
+XXXXXXXX lihet siç është: mktemp e zëvendëson me karaktere rastësore.
+Ruaj path-in e shfaqur; do të nevojitet nëse ka problem.
+Nëse krijimi i folderit dështon ose path-i është bosh, NDALO.
+Vazhdo në të njëjtën seancë SSH që të ruhet variabla backup_dir.
+
+Backupi i .env dhe commit-it aktual:
+
+(umask 077; cp .env "$backup_dir/env")
+(umask 077; git rev-parse HEAD > "$backup_dir/commit.txt")
+
+Backupi i uploads (publike dhe private brenda storage/app):
+
+(umask 077; tar -czf "$backup_dir/storage.tar.gz" storage/app)
+
+Kontrollo parametrat JO sekretë të databazës:
+
+grep -E '^(DB_CONNECTION|DB_HOST|DB_PORT|DB_DATABASE|DB_USERNAME)=' .env
+
+Duhet të përputhen me konfigurimin MySQL në fillim të tutorialit.
+Nëse nuk përputhen, ose përdoren URL/konfigurime të tjera, NDALO dhe përshtat
+komandën me konfigurimin real; mos bëj backup të databazës së gabuar.
+
+Backupi MySQL:
+
+(umask 077; mysqldump --host=127.0.0.1 --port=3306 --user=piramida_user --password --single-transaction --quick --no-tablespaces piramida > "$backup_dir/database.sql")
+
+Kur të kërkohet "Enter password:", shkruaj password-in e databazës.
+Nuk shfaqet gjatë shtypjes. Mos e shkruaj në komandë dhe mos e dërgo në chat.
+Nëse mysqldump dështon, një file .sql mund të ekzistojë por të jetë i paplotë.
+
+Verifiko backup-et:
+
+test -s "$backup_dir/database.sql" && grep -q '^-- Dump completed' "$backup_dir/database.sql" && echo "Database backup check passed"
+gzip -t "$backup_dir/storage.tar.gz" && echo "Storage archive check passed"
+ls -lh "$backup_dir"
+
+Duhet të shfaqen TË DY mesazhet e suksesit dhe këto katër file:
+  env, commit.txt, database.sql, storage.tar.gz
+
+Këto janë kontrolle bazë të backup-it, jo provë e një restore të plotë.
+Ky është backup i aplikacionit, jo snapshot i të gjithë serverit/Nginx/MySQL.
+Për ndryshime infrastrukture kërkohet edhe backup/snapshot i përshtatshëm.
+Ruaj një kopje në një destinacion privat të sigurt jashtë serverit;
+backup-et përmbajnë secrets dhe dokumente private, jo file për publikim.
+
+umask 077 përdoret VETËM brenda kllapave, për backup-et.
+Mos e lër aktive në shell për git/build/cache: shkakton permission denied/500.
+
+============================================================
+3. AKTIVIZO KODIN E SHKARKUAR NGA GITHUB
+============================================================
+umask 022
+php artisan config:clear
+php artisan route:clear
+git merge --ff-only origin/main
+git log -1 --oneline
+
+merge --ff-only aplikon versionin që fetch shkarkoi dhe që kontrollove.
+Nuk krijon merge commit dhe nuk hedh poshtë ndryshime lokale.
+Nëse dështon, NDALO: mos përdor --force ose reset --hard.
+Commit-i i shfaqur duhet të jetë versioni i miratuar.
+
+============================================================
+4. DEPENDENCIES DHE BUILD
+============================================================
+composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+
+Kjo përdor composer.lock; NUK përdoret composer update në live.
+Për një deploy vetëm CSS, pa ndryshime Composer, mund të anashkalohet
+vetëm kur këtë e konfirmojnë udhëzimet specifike të release-it.
+
+npm ci
+npm run build
+
+Prit përfundimin e build-it me sukses, jo vetëm një listë assetesh.
+Warning-u për fontaine opsionale nuk ishte bllokues në konfigurimin aktual.
+Nëse exit status është gabim ose manifest mungon, NDALO.
+
+test -s public/build/manifest.json && echo "Build manifest exists"
+
+Mos kopjo skedarë build nga një version tjetër dhe mos përditëso
+paketat me npm update si pjesë e këtij procesi.
+
+============================================================
+5. MIGRIMET DHE CACHE
+============================================================
+php artisan config:clear
+php artisan migrate --force
+php artisan migrate:status
+
+Nëse nuk ka migrime të reja, "Nothing to migrate" është normale.
+Çdo migrim i ri duhet të përfundojë me sukses. Nëse ka error, NDALO.
+Mos përsërit verbërisht një migrim të dështuar: mund të ketë ndryshime të pjesshme.
+
+php artisan config:cache
+php artisan route:clear
+php artisan view:cache
+
+ROUTE CACHE: qëllimisht përdorim route:clear, jo route:cache/optimize,
+deri sa rregullimi i bindings të jetë publikuar dhe testuar me cache aktive.
+
+Mos përdor seeders si pjesë e një përditësimi rutinë.
+storage:link nuk duhet përsëritur në çdo deploy nëse link-u ekziston.
+Mos ndrysho .env/APP_KEY/SMTP nëse release-i nuk e kërkon shprehimisht.
+
+============================================================
+6. KONTROLLO LEJET DHE HAP FAQEN
+============================================================
+umask
+ls -ld bootstrap/cache storage/framework/views public/build
+ls -l bootstrap/cache/config.php public/build/manifest.json
+
+umask duhet të jetë 0022. File publike/config cache normalisht 644
+(-rw-r--r--), folderat duhet të jenë të aksesueshëm nga web-serveri.
+storage dhe bootstrap/cache duhet të ruajnë lejet ekzistuese të shkrimit
+për web-serverin. Nëse shfaqet permission denied, kërko kontroll të saktë.
+Mos bëj chmod -R 777 ose chmod global mbi .env/private uploads/backup-et.
+
+php artisan up
+
+Faqja është përsëri online vetëm pasi kjo komandë të përfundojë me sukses.
+
+============================================================
+7. KONTROLLET PAS DEPLOY
+============================================================
+Në browser bëj Ctrl + Shift + R dhe kontrollo:
+  - Homepage në AL dhe EN, desktop dhe mobile.
+  - Faqet/module që u ndryshuan në këtë release.
+  - Foto, CSS dhe JavaScript të ngarkohen pa 404/500.
+  - Admin login, listat dhe Edit për rekordet ekzistuese.
+  - Attractions, Businesses, Event spaces dhe Leasing Edit.
+  - Forms/validation pa dërguar kërkesa reale ose dokumente private si test.
+  - Përmbajtja, uploads dhe caktimet ekzistuese të jenë ende aty.
+
+Mos kliko Trash mbi një rekord real vetëm për të testuar butonin.
+Testet automatike me SQLite bëhen lokalisht; jo mbi databazën live.
+HTTP 200 i homepage nuk mjafton për të konfirmuar gjithë dashboard-in.
+
+Kontrollo log-un në server nëse ka gabim:
+
+tail -n 60 storage/logs/laravel.log
+
+Shiko datën/orën: një gabim i vjetër nuk provon dështimin e deploy-it të ri.
+Para se të dërgosh log/screenshot, hiq passwords, tokens dhe të dhëna personale.
+
+Ruaj shënim: data e deploy-it, commit-i, path-i i backup-it dhe kontrollet.
+Nëse OPcache i serverit nuk kontrollon ndryshimet e file-ve, mund të nevojitet
+reload i shërbimit real PHP-FPM nga administratori. Mos hamendëso emrin e tij.
+
+============================================================
+8. NËSE DEL ERROR
+============================================================
+1. Ndalo hapat pasues. Mos vazhdo deploy-in me errors.
+2. Nëse faqja është hapur por e prishur, php artisan down mund ta rikthejë
+   në maintenance, nëse aplikacioni është ende në gjendje të ekzekutohet.
+3. Shëno komandën e dështuar dhe mesazhin e saktë.
+4. Kontrollo log-un dhe lejet e file-ve të përmendura.
+5. Në rast Edit/Trash 404 me route cache, workaround-i është route:clear.
+6. Kërko ndihmë përpara restore ose rollback.
+
+Nuk ka komandë universale të sigurt rollback:
+  - Kodi i vjetër mund të mos përputhet me databazën pas migrimit.
+  - migrate:rollback mund të heqë të dhëna/tabela ose të prekë disa migrime.
+  - Restore i databazës humbet shkrimet e bëra pas backup-it.
+  - Revert i kodit duhet të vijë nga një commit i kontrolluar, me dependencies
+    dhe assets për të njëjtin version; jo nga reset i pakontrolluar në live.
+Prandaj backup-et ruhen dhe plani i rikthimit zgjidhet sipas gabimit konkret.
+
+============================================================
+MOS I EKZEKUTO NË LIVE SI PJESË E UPDATE-IT RUTINË
+============================================================
+  php artisan migrate:fresh
+  php artisan migrate:refresh
+  php artisan db:wipe
+  php artisan db:seed
+  php artisan key:generate
+  git reset --hard
+  git clean -fd
+  composer update
+  npm update
+  chmod -R 777 ...
+
+Mos kopjo databazën lokale, .env lokale ose përmbajtje demo mbi live.
+Git transporton kodin e versionuar, jo përmbajtjen e ruajtur në MySQL.
+Megjithatë, migrimet dhe ndryshimet e template-it mund të ndryshojnë të dhënat
+ose çfarë shfaqet, prandaj lexo release-in dhe kontrollo faqen pas deploy.
+
+PËR NDRYSHIMET ME WINSCP
+Nëse git status tregon contactus.css ose integration.css si modified,
+serveri nuk është clean edhe nëse ndryshimi është pasqyruar tani në GitHub.
+Mos e detyro merge-in. Ruaj file-t në backup dhe krahasoji me versionin e ri;
+pajtoji me ndihmën e developer-it që të mos humbasin ndryshime të tjera.
+
+FUND — ky tutorial nuk ekzekuton asnjë komandë në server vetë.

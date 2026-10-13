@@ -104,7 +104,27 @@ dialog[open]::backdrop { animation:popup-backdrop 240ms ease-out both; }
 .leasing-submit-button { font-size:14px; }
 .leasing-back-button { display:none; }
 .leasing-form-gallery:has(img:only-child) { justify-content:center; }
-.leasing-form-carousel:has(img:only-child) .leasing-form-carousel-arrow { display:none; }
+@media (min-width: 768px) {
+  .leasing-form-grid-3 > div,
+  .leasing-document-field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .leasing-form-grid-3 > div > label,
+  .leasing-document-field > label {
+    flex-grow: 1;
+  }
+}
+
+.leasing-form-carousel:not(:has(.leasing-form-gallery > img)) {
+  display: none;
+}
+
+.leasing-form-carousel:not(:has(.leasing-form-gallery > img:nth-child(2)))
+.leasing-form-carousel-arrow {
+  display: none;
+}
 
 .contact-layout > * { min-width:0; }
 @media(min-width:901px) { .contact-form-shell { padding-bottom:180px; } }
