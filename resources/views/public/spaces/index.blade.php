@@ -30,7 +30,7 @@
             <div class="event-spaces-card-track">@forelse ($items as $space)
 @php $translation = $space->translation(app()->getLocale(), false); @endphp
 <a class="event-spaces-card" href="{{ route('public.spaces.show', [app()->getLocale(), $translation->slug]) }}" @if($space->booking_mode->allowsInternal()) data-dialog-open="space-request-{{ $space->id }}" @endif>
-    <div class="event-spaces-card-media">@if($space->featuredMedia)<img src="{{ $space->featuredMedia->displayUrl() }}" alt="{{ $translation->title }}" loading="lazy">@endif<span class="event-spaces-card-button">{{ $spaceType === \App\Enums\SpaceType::Leasing ? __('cms.request_information') : __('cms.book_now') }}</span></div>
+    <div class="event-spaces-card-media">@if($space->featuredMedia)<x-public-image :media="$space->featuredMedia" alt="{{ $translation->title }}" loading="lazy" sizes="(max-width: 639px) 100vw, 50vw" />@endif<span class="event-spaces-card-button">{{ $spaceType === \App\Enums\SpaceType::Leasing ? __('cms.request_information') : __('cms.book_now') }}</span></div>
     <div class="event-spaces-card-title">{{ $translation->title }}</div>
     <div class="event-spaces-card-meta">{{ $translation->location }} @if($space->area_sqm) | {{ $space->area_sqm + 0 }} m² @endif @if($space->capacity) | {{ __('cms.capacity') }}: {{ $space->capacity }} @endif</div>
 </a>
@@ -80,7 +80,7 @@
 @foreach ($items as $space)
 @php $translation = $space->translation(app()->getLocale(), false); @endphp
 <section id="space-{{ $loop->iteration }}" class="event-space-panel">
-    @if($space->featuredMedia)<img class="event-space-panel-image" src="{{ $space->featuredMedia->displayUrl() }}" alt="" loading="lazy">@endif
+    @if($space->featuredMedia)<x-public-image class="event-space-panel-image" :media="$space->featuredMedia" alt="" loading="lazy" sizes="(max-width: 639px) 100vw, 50vw" />@endif
     <div class="event-space-panel-content"><div class="event-space-panel-title">{{ $translation->title }}</div>
     <p class="event-space-panel-meta">{{ $translation->location }} @if($space->area_sqm) | {{ $space->area_sqm + 0 }} m² @endif @if($space->capacity) | {{ __('cms.capacity') }}: {{ $space->capacity }} @endif</p>
     <a class="event-space-panel-button" href="{{ route('public.spaces.show', [app()->getLocale(), $translation->slug]) }}" @if($space->booking_mode->allowsInternal()) data-dialog-open="space-request-{{ $space->id }}" @endif>{{ $spaceType === \App\Enums\SpaceType::Leasing ? __('cms.request_information') : __('cms.book_now') }} ↗</a></div>

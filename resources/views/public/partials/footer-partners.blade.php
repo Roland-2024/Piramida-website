@@ -6,7 +6,7 @@
         @if($partnerCopy?->description)<div class="prose-content mt-3 text-sm">{!! $partnerCopy->description !!}</div>@endif
         <div class="mt-4 flex flex-wrap items-center justify-center md:justify-start gap-3">
             @if($footerPartners?->gallery->isNotEmpty())
-                @foreach($footerPartners->gallery as $logo)<img src="{{ $logo->displayUrl() }}" alt="{{ (app()->getLocale() === 'en' ? $logo->alt_text_en : $logo->alt_text_al) ?: $logo->original_name }}" class="h-8 w-[75px] md:h-10 md:w-[102px] object-contain" loading="lazy">@endforeach
+                @foreach($footerPartners->gallery as $logo)<x-public-image :media="$logo" alt="{{ (app()->getLocale() === 'en' ? $logo->alt_text_en : $logo->alt_text_al) ?: $logo->original_name }}" class="h-8 w-[75px] md:h-10 md:w-[102px] object-contain" loading="lazy" sizes="(max-width: 767px) 75px, 102px" />@endforeach
             @else
                 <img src="{{ \App\Support\WebsiteContent::image('template/images/aadffinalk-logo 1.svg') }}" class="h-8 w-[75px] md:h-10 md:w-[102px] object-contain" alt="{{ __('website.partials_footer_aadf') }}">
                 <img src="{{ \App\Support\WebsiteContent::image('template/images/bashkia2 1.svg') }}" class="h-8 w-[75px] md:h-10 md:w-[102px] object-contain" alt="{{ __('website.partials_footer_bashkia_tiran') }}">

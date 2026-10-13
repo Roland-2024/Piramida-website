@@ -3,8 +3,8 @@
                     class="news-card shrink-0 w-full snap-center rounded-[16px] border border-white/15 p-[30px] bg-gradient-to-b from-white/[0.06] to-white/[0.01] backdrop-blur-md">
                     <a href="{{ route('public.news.show', [app()->getLocale(), $newsTranslation->slug]) }}">
                         <div class="rounded-xl">
-                            <img src="{{ $newsItem->featuredMedia?->displayUrl() ?: \App\Support\WebsiteContent::image('template/images/piramida_block_1.jpg') }}" alt="{{ $newsTranslation->title }}"
-                                loading="lazy" class="w-full object-cover h-[265px] rounded-[16px]" />
+                            <x-public-image :media="$newsItem->featuredMedia" :path="'template/images/piramida_block_1.jpg'" alt="{{ $newsTranslation->title }}"
+                                loading="lazy" class="w-full object-cover h-[265px] rounded-[16px]" sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw" />
                         </div>
                         <div class="pt-4 pb-2 px-1">
                             <div class="text-white title-22 mb-2">

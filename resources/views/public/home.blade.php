@@ -32,8 +32,7 @@
 <span class="sr-only">{{ $translation?->title }}</span>
     <section class="relative w-full min-h-[110vh] overflow-hidden pb-28">
       <!-- Background image -->
-      <img src="{{ \App\Support\WebsiteContent::image('template/images/piramida-hero-1920.jpg') }}" @if (\App\Support\WebsiteContent::image('template/images/piramida-hero-1920.jpg') === asset('template/images/piramida-hero-1920.jpg')) srcset="/template/images/piramida-hero-960.jpg 960w, /template/images/piramida-hero-1920.jpg 1920w" @endif sizes="100vw" width="1920" height="1232" fetchpriority="high" alt="{{ __('website.home_piramida_of_tirana') }}"
-        class="absolute inset-0 w-full h-full object-cover" />
+      <x-public-image path="template/images/piramida-hero-1920.jpg" sizes="100vw" width="1920" height="1232" fetchpriority="high" alt="{{ __('website.home_piramida_of_tirana') }}" class="absolute inset-0 w-full h-full object-cover" />
 
       <!-- Bottom shadow overlay for text contrast -->
       <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/50 via-black/30 to-transparent"></div>
@@ -81,8 +80,8 @@
       <!-- Card: Education -->
       <a @if($presentationUrls['education']) href="{{ $presentationUrls['education'] }}" @else aria-disabled="true" @endif
         id="education" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
-        <img src="{{ \App\Support\WebsiteContent::image('template/images/education.png') }}" alt="{{ __('website.home_education_spaces_at_piramida') }}"
-          class="w-full h-full object-cover object-center" />
+        <x-public-image :path="'template/images/education.png'" alt="{{ __('website.home_education_spaces_at_piramida') }}"
+          class="w-full h-full object-cover object-center" loading="lazy" />
 
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
           <img src="{{ \App\Support\WebsiteContent::image('template/images/Education.svg') }}" class="w-[24px] h-[30px]" />
@@ -97,8 +96,8 @@
       <!-- Card: Innovation -->
       <a @if($presentationUrls['innovation']) href="{{ $presentationUrls['innovation'] }}" @else aria-disabled="true" @endif
         id="innovation" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
-        <img src="{{ \App\Support\WebsiteContent::image('template/images/innovation.png') }}" alt="{{ __('website.home_innovation_spaces_at_piramida') }}"
-          class="w-full h-full object-cover object-center" />
+        <x-public-image :path="'template/images/innovation.png'" alt="{{ __('website.home_innovation_spaces_at_piramida') }}"
+          class="w-full h-full object-cover object-center" loading="lazy" />
 
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
           <img src="{{ \App\Support\WebsiteContent::image('template/images/Innovation.svg') }}" class="w-[24px] h-[30px]" />
@@ -113,8 +112,8 @@
       <!-- Card: Business -->
       <a @if($presentationUrls['business']) href="{{ $presentationUrls['business'] }}" @else aria-disabled="true" @endif
         id="business" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
-        <img src="{{ \App\Support\WebsiteContent::image('template/images/business.png') }}" alt="{{ data_get($pillarItems, '2.title', __('cms.business')) }}"
-          class="w-full h-full object-cover object-center" />
+        <x-public-image :path="'template/images/business.png'" alt="{{ data_get($pillarItems, '2.title', __('cms.business')) }}"
+          class="w-full h-full object-cover object-center" loading="lazy" />
 
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
           <img src="{{ \App\Support\WebsiteContent::image('template/images/Business.svg') }}" class="w-[24px] h-[30px]" />
@@ -131,8 +130,8 @@
       <!-- Card: Art & Culture -->
       <a @if($presentationUrls['art']) href="{{ $presentationUrls['art'] }}" @else aria-disabled="true" @endif
         id="art" class="block group relative rounded-2xl overflow-hidden h-[280px] sm:h-[320px] md:h-[350px] bg-slate-900 border border-gray-800">
-        <img src="{{ \App\Support\WebsiteContent::image('template/images/art.png') }}" alt="{{ data_get($pillarItems, '3.title', __('cms.art')) }}"
-          class="w-full h-full object-cover object-center" />
+        <x-public-image :path="'template/images/art.png'" alt="{{ data_get($pillarItems, '3.title', __('cms.art')) }}"
+          class="w-full h-full object-cover object-center" loading="lazy" />
 
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
           <img src="{{ \App\Support\WebsiteContent::image('template/images/Art.svg') }}" class="w-[24px] h-[30px]" />
@@ -220,7 +219,7 @@
       <div class="video-clip">
         @if (! $youtubeId && $videoSection?->video_url && preg_match('/\\.(mp4|webm|ogg)(\\?.*)?$/i', $videoSection->video_url))<video id="piramidaVideo" poster="{{ \App\Support\WebsiteContent::image('template/images/Image Container.png') }}" class="w-full aspect-[1280/680] object-cover" preload="metadata" playsinline controls><source src="{{ $videoSection->video_url }}"></video>
         @else
-        <img src="{{ \App\Support\WebsiteContent::image('template/images/Image Container.png') }}" alt="{{ __('website.home_piramida') }}" class="w-full aspect-[1280/680] object-cover" loading="lazy">
+        <x-public-image :path="'template/images/Image Container.png'" alt="{{ __('website.home_piramida') }}" class="w-full aspect-[1280/680] object-cover" loading="lazy" />
         @endif
       </div>
 
@@ -280,7 +279,7 @@
     @php $eventTranslation = $event->translation(app()->getLocale(), false); @endphp
     <div class="card-snap overflow-hidden {{ $loop->index === 1 || $upcomingEvents->count() === 1 ? 'is-active' : '' }}">
         <a href="{{ route('public.events.show', [app()->getLocale(), $eventTranslation->slug]) }}">
-            @if ($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="{{ $eventTranslation->title }}" loading="lazy" class="w-full h-[450px] rounded-[12px] object-cover object-center">@endif
+            @if ($event->featuredMedia)<x-public-image :media="$event->featuredMedia" alt="{{ $eventTranslation->title }}" loading="lazy" class="w-full h-[450px] rounded-[12px] object-cover object-center" sizes="(max-width: 639px) 100vw, 50vw" />@endif
         </a>
         <div class="card-text pt-[40px] sm:p-5 mx-auto">
             <p class="title-green-20 mx-auto text-center">{{ $eventTranslation->title }}</p>
@@ -318,8 +317,8 @@
       <!-- Attraction cards -->
       <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6 mb-24">
 
-        @include('public.partials.home-promotion', ['section' => $attractionPromotion, 'color' => '#D9F044', 'defaultTitle' => $featuredAttractions->first()?->translation(app()->getLocale(), false)?->title ?: __('cms.step_into_piramida'), 'defaultDescription' => $featuredAttractions->first()?->translation(app()->getLocale(), false)?->short_description, 'defaultImage' => $featuredAttractions->first()?->featuredMedia?->displayUrl() ?: \App\Support\WebsiteContent::image('template/images/piramida_block.jpg'), 'templateImage' => 'template/images/piramida_block.jpg', 'defaultUrl' => route('public.attractions.index', app()->getLocale()), 'defaultButton' => __('cms.step_into_piramida')])
-        @include('public.partials.home-promotion', ['section' => $experiencePromotion, 'color' => '#BEE3FF', 'defaultTitle' => __('cms.social_spaces'), 'defaultDescription' => __('cms.businesses_intro'), 'defaultImage' => \App\Support\WebsiteContent::image('template/images/piramida_block_1.jpg'), 'templateImage' => 'template/images/piramida_block_1.jpg', 'defaultUrl' => route('public.businesses.index', app()->getLocale()), 'defaultButton' => __('cms.explore_corners')])
+        @include('public.partials.home-promotion', ['section' => $attractionPromotion, 'color' => '#D9F044', 'defaultTitle' => $featuredAttractions->first()?->translation(app()->getLocale(), false)?->title ?: __('cms.step_into_piramida'), 'defaultDescription' => $featuredAttractions->first()?->translation(app()->getLocale(), false)?->short_description, 'defaultMedia' => $featuredAttractions->first()?->featuredMedia, 'templateImage' => 'template/images/piramida_block.jpg', 'defaultUrl' => route('public.attractions.index', app()->getLocale()), 'defaultButton' => __('cms.step_into_piramida')])
+        @include('public.partials.home-promotion', ['section' => $experiencePromotion, 'color' => '#BEE3FF', 'defaultTitle' => __('cms.social_spaces'), 'defaultDescription' => __('cms.businesses_intro'), 'templateImage' => 'template/images/piramida_block_1.jpg', 'defaultUrl' => route('public.businesses.index', app()->getLocale()), 'defaultButton' => __('cms.explore_corners')])
 
       </div>
 
@@ -348,8 +347,8 @@
       <article class="news-card shrink-0 w-full sm:w-auto snap-center rounded-[16px] border border-white/15 p-[30px]">
         <a href="{{ route('public.news.show', [app()->getLocale(), $newsTranslation->slug]) }}">
           <div class="rounded-xl">
-            <img src="{{ $article->featuredMedia?->displayUrl() ?: \App\Support\WebsiteContent::image('template/images/piramida_block_1.jpg') }}" alt="{{ $newsTranslation->title }}" loading="lazy"
-              class="w-full sm:w-[350px] object-cover h-[380px] rounded-[12px]" />
+            <x-public-image :media="$article->featuredMedia" :path="'template/images/piramida_block_1.jpg'" alt="{{ $newsTranslation->title }}" loading="lazy"
+              class="w-full sm:w-[350px] object-cover h-[380px] rounded-[12px]" sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw" />
           </div>
           <div class="pt-4 px-1">
             <div class="text-white title-22 mb-2">

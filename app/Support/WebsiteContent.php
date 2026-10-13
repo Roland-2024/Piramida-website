@@ -50,12 +50,28 @@ class WebsiteContent
         }
     }
 
-    public static function image(string $path): string
+    public static function image(string $path, bool $optimized = true): string
     {
-        $fallback = preg_match('~^template/images/leasing/(kati-0|kati-1|kati-3|kati-4|outdoor)\.png$~', $path)
-            ? substr($path, 0, -4).'.webp' : $path;
+        if (! $optimized) {
+            return (app(self::class)->images()[sha1($path)] ?? null)?->url() ?? asset($path);
+        }
 
-        return app(self::class)->images()[sha1($path)] ?? asset($fallback);
+        $fallback = preg_match('~^template/images/leasing/(kati-0|kati-1|kati-3|kati-4|outdoor)\.png$~', $path)
+            || in_array($path, config('template_photos'), true)
+            ? substr($path, 0, strrpos($path, '.')).'.webp' : $path;
+
+        return (app(self::class)->images()[sha1($path)] ?? null)?->displayUrl() ?? asset($fallback);
+    }
+
+    public static function imageSrcset(string $path): ?string
+    {
+        if ($media = app(self::class)->images()[sha1($path)] ?? null) {
+            return $media->srcset();
+        }
+
+        return $path === 'template/images/piramida-hero-1920.jpg'
+            ? asset('template/images/piramida-hero-960.jpg').' 960w, '.asset($path).' 1920w'
+            : null;
     }
 
     private function images(): array
@@ -66,7 +82,7 @@ class WebsiteContent
             $this->images = [];
             foreach ($references as $key => $id) {
                 if ($item = $media->get($id)) {
-                    $this->images[$key] = $item->displayUrl();
+                    $this->images[$key] = $item;
                 }
             }
         }

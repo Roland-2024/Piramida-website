@@ -5,8 +5,11 @@ namespace Tests\Feature;
 use App\Models\Media;
 use App\Models\User;
 use App\Services\MediaImageOptimizer;
+use App\Support\WebsiteContent;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -30,6 +33,8 @@ class MediaOptimizationTest extends TestCase
             $this->assertSame((int) $width, getimagesize($disk->path($path))[0]);
         }
         $this->assertStringEndsWith('-480.webp', $media->displayUrl(480));
+        $this->assertStringContainsString('-480.webp 480w', $media->srcset());
+        $this->assertStringContainsString('-1600.webp 1600w', $media->srcset());
         $this->assertStringEndsWith('.png', $media->url());
         $this->assertFalse(app(MediaImageOptimizer::class)->optimize($media));
     }
@@ -40,6 +45,7 @@ class MediaOptimizationTest extends TestCase
             $media = Media::factory()->create($attributes);
             $this->assertFalse(app(MediaImageOptimizer::class)->optimize($media));
             $this->assertSame($media->url(), $media->displayUrl());
+            $this->assertNull($media->srcset());
         }
     }
 
@@ -55,5 +61,51 @@ class MediaOptimizationTest extends TestCase
         $this->assertFalse(app(MediaImageOptimizer::class)->optimize($media));
         $this->assertNull($media->fresh()->image_variants);
         $this->assertSame('/storage/media/original.png', $media->displayUrl());
+    }
+
+    public function test_responsive_markup_uses_actual_widths_and_keeps_loading_controls(): void
+    {
+        $media = Media::factory()->create(['width' => 800, 'height' => 600, 'image_variants' => [480 => 'small.webp', 1600 => 'large.webp']]);
+        $this->assertSame(Storage::disk('public')->url('small.webp').' 480w, '.Storage::disk('public')->url('large.webp').' 800w', $media->srcset());
+        $html = Blade::render('<x-public-image :media="$media" alt="Example" sizes="300px" loading="lazy" data-gallery-image :hidden="true" />', compact('media'));
+        $this->assertStringContainsString('sizes="300px"', $html);
+        $this->assertStringContainsString('loading="lazy"', $html);
+        $this->assertStringContainsString('decoding="async"', $html);
+        $this->assertStringContainsString('width="800"', $html);
+        $this->assertStringContainsString('height="600"', $html);
+        $this->assertStringContainsString('hidden', $html);
+        $this->assertStringContainsString('data-gallery-image', $html);
+
+        $media->image_variants = [480 => 'small.webp'];
+        $this->assertStringEndsWith($media->url().' 800w', $media->srcset());
+        $media->width = 320;
+        $this->assertSame(Storage::disk('public')->url('small.webp').' 320w', $media->srcset());
+        $media->image_variants = null;
+        $this->assertNull($media->srcset());
+        $html = Blade::render('<x-public-image :media="$media" path="template/images/piramida-hero-1920.jpg" alt="Fallback" />', compact('media'));
+        $this->assertStringContainsString('src="'.$media->url().'"', $html);
+        $this->assertStringNotContainsString('srcset=', $html);
+    }
+
+    public function test_template_copies_are_smaller_and_image_overrides_keep_their_own_candidates(): void
+    {
+        foreach (config('template_photos') as $path) {
+            $copy = substr($path, 0, strrpos($path, '.')).'.webp';
+            $this->assertFileExists(public_path($copy));
+            $this->assertLessThan(filesize(public_path($path)), filesize(public_path($copy)));
+            $this->assertSame(array_slice(getimagesize(public_path($path)), 0, 2), array_slice(getimagesize(public_path($copy)), 0, 2));
+            $this->assertStringEndsWith($copy, WebsiteContent::image($path));
+            $this->assertStringEndsWith($path, WebsiteContent::image($path, false));
+        }
+        $this->get('/')->assertOk()->assertSee('fetchpriority="high"', false)
+            ->assertSee('piramida-hero-960.jpg 960w', false)->assertSee('loading="lazy"', false)
+            ->assertSee('class="absolute inset-0 w-full h-full object-cover"', false);
+
+        $media = Media::factory()->create(['width' => 1600, 'height' => 1000, 'image_variants' => [480 => 'hero-small.webp', 1600 => 'hero-large.webp']]);
+        DB::table('website_images')->insert(['key' => sha1('template/images/piramida-hero-1920.jpg'), 'media_id' => $media->id]);
+        $this->app->forgetScopedInstances();
+        $this->get('/en')->assertOk()->assertSee('hero-small.webp 480w', false)
+            ->assertSee('hero-large.webp 1600w', false)->assertDontSee('piramida-hero-960.jpg', false);
+        $this->assertSame($media->url(), WebsiteContent::image('template/images/piramida-hero-1920.jpg', false));
     }
 }

@@ -9,7 +9,7 @@
     <div class="grid items-center gap-10 {{ $section->primaryMedia ? 'lg:grid-cols-2' : '' }}">
         @if ($section->primaryMedia)<div>
                 @include('public.partials.prism', ['media' => $section->primaryMedia])
-                @if ($section->secondaryMedia)<img src="{{ $section->secondaryMedia->displayUrl() }}" alt="{{ $imageAlt($section->secondaryMedia) }}" class="mt-5 max-h-80 w-full rounded-xl object-cover" loading="lazy">@endif
+                @if ($section->secondaryMedia)<x-public-image :media="$section->secondaryMedia" alt="{{ $imageAlt($section->secondaryMedia) }}" class="mt-5 max-h-80 w-full rounded-xl object-cover" loading="lazy" sizes="(max-width: 639px) 100vw, 50vw" />@endif
             </div>
         @endif
         <div class="{{ $isPillars || $isPartners ? 'mx-auto max-w-2xl text-center' : '' }}">
@@ -28,7 +28,7 @@
                 <article class="{{ $isPillars ? 'pillar-card' : '' }}">
                     @if ($isPillars && $loop->index< 4)
                         @php $artwork = ['education', 'innovation', 'business', 'art'][$loop->index]; @endphp
-                        <img src="{{ \App\Support\WebsiteContent::image('template/images/'.$artwork.'.png') }}" alt="" class="pillar-photo" loading="lazy">
+                        <x-public-image :path="'template/images/'.$artwork.'.png'" alt="" class="pillar-photo" loading="lazy" />
                         <img src="{{ \App\Support\WebsiteContent::image('template/images/'.ucfirst($artwork).'.svg') }}" alt="" width="26" height="30">
                     @endif
                     <div><h3>{{ data_get($item, 'title') }}</h3>@if (data_get($item, 'text'))<p class="mt-3">{{ data_get($item, 'text') }}</p>@endif</div>
@@ -44,7 +44,7 @@
         </div>
     @endif
     @if ($section->gallery->isNotEmpty())<div class="mt-8 {{ $isPartners ? 'grid grid-cols-2 items-center gap-6 sm:grid-cols-3' : 'carousel-track' }}">
-            @foreach ($section->gallery as $media)<img src="{{ $media->displayUrl() }}" alt="{{ $imageAlt($media) }}" loading="lazy" class="{{ $isPartners ? 'h-24 w-full bg-white p-4 object-contain' : 'h-80 rounded-xl object-cover' }}">
+            @foreach ($section->gallery as $media)<x-public-image :media="$media" alt="{{ $imageAlt($media) }}" loading="lazy" class="{{ $isPartners ? 'h-24 w-full bg-white p-4 object-contain' : 'h-80 rounded-xl object-cover' }}" sizes="(max-width: 639px) 100vw, 50vw" />
             @endforeach
         </div>
     @endif

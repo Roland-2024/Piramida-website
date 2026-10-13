@@ -53,6 +53,25 @@ class Media extends Model
         return Storage::disk($this->disk)->url($path);
     }
 
+    public function srcset(): ?string
+    {
+        if (! $this->width || ! $this->image_variants) {
+            return null;
+        }
+
+        $candidates = [];
+        foreach ($this->image_variants as $width => $path) {
+            $candidates[min((int) $width, $this->width)] = Storage::disk($this->disk)->url($path);
+        }
+        // Keep a larger candidate when only the thumbnail was worth generating.
+        if (! isset($this->image_variants[1600])) {
+            $candidates[$this->width] ??= $this->url();
+        }
+        ksort($candidates);
+
+        return collect($candidates)->map(fn ($url, $width) => $url.' '.$width.'w')->implode(', ');
+    }
+
     public function isReferenced(): bool
     {
         return Page::withTrashed()->where('featured_media_id', $this->id)->exists()

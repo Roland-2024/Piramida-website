@@ -14,15 +14,15 @@
         </div>
 
         <div class="max-w-[1600px] w-full mx-auto px-6 mt-[40px]">
-            @if($article->featuredMedia)<img src="{{ $article->featuredMedia->displayUrl() }}" alt="{{ $translation->title }}"
-                class="max-h-[680px] rounded-[20px] w-full object-cover">@endif
+            @if($article->featuredMedia)<x-public-image :media="$article->featuredMedia" alt="{{ $translation->title }}"
+                class="max-h-[680px] rounded-[20px] w-full object-cover" sizes="100vw" />@endif
         </div>
 
 
         <article class="news-article mx-auto max-w-6xl px-6 prose-content">
 {!! preg_replace('~<p>(?:\s|&nbsp;|<br\s*/?>)*</p>~iu', '', $translation->content ?? '') !!}
 @if($article->gallery->isNotEmpty())<div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
-@foreach($article->gallery as $media)<img src="{{ $media->displayUrl() }}" alt="{{ app()->getLocale() === 'en' ? $media->alt_text_en : $media->alt_text_al }}" class="w-full h-[260px] object-cover rounded-[16px]" loading="lazy">@endforeach
+@foreach($article->gallery as $media)<x-public-image :media="$media" alt="{{ app()->getLocale() === 'en' ? $media->alt_text_en : $media->alt_text_al }}" class="w-full h-[260px] object-cover rounded-[16px]" loading="lazy" sizes="100vw" />@endforeach
 </div>@endif</article>
 
         <img src="{{ \App\Support\WebsiteContent::image('template/images/greeen.png') }}" alt="" aria-hidden="true"

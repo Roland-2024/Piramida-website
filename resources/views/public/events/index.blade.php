@@ -11,7 +11,7 @@
                         @php $item = $event->translation(app()->getLocale(), false); $offset = 2 - $loop->index; @endphp
                         <article class="slot-diagonal absolute overflow-hidden" style="--card-offset:{{ $offset }};">
                             <a href="{{ route('public.events.show', [app()->getLocale(), $item->slug]) }}" aria-label="{{ $item->title }}">
-                                @if ($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="" class="absolute inset-0 w-full h-full object-cover">@endif
+                                @if ($event->featuredMedia)<x-public-image :media="$event->featuredMedia" alt="" class="absolute inset-0 w-full h-full object-cover" :loading="$loop->parent->first ? 'eager' : 'lazy'" sizes="(max-width: 639px) 100vw, 50vw" />@endif
                                 <x-event-ended-overlay :event="$event" />
                             </a>
                             <div class="slot-title title_40">{{ $item->title }}</div>
@@ -27,7 +27,7 @@
         @foreach ($events as $event)
             @php $item = $event->translation(app()->getLocale(), false); @endphp
             <div class="reel-item">
-                <div class="reel-image-wrap"><a href="{{ route('public.events.show', [app()->getLocale(), $item->slug]) }}" aria-label="{{ $item->title }}">@if($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="">@endif<x-event-ended-overlay :event="$event" /></a></div>
+                <div class="reel-image-wrap"><a href="{{ route('public.events.show', [app()->getLocale(), $item->slug]) }}" aria-label="{{ $item->title }}">@if($event->featuredMedia)<x-public-image :media="$event->featuredMedia" alt="" :loading="$loop->first ? 'eager' : 'lazy'" sizes="(max-width: 639px) 100vw, 50vw" />@endif<x-event-ended-overlay :event="$event" /></a></div>
                 <div class="reel-date">{{ $event->starts_at->format('d M · H:i') }}</div><div class="reel-title">{{ $item->title }}</div>
             </div>
         @endforeach

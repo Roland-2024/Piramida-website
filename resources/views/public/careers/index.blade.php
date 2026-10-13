@@ -20,20 +20,20 @@
             <div id="photoCarousel"
                 class="flex gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide pl-6 sm:pl-0 sm:overflow-visible sm:snap-none">
                 <div class="snap-start shrink-0 w-[85%] aspect-[4/5] rounded-2xl sm:w-auto sm:shrink sm:aspect-auto sm:h-72 sm:flex-[596] sm:rounded-xl overflow-hidden bg-[#0f1730]">
-                    <img src="{{ \App\Support\WebsiteContent::image('template/images/Careers.jpg') }}"
-                        alt="{{ __('website.careers_index_team_on_rooftop_terrace') }}" class="w-full h-full object-cover">
+                    <x-public-image :path="'template/images/Careers.jpg'"
+                        alt="{{ __('website.careers_index_team_on_rooftop_terrace') }}" class="w-full h-full object-cover" sizes="(max-width: 639px) 85vw, 33vw" />
                 </div>
                 <div class="snap-start shrink-0 w-[85%] aspect-[4/5] rounded-2xl sm:w-auto sm:shrink sm:aspect-auto sm:h-72 sm:flex-[408] sm:rounded-xl overflow-hidden bg-[#0f1730]">
-                    <img src="{{ \App\Support\WebsiteContent::image('template/images/Careers_1.jpg') }}"
-                        alt="{{ __('website.careers_index_event_crowd') }}" class="w-full h-full object-cover">
+                    <x-public-image :path="'template/images/Careers_1.jpg'"
+                        alt="{{ __('website.careers_index_event_crowd') }}" class="w-full h-full object-cover" loading="lazy" />
                 </div>
                 <div class="snap-start shrink-0 w-[85%] aspect-[4/5] rounded-2xl sm:w-auto sm:shrink sm:aspect-auto sm:h-72 sm:flex-[494] sm:rounded-xl overflow-hidden bg-[#0f1730]">
-                    <img src="{{ \App\Support\WebsiteContent::image('template/images/Careers_2.jpg') }}"
-                        alt="{{ __('website.careers_index_store_front') }}" class="w-full h-full object-cover">
+                    <x-public-image :path="'template/images/Careers_2.jpg'"
+                        alt="{{ __('website.careers_index_store_front') }}" class="w-full h-full object-cover" loading="lazy" />
                 </div>
                 <div class="snap-start shrink-0 w-[85%] aspect-[4/5] rounded-2xl sm:w-auto sm:shrink sm:aspect-auto sm:h-72 sm:flex-[288] sm:rounded-xl overflow-hidden bg-[#0f1730]">
-                    <img src="{{ \App\Support\WebsiteContent::image('template/images/Careers_3.jpg') }}"
-                        alt="{{ __('website.careers_index_mall_interior_with_crowd') }}" class="w-full h-full object-cover">
+                    <x-public-image :path="'template/images/Careers_3.jpg'"
+                        alt="{{ __('website.careers_index_mall_interior_with_crowd') }}" class="w-full h-full object-cover" loading="lazy" />
                 </div>
             </div>
             <div id="carouselDots" class="flex justify-center items-center gap-2 mt-4 sm:hidden">

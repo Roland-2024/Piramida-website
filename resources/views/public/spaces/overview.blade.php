@@ -3,11 +3,10 @@
 
         <section class="rent-space-card-list" aria-label="{{ __('website.spaces_overview_rentable_spaces') }}">
           <a class="rent-space-card" href="{{ route('public.spaces.index', app()->getLocale()) }}">
-            <img
+            <x-public-image
               class="rent-space-card-image rent-space-card-image-event"
-              src="{{ \App\Support\WebsiteContent::image('template/images/rent-event-spaces.jpg') }}"
-              alt=""
-            />
+              :path="'template/images/rent-event-spaces.jpg'"
+              alt="" loading="lazy" />
 
             <span class="rent-space-card-shade" aria-hidden="true"></span>
 
@@ -17,11 +16,10 @@
           </a>
 
           <a class="rent-space-card" href="{{ route('public.leasing.index', app()->getLocale()) }}">
-            <img
+            <x-public-image
               class="rent-space-card-image rent-space-card-image-leasing"
-              src="{{ \App\Support\WebsiteContent::image('template/images/rent-leasing.jpg') }}"
-              alt=""
-            />
+              :path="'template/images/rent-leasing.jpg'"
+              alt="" loading="lazy" />
 
             <span class="rent-space-card-shade" aria-hidden="true"></span>
 

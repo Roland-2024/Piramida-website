@@ -66,7 +66,7 @@ class Seo
             }
         }
         $media = $record && $record->relationLoaded('featuredMedia') ? $record->featuredMedia : null;
-        $image = $media && str_starts_with($media->mime_type, 'image/') ? $media->url() : WebsiteContent::image('template/images/piramida_block_1.jpg');
+        $image = $media && str_starts_with($media->mime_type, 'image/') ? $media->url() : WebsiteContent::image('template/images/piramida_block_1.jpg', false);
         // Keep external CDN URLs; normalize local storage URLs to the production domain.
         $host = parse_url($image, PHP_URL_HOST);
         if (! $host || in_array($host, [request()->getHost(), parse_url(config('app.url'), PHP_URL_HOST)], true)) {

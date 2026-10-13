@@ -25,7 +25,7 @@
                     </defs>
                 </svg>
 
-                @if($event->featuredMedia)<img src="{{ $event->featuredMedia->displayUrl() }}" alt="{{ $translation->title }}" class="prism-photo" />@endif
+                @if($event->featuredMedia)<x-public-image :media="$event->featuredMedia" alt="{{ $translation->title }}" class="prism-photo" sizes="(max-width: 639px) 100vw, 50vw" />@endif
             </div>
 
             <!-- RIGHT: content -->
@@ -71,7 +71,7 @@
         @foreach($latestEvents as $latestEvent)
         @php $latestTranslation = $latestEvent->translation(app()->getLocale(), false); @endphp
         <a class="event-card" href="{{ route('public.events.show', [app()->getLocale(), $latestTranslation->slug]) }}">
-            <div class="event-poster relative rounded-xl overflow-hidden">@if($latestEvent->featuredMedia)<img src="{{ $latestEvent->featuredMedia->displayUrl() }}" alt="{{ $latestTranslation->title }}" class="w-full h-full object-cover" loading="lazy">@endif<x-event-ended-overlay :event="$latestEvent" /></div>
+            <div class="event-poster relative rounded-xl overflow-hidden">@if($latestEvent->featuredMedia)<x-public-image :media="$latestEvent->featuredMedia" alt="{{ $latestTranslation->title }}" class="w-full h-full object-cover" loading="lazy" sizes="(max-width: 639px) 100vw, 50vw" />@endif<x-event-ended-overlay :event="$latestEvent" /></div>
             <div class="pt-3"><p class="title-24">{{ $latestTranslation->title }}</p><p class="text-xs text-white/50">{{ $latestEvent->starts_at->format('d M Y') }}</p></div>
         </a>
         @endforeach

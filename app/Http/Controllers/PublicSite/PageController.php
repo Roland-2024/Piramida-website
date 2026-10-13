@@ -45,6 +45,7 @@ class PageController extends Controller
                     ->orderBy('display_order')->orderBy('id')->get()
                     ->map(fn (Business $business) => [
                         'url' => $business->featuredMedia?->displayUrl(),
+                        'media' => $business->featuredMedia,
                         'title' => $business->translation($locale, false)->name,
                         'description' => strip_tags($business->translation($locale, false)->description ?? ''),
                     ])
@@ -55,6 +56,7 @@ class PageController extends Controller
                         ->with(['translations', 'featuredMedia'])->orderBy('display_order')->orderBy('id')->get()
                         ->map(fn (Program $program) => [
                             'url' => $program->featuredMedia?->displayUrl(),
+                            'media' => $program->featuredMedia,
                             'title' => $program->translation($locale, false)->title,
                             'description' => strip_tags($program->translation($locale, false)->description ?? ''),
                         ])

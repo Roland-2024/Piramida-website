@@ -2,11 +2,10 @@
     @php
         $copy = $section?->translation(app()->getLocale());
         $title = $section ? $copy?->title : $defaultTitle;
-        $image = $section ? ($section->primaryMedia?->displayUrl() ?: \App\Support\WebsiteContent::image($templateImage)) : $defaultImage;
         $defaultAction = !$section || (!$section->primary_button_url && !$copy?->primary_button_label);
     @endphp
     <article class="flex flex-col overflow-hidden rounded-[20px]" style="background:{{ $color }}" data-home-promotion="{{ $section?->internal_name }}">
-        <img src="{{ $image }}" alt="{{ $title }}" loading="lazy" class="h-[300px] sm:h-[400px] w-full object-cover p-[10px] rounded-[20px]">
+        <x-public-image :media="$section ? $section->primaryMedia : ($defaultMedia ?? null)" :path="$templateImage" alt="{{ $title }}" loading="lazy" sizes="(max-width: 639px) 100vw, 50vw" class="h-[300px] sm:h-[400px] w-full object-cover p-[10px] rounded-[20px]" />
         <div class="flex flex-1 flex-col py-[50px] px-[40px]">
             @if($title)<h2 class="uppercase title-36 text-black mb-2">{{ $title }}</h2>@endif
             <div class="home-attraction-description title-16 prose-content mb-5">

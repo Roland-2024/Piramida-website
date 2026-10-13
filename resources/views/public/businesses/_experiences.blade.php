@@ -17,8 +17,8 @@
                 @foreach($businesses as $business)
 @php $businessTranslation = $business->translation(app()->getLocale(), false); @endphp
 <a class="exp-card" href="{{ route('public.businesses.show', [app()->getLocale(), $businessTranslation->slug]) }}" data-dialog-open="business-{{ $business->id }}" aria-haspopup="dialog">
-<div class="exp-card-media">@if($business->featuredMedia)<img src="{{ $business->featuredMedia->displayUrl(480) }}" alt="{{ $businessTranslation->name }}" loading="lazy">@endif</div>
-<div class="exp-card-meta"><span class="exp-avatar">@if($business->logoMedia)<img src="{{ $business->logoMedia->displayUrl(480) }}" alt="">@endif</span>
+<div class="exp-card-media">@if($business->featuredMedia)<x-public-image :media="$business->featuredMedia" alt="{{ $businessTranslation->name }}" loading="lazy" sizes="(max-width: 639px) 100vw, 50vw" />@endif</div>
+<div class="exp-card-meta"><span class="exp-avatar">@if($business->logoMedia)<x-public-image :media="$business->logoMedia" alt="" sizes="40px" loading="lazy" />@endif</span>
 <span class="exp-meta-text"><span class="exp-label">{{ $businessTranslation->name }}</span><span class="exp-sublabel">{{ $business->categoryLabels() }}</span></span></div>
 </a>@endforeach
             </div>
