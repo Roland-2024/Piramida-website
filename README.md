@@ -296,6 +296,8 @@ The public map is at `/leasing` (Albanian) or `/en/leasing` (English). Event-spa
 
 The supplied PNG backgrounds and SVG paths are local assets. Unit geometry and floor inventory are fixed to the supplied plans, not uploaded by editors. No new environment variables or services are needed.
 
+The updated client-supplied `KATI 4.svg` adds Roof L+4 unit **D2** alongside E1/E2, bringing the inventory to 53 units. Its background bitmap matches the existing rooftop asset; the new shape/label use the supplied coordinates. Deploy the additive `2026_10_13_000001_add_roof_d2_leasing_unit` migration with `php artisan migrate --force`, then refresh config/views and rebuild assets. Existing unit IDs, post assignments, content and uploads are preserved; no seeding is required. Editors can select D2 in Leasing spaces > Floor / map unit. It stays red/non-clickable until assigned to an available, published, locale-translated post with a valid area.
+
 ## Production deployment without Docker
 
 Docker Compose is for local development only; the live server does not need Docker. The production host needs PHP 8.4.1 or newer with Laravel's required extensions, MySQL 8, Composer, a web server whose document root is `public/`, and either Node.js for the asset build or a prebuilt `public/build` directory.

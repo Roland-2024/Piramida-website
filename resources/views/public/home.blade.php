@@ -87,7 +87,7 @@
           <img src="{{ \App\Support\WebsiteContent::image('template/images/Education.svg') }}" class="w-[24px] h-[30px]" />
 
           <div class="mt-auto">
-            <h3 class="text-lime-400 font-bold uppercase text-3xl mb-2">{{ data_get($pillarItems, '0.title', __('cms.education')) }}</h3>
+            <h3 class="title-36 text-lime-400 uppercase mb-2">{{ data_get($pillarItems, '0.title', __('cms.education')) }}</h3>
             <p class="text-white/80 text-sm leading-snug max-w-[85%] sm:max-w-[70%]">{{ data_get($pillarItems, '0.text', '') }}</p>
           </div>
         </div>
@@ -103,7 +103,7 @@
           <img src="{{ \App\Support\WebsiteContent::image('template/images/Innovation.svg') }}" class="w-[24px] h-[30px]" />
 
           <div class="mt-auto">
-            <h3 class="text-lime-400 font-bold uppercase text-3xl mb-2">{{ data_get($pillarItems, '1.title', __('cms.innovation')) }}</h3>
+            <h3 class="title-36 text-lime-400 uppercase mb-2">{{ data_get($pillarItems, '1.title', __('cms.innovation')) }}</h3>
             <p class="text-white/80 text-sm leading-snug max-w-[85%] sm:max-w-[70%]">{{ data_get($pillarItems, '1.text', '') }}</p>
           </div>
         </div>
@@ -121,7 +121,7 @@
 
 
           <div class="mt-auto">
-            <h3 class="text-lime-400 font-bold uppercase text-3xl mb-2">{{ data_get($pillarItems, '2.title', __('cms.business')) }}</h3>
+            <h3 class="title-36 text-lime-400 uppercase mb-2">{{ data_get($pillarItems, '2.title', __('cms.business')) }}</h3>
             <p class="text-white/80 text-sm leading-snug max-w-[85%] sm:max-w-[70%]">{{ data_get($pillarItems, '2.text', '') }}</p>
           </div>
         </div>
@@ -136,7 +136,7 @@
         <div class="absolute inset-0 z-10 flex flex-col h-full p-5">
           <img src="{{ \App\Support\WebsiteContent::image('template/images/Art.svg') }}" class="w-[24px] h-[30px]" />
           <div class="mt-auto">
-            <h3 class="text-lime-400 font-bold uppercase text-3xl mb-2">{{ data_get($pillarItems, '3.title', __('cms.art')) }}</h3>
+            <h3 class="title-36 text-lime-400 uppercase mb-2">{{ data_get($pillarItems, '3.title', __('cms.art')) }}</h3>
             <p class="text-white/80 text-sm leading-snug max-w-[85%] sm:max-w-[70%]">{{ data_get($pillarItems, '3.text', '') }}</p>
           </div>
         </div>

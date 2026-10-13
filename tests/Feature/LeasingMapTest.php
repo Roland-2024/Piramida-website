@@ -8,6 +8,7 @@ use App\Models\LeasingUnit;
 use App\Models\Space;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class LeasingMapTest extends TestCase
@@ -16,7 +17,8 @@ class LeasingMapTest extends TestCase
 
     public function test_real_inventory_and_all_floor_templates_render_in_both_languages(): void
     {
-        $this->assertDatabaseCount('leasing_units', 52);
+        $this->assertDatabaseCount('leasing_units', 53);
+        $this->assertDatabaseHas('leasing_units', ['floor' => 'roof', 'code' => 'D2', 'svg_id' => 'unit-D2']);
         $this->assertDatabaseMissing('leasing_units', ['code' => 'A16']);
         $this->assertDatabaseHas('leasing_units', ['code' => 'BE1/1', 'svg_id' => 'unit-BE1-1']);
         foreach (['al', 'en'] as $locale) {
@@ -139,6 +141,66 @@ class LeasingMapTest extends TestCase
         $space->translations()->where('locale', 'en')->delete();
         $this->get('/en/leasing/floors/minus-one')->assertDontSee('data-status="available"', false);
         $this->get('/leasing/floors/minus-one')->assertSee('data-status="available"', false);
+    }
+
+    public function test_roof_d2_migration_preserves_existing_units_and_assignments(): void
+    {
+        DB::table('leasing_units')->where('code', 'D2')->delete();
+        $originalUnits = DB::table('leasing_units')->orderBy('id')->get();
+        $e1 = LeasingUnit::where('code', 'E1')->firstOrFail();
+        $space = Space::factory()->published()->create([
+            'type' => SpaceType::Leasing, 'leasing_unit_id' => $e1->id, 'is_available' => true,
+        ]);
+
+        $migration = require database_path('migrations/2026_10_13_000001_add_roof_d2_leasing_unit.php');
+        $migration->up();
+
+        $this->assertEquals($originalUnits, DB::table('leasing_units')->where('code', '!=', 'D2')->orderBy('id')->get());
+        $this->assertSame($e1->id, $space->fresh()->leasing_unit_id);
+        $this->assertDatabaseCount('leasing_units', 53);
+        $this->assertDatabaseHas('leasing_units', ['floor' => 'roof', 'code' => 'D2', 'svg_id' => 'unit-D2']);
+    }
+
+    public function test_editor_can_assign_roof_d2_and_publication_rules_control_its_map_link(): void
+    {
+        $unit = LeasingUnit::where('code', 'D2')->firstOrFail();
+        $unavailable = 'id="unit-D2" class="floor-plan-unit" data-unit="D2" data-status="unavailable"';
+        $available = 'id="unit-D2" class="floor-plan-unit" data-unit="D2" data-status="available"';
+        $shape = 'M837 280.5V326L964 340.5L977.5 269.5V229L855 210.5L837 280.5Z';
+        foreach (['/leasing/floors/roof', '/en/leasing/floors/roof'] as $url) {
+            $this->get($url)->assertOk()->assertSee($unavailable, false)->assertSee($shape, false);
+        }
+        $this->actingAs(User::factory()->create());
+        $this->get(route('admin.leasing.create'))->assertOk()->assertSee('Roof L+4 — D2');
+        $this->post(route('admin.leasing.store'), $this->payload([
+            'leasing_unit_id' => $unit->id, 'is_available' => '1',
+        ]))->assertSessionHasNoErrors()->assertRedirect();
+        $space = Space::firstOrFail();
+        $this->assertSame('roof', $space->leasingUnit->floor);
+        $this->assertSame($unit->id, $space->leasing_unit_id);
+        $this->post(route('admin.leasing.store'), $this->payload([
+            'leasing_unit_id' => $unit->id,
+        ]))->assertSessionHasErrors('leasing_unit_id');
+        foreach (['al' => 'test-qira', 'en' => 'test-leasing'] as $locale => $slug) {
+            $url = route('public.spaces.show', [$locale, $slug]);
+            $this->get(route('public.leasing.floor', [$locale, 'roof']))->assertOk()
+                ->assertSee($available, false)->assertSee('href="'.$url.'"', false);
+            $this->get($url)->assertOk()->assertSee('D2');
+        }
+        foreach ([
+            ['is_available' => false],
+            ['is_available' => true, 'status' => ContentStatus::Draft],
+            ['status' => ContentStatus::Published, 'published_at' => now()->addDay()],
+        ] as $state) {
+            $space->update($state);
+            $this->get('/en/leasing/floors/roof')->assertSee($unavailable, false);
+            $this->get('/en/spaces/test-leasing')->assertNotFound();
+        }
+        $space->update(['published_at' => now()->subDay()]);
+        $space->translations()->where('locale', 'en')->delete();
+        $this->get('/en/leasing/floors/roof')->assertSee($unavailable, false);
+        $this->get('/leasing/floors/roof')->assertSee($available, false);
+        $this->assertDatabaseCount('submissions', 0);
     }
 
     private function payload(array $overrides = []): array
