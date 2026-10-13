@@ -48,7 +48,7 @@
 
                     <div class="mt-6 title-18 text-white prose-content">{!! $overview?->translation()?->description !!}</div>
 
-                    <ul class="mt-8 space-y-4 title-18 text-white">@foreach ($missionItems as $item)<li class="flex items-start gap-3"><span class="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#CBFF00]"></span><span @class(['text-white/80' => $loop->first])>{{ data_get($item, 'text') ?: data_get($item, 'title') }}</span></li>@endforeach</ul>
+                    <ul class="mt-8 space-y-4 title-18 text-white">@foreach ($missionItems as $item)<li class="flex items-start gap-3"><span class="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-[#CBFF00]"></span><span>{{ data_get($item, 'text') ?: data_get($item, 'title') }}</span></li>@endforeach</ul>
                 </div>
             </div>
         </div>
