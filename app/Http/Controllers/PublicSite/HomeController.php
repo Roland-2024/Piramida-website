@@ -59,11 +59,11 @@ class HomeController extends Controller
                 ->get(),
             'upcomingEvents' => Event::query()
                 ->published()
-                ->upcoming()
                 ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
                 ->with(['translations', 'featuredMedia'])
-                ->orderBy('starts_at')
-                ->limit(3)
+                ->latest('starts_at')
+                ->orderBy('id')
+                ->limit(10)
                 ->get(),
             'featuredAttractions' => Attraction::query()
                 ->published()

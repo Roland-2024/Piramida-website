@@ -39,6 +39,7 @@ This file records durable decisions that future tasks should preserve. Implement
 - Records absent from a complete upstream response move to draft rather than being deleted.
 - Upcoming and past events returned by WordPress are retained for content history. The public archive lists both together, ordered by event start date descending, with nine records initially and nine more per scroll request. Crawlable page URLs and a next-link fallback remain; no numbered pagination or desktop arrow controls are shown. Desktop groups of three alternate diagonals and move vertically; mobile retains its full-screen reel. Old period filters no longer affect content or canonical URLs. The single-event carousel lists up to ten other published, localized events in the same order. Ended events have a navy image overlay and a localized label, based on their end time.
 - Synchronization runs daily at 06:00 and 18:00 in `Europe/Tirane` and can also be run manually.
+- The homepage event slider includes up to ten published, active-locale events across all periods, ordered by start date descending and ID ascending for ties, even when all events have ended. Its existing template and looping behavior remain unchanged.
 - The WordPress API key stays in the server environment and is never exposed to the browser or committed.
 - The event design and current API require one featured image. Event galleries were removed and should return only if a final template or upstream contract requires them.
 

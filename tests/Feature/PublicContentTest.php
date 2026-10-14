@@ -21,6 +21,55 @@ class PublicContentTest extends TestCase
         $this->get('/fr')->assertNotFound();
     }
 
+    public function test_homepage_shows_ten_latest_events_even_when_all_have_ended(): void
+    {
+        $this->travelTo(now()->startOfSecond());
+        $events = Event::factory()->published()->count(12)->sequence(
+            fn ($sequence) => [
+                'starts_at' => now()->subDays($sequence->index + 2),
+                'ends_at' => now()->subDays($sequence->index + 1),
+                'published_at' => now()->subDays(30 - $sequence->index),
+            ],
+        )->create();
+
+        foreach (['/' => 'al', '/en' => 'en'] as $url => $locale) {
+            $response = $this->get($url)->assertOk()
+                ->assertViewHas('upcomingEvents', fn ($items) => $items->modelKeys() === $events->take(10)->modelKeys());
+            $this->assertSame(10, substr_count($response->getContent(), 'class="card-snap '));
+            foreach ($events->take(10) as $event) {
+                $response->assertSee(route('public.events.show', [$locale, $event->translation($locale, false)->slug]), false);
+            }
+        }
+    }
+
+    public function test_homepage_events_include_all_periods_with_localization_publication_and_stable_ordering(): void
+    {
+        $this->travelTo(now()->startOfSecond());
+        $upcoming = Event::factory()->published()->count(2)->create([
+            'starts_at' => now()->addDay(), 'ends_at' => now()->addDay()->addHours(2),
+        ]);
+        $ongoing = Event::factory()->published()->create([
+            'starts_at' => now()->subHour(), 'ends_at' => now()->addHour(),
+        ]);
+        $past = Event::factory()->published()->past()->create();
+        $alOnly = Event::factory()->published()->create([
+            'starts_at' => now()->addDays(2), 'ends_at' => now()->addDays(2)->addHours(2),
+        ]);
+        $alOnly->translations()->where('locale', 'en')->delete();
+        Event::factory()->create();
+        Event::factory()->published()->create(['published_at' => now()->addDay()]);
+        Event::factory()->published()->create()->delete();
+        $untranslated = Event::factory()->published()->create();
+        $untranslated->translations()->delete();
+
+        $sharedIds = [...$upcoming->modelKeys(), $ongoing->id, $past->id];
+        foreach (['/' => [$alOnly->id, ...$sharedIds], '/en' => $sharedIds] as $url => $expectedIds) {
+            $response = $this->get($url)->assertOk()
+                ->assertViewHas('upcomingEvents', fn ($items) => $items->modelKeys() === $expectedIds);
+            $this->assertSame(count($expectedIds), substr_count($response->getContent(), 'class="card-snap '));
+        }
+    }
+
     public function test_published_page_resolves_only_by_the_active_locale_slug(): void
     {
         $page = Page::factory()->published()->create();
