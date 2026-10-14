@@ -84,7 +84,10 @@ dialog[open]::backdrop { animation:popup-backdrop 240ms ease-out both; }
 .template-event-filters { position:absolute; top:72px; left:8%; z-index:110; display:flex; gap:18px; font-size:12px; }
 .template-event-filters [aria-current] { color:#cbff00; }
 @media (min-width:768px) {
+    #experiences { --exp-pad:4rem; }
     #experiences .exp-track-wrap { box-sizing:border-box; width:calc(var(--exp-card-w) * var(--exp-count) + 1.25rem * (var(--exp-count) - 1) + 2 * var(--exp-pad)); max-width:100%; padding:0 var(--exp-pad); }
+    #experiences [data-exp-prev] { left:.75rem; }
+    #experiences [data-exp-next] { right:.75rem; }
 }
 #experiences button:disabled { opacity:.35; cursor:default; }
 #eventsSection,#eventsMobile { background-image:url('/template/images/BG.png'); }
