@@ -221,7 +221,7 @@ body {
 .event-space-panel-meta {
   margin: 18px 0 24px;
   color: rgba(255, 255, 255, 0.68);
-  font-family: "Albert Sans", var(--font-body);
+  font-family: var(--font-body);
   font-size: clamp(13px, 1vw, 16px);
   line-height: 1.4;
 }
@@ -391,7 +391,7 @@ body {
   .event-spaces-card-meta {
     margin-top: 7px;
     color: rgba(255, 255, 255, 0.48);
-    font-family: "Albert Sans", var(--font-body);
+    font-family: var(--font-body);
     font-size: 13px;
     line-height: 1.35;
   }

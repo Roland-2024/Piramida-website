@@ -256,7 +256,7 @@
         line-height: 1.15;
         text-transform: uppercase;
         letter-spacing: 0.01em;
-        font-family: 'Albert-Sans', Arial, sans-serif;
+        font-family: var(--font-body);
     }
 }
 

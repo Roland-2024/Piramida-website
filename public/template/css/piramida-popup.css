@@ -257,7 +257,7 @@
   }
 
   .place-popup-card {
-    font-family: "Albert Sans", Arial, sans-serif;
+    font-family: var(--font-body);
   }
 
   .place-popup-section {

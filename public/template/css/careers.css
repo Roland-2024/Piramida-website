@@ -32,7 +32,7 @@ details[open] .panel {
 }
 
 .font-display {
-    font-family: 'Archivo Black', 'Inter', sans-serif;
+    font-family: var(--font-display);
 }
 
 .drop-line {
