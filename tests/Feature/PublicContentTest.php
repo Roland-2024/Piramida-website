@@ -70,6 +70,29 @@ class PublicContentTest extends TestCase
         }
     }
 
+    public function test_homepage_marks_only_ended_events_with_the_shared_localized_image_overlay(): void
+    {
+        $this->travelTo(now()->startOfSecond());
+        $ended = Event::factory()->published()->past()->create();
+        Event::factory()->published()->create();
+        Event::factory()->published()->create(['starts_at' => now()->subHour(), 'ends_at' => now()->addHour()]);
+        Event::factory()->published()->create(['starts_at' => now()->subHour(), 'ends_at' => now()]);
+
+        foreach (['/' => ['al', 'Event i përfunduar'], '/en' => ['en', 'Event ended']] as $url => [$locale, $label]) {
+            $response = $this->get($url)->assertOk();
+            $dom = new \DOMDocument;
+            @$dom->loadHTML('<?xml encoding="UTF-8">'.$response->getContent());
+            $xpath = new \DOMXPath($dom);
+            $overlays = $xpath->query('//*[@id="cardTrack"]//span[@class="event-ended-overlay"]');
+            $this->assertSame(1, $overlays->length);
+            $overlay = $overlays->item(0);
+            $this->assertSame($label, trim($overlay->textContent));
+            $this->assertSame('a', $overlay->parentNode->nodeName);
+            $this->assertSame(route('public.events.show', [$locale, $ended->translation($locale, false)->slug]), $overlay->parentNode->getAttribute('href'));
+            $this->assertStringContainsString('relative block h-[450px] overflow-hidden', $overlay->parentNode->getAttribute('class'));
+        }
+    }
+
     public function test_published_page_resolves_only_by_the_active_locale_slug(): void
     {
         $page = Page::factory()->published()->create();

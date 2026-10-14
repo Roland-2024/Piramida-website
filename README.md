@@ -45,7 +45,7 @@ Events, spaces, and careers support internal request forms, external links, both
 
 Events can also be synchronized from Piramida Ime's bilingual WordPress API. Imported translations keep their WordPress IDs, while manually created dashboard events remain independent and are never overwritten by the importer. The initial import pairs Albanian and English records only when their featured image provides an unambiguous match; subsequent runs use the stored WordPress IDs. Events removed from the complete upstream response are moved to draft rather than deleted.
 
-The homepage event slider shows up to 10 published events with the active locale's translation, including upcoming, ongoing and ended events. It orders by event start date descending, then ID ascending for ties, matching the archive. No migration, reseeding or asset rebuild is needed for this query change. The existing `upcomingEvents` view key is retained for template compatibility.
+The homepage event slider shows up to 10 published events with the active locale's translation, including upcoming, ongoing and ended events. It orders by event start date descending, then ID ascending for ties, matching the archive. Ended posters reuse the archive's navy overlay and localized label, based on the event end time; ongoing/upcoming posters are not dimmed. No migration or reseeding is needed. The existing `upcomingEvents` view key is retained for template compatibility.
 
 Media pickers load searchable pages of 24 public images only when opened; content forms initially load only their selected images. Page slugs cannot reuse system URLs such as `news`, `contact`, or `admin`.
 

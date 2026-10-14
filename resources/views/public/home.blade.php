@@ -278,8 +278,9 @@
 @forelse ($upcomingEvents as $event)
     @php $eventTranslation = $event->translation(app()->getLocale(), false); @endphp
     <div class="card-snap overflow-hidden {{ $loop->index === 1 || $upcomingEvents->count() === 1 ? 'is-active' : '' }}">
-        <a href="{{ route('public.events.show', [app()->getLocale(), $eventTranslation->slug]) }}">
-            @if ($event->featuredMedia)<x-public-image :media="$event->featuredMedia" alt="{{ $eventTranslation->title }}" loading="lazy" class="w-full h-[450px] rounded-[12px] object-cover object-center" sizes="(max-width: 639px) 100vw, 50vw" />@endif
+        <a href="{{ route('public.events.show', [app()->getLocale(), $eventTranslation->slug]) }}" class="relative block h-[450px] overflow-hidden rounded-[12px]">
+            @if ($event->featuredMedia)<x-public-image :media="$event->featuredMedia" alt="{{ $eventTranslation->title }}" loading="lazy" class="w-full h-full object-cover object-center" sizes="(max-width: 639px) 100vw, 50vw" />@endif
+            <x-event-ended-overlay :event="$event" />
         </a>
         <div class="card-text pt-[40px] sm:p-5 mx-auto">
             <p class="title-green-20 mx-auto text-center">{{ $eventTranslation->title }}</p>
