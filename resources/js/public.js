@@ -93,7 +93,9 @@ document.querySelectorAll('[data-carousel]').forEach(carousel => {
 });
 
 const intro = document.querySelector('[data-intro]');
-if (intro && window.innerWidth > 1024 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+if (intro && window.innerWidth > 1024 && !matchMedia('(prefers-reduced-motion: reduce)').matches
+    && !document.cookie.split(';').some(cookie => cookie.trim() === 'piramida_intro_seen=1')) {
+    document.cookie = `piramida_intro_seen=1; Path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
     intro.hidden = false;
     window.scrollTo(0, 0);
     const swipe = document.querySelector('[data-intro-swipe]');
