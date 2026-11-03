@@ -116,7 +116,10 @@ if (track && viewport) {
         const image = card.querySelector("img");
 
         card.dataset.index = originalIndex;
-        if (copy !== 1) card.setAttribute("aria-hidden", "true");
+        if (copy !== 1) {
+          card.setAttribute("aria-hidden", "true");
+          card.querySelectorAll("a").forEach(link => link.tabIndex = -1);
+        }
 
         if (image) {
           image.draggable = false;
@@ -473,8 +476,11 @@ if (track && viewport) {
     });
 
     allCards.forEach(({ el }, index) => {
-      el.addEventListener("click", () => {
-        if (hasDragged) return;
+      el.addEventListener("click", (event) => {
+        if (hasDragged && event.detail !== 0) {
+          event.preventDefault();
+          return;
+        }
 
         activeIndex = index;
         snapTarget = calculateOffset(activeIndex);

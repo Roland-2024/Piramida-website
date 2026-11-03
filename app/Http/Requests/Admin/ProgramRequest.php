@@ -15,6 +15,7 @@ class ProgramRequest extends TranslatedContentRequest
     {
         $rules = $this->contentRules('program_translations', [
             'category' => ['required', Rule::in(['education', 'innovation', 'art_culture'])],
+            'external_url' => ['nullable', 'url:http,https', 'max:255'],
         ], [
             'description' => ['nullable', 'string'],
         ]);

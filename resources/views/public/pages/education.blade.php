@@ -9,11 +9,13 @@
                     <div class="slider-track" id="track">
                         @foreach ($slides as $slide)
                             <article class="card">
+                                @if ($slide['link'] ?? null)<a href="{{ $slide['link'] }}" target="_blank" rel="noopener noreferrer" draggable="false" class="block h-full" aria-label="{{ $slide['title'] }}">@endif
                                 @if ($slide['url'])<x-public-image :media="$slide['media']" alt="{{ $slide['title'] }}" draggable="false" :loading="$loop->index < 3 ? 'eager' : 'lazy'" sizes="(max-width: 767px) min(380px, calc(100vw - 86px)), 280px" />@endif
                                 <div class="sr-only">
                                     <h2 data-slide-title>{{ $slide['title'] }}</h2>
                                     <p data-slide-description>{{ $slide['description'] }}</p>
                                 </div>
+                                @if ($slide['link'] ?? null)</a>@endif
                             </article>
                         @endforeach
                     </div>

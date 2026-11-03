@@ -35,6 +35,7 @@ class ProgramController extends TranslatedContentController
     {
         return [
             ['name' => 'category', 'label' => 'Carousel page', 'type' => 'select', 'required' => true, 'options' => array_diff_key($this->options(ProgramCategory::cases()), ['business' => true])],
+            ['name' => 'external_url', 'label' => 'Optional link (HTTP/HTTPS, shared AL/EN)', 'type' => 'url'],
         ];
     }
 

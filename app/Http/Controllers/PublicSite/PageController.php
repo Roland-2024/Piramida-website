@@ -55,6 +55,7 @@ class PageController extends Controller
                         ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale))
                         ->with(['translations', 'featuredMedia'])->orderBy('display_order')->orderBy('id')->get()
                         ->map(fn (Program $program) => [
+                            'link' => filter_var($program->external_url, FILTER_VALIDATE_URL) && in_array(strtolower(parse_url($program->external_url, PHP_URL_SCHEME) ?? ''), ['http', 'https'], true) ? $program->external_url : null,
                             'url' => $program->featuredMedia?->displayUrl(),
                             'media' => $program->featuredMedia,
                             'title' => $program->translation($locale, false)->title,
