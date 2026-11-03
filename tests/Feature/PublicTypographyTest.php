@@ -16,7 +16,7 @@ class PublicTypographyTest extends TestCase
             $this->assertSame(4, preg_match_all('/<h3 class="title-36 text-lime-400 uppercase mb-2">/', $response->getContent()));
         }
         $css = file_get_contents(public_path('template/integration.css'));
-        $this->assertStringContainsString('h1,h2,h3,h4,h5,h6 { font-family:var(--font-display) !important; }', $css);
+        $this->assertStringNotContainsString('h1,h2,h3,h4,h5,h6 { font-family:var(--font-display) !important; }', $css);
         $this->assertStringContainsString('@media(min-width:768px) { .event-track .event-card .title-24 { font-size:20px; } }', $css);
     }
 }
