@@ -137,6 +137,7 @@ return [
     'privacy_consent' => 'I agree that Piramida may use these details to respond to this request.',
     'submit_request' => 'Submit request',
     'read_more' => 'Read more',
+    'carousel_more' => 'View more',
     'no_content' => 'No content is available yet.',
     'no_image' => 'No image',
     'close' => 'Close',

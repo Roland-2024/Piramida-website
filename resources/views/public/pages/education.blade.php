@@ -8,23 +8,22 @@
                 <div class="slider-viewport" id="viewport" tabindex="0" role="region" aria-label="{{ $translation->title }}">
                     <div class="slider-track" id="track">
                         @foreach ($slides as $slide)
-                            <article class="card">
-                                @if ($slide['link'] ?? null)<a href="{{ $slide['link'] }}" target="_blank" rel="noopener noreferrer" draggable="false" class="block h-full" aria-label="{{ $slide['title'] }}">@endif
+                            <article class="card" data-slide-link="{{ $slide['link'] ?? '' }}">
                                 @if ($slide['url'])<x-public-image :media="$slide['media']" alt="{{ $slide['title'] }}" draggable="false" :loading="$loop->index < 3 ? 'eager' : 'lazy'" sizes="(max-width: 767px) min(380px, calc(100vw - 86px)), 280px" />@endif
                                 <div class="sr-only">
                                     <h2 data-slide-title>{{ $slide['title'] }}</h2>
                                     <p data-slide-description>{{ $slide['description'] }}</p>
                                 </div>
-                                @if ($slide['link'] ?? null)</a>@endif
                             </article>
                         @endforeach
                     </div>
                 </div>
             </div>
             <div class="mt-2 max-md:mt-4 flex items-center justify-center px-6 text-center md:mt-8">
-                <div class="max-w-4xl">
+                <div class="max-w-4xl pb-8 md:pb-12">
                     <h2 id="activeSlideTitle" class="text-[24px] font-normal text-[#CBFF00] md:text-[20px] lg:text-[24px]">{{ $slides->first()['title'] ?? $translation->title }}</h2>
-                    <p id="activeSlideDescription" class="text-[14px] md:pb-12 font-normal leading-relaxed text-white/75 md:text-[16px]">{{ $slides->first()['description'] ?? strip_tags($translation->content ?? '') }}</p>
+                    <p id="activeSlideDescription" class="text-[14px] font-normal leading-relaxed text-white/75 md:text-[16px]">{{ $slides->first()['description'] ?? strip_tags($translation->content ?? '') }}</p>
+                    <a id="activeSlideLink" class="education-slide-link" @if ($slides->first()['link'] ?? null) href="{{ $slides->first()['link'] }}" @else hidden @endif target="_blank" rel="noopener noreferrer">{{ __('cms.carousel_more') }}</a>
                 </div>
             </div>
         </section>

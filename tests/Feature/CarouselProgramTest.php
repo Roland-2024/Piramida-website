@@ -27,7 +27,10 @@ class CarouselProgramTest extends TestCase
         $post = Program::firstOrFail();
         foreach (['en', 'al'] as $locale) {
             $this->get(route('public.pages.show', [$locale, $page->translation($locale)->slug]))
-                ->assertOk()->assertSee('href="https://example.test/college"', false);
+                ->assertOk()->assertSee('href="https://example.test/college"', false)
+                ->assertSee('data-slide-link="https://example.test/college"', false)
+                ->assertSee($locale === 'al' ? 'Shiko më shumë' : 'View more')
+                ->assertSee('id="activeSlideLink"', false);
         }
         foreach (['javascript:alert(1)', 'ftp://example.test/file', 'not a url'] as $invalid) {
             $this->put(route('admin.programs.update', $post), [...$data, 'external_url' => $invalid])

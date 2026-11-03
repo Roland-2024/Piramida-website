@@ -137,6 +137,7 @@ return [
     'privacy_consent' => 'Pranoj që Piramida t’i përdorë këto të dhëna për t’iu përgjigjur kësaj kërkese.',
     'submit_request' => 'Dërgo kërkesën',
     'read_more' => 'Lexo më shumë',
+    'carousel_more' => 'Shiko më shumë',
     'no_content' => 'Nuk ka ende përmbajtje.',
     'no_image' => 'Pa imazh',
     'close' => 'Mbyll',

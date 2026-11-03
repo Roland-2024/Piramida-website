@@ -20,6 +20,7 @@ const track = document.getElementById("track");
 const viewport = document.getElementById("viewport");
 const dotsContainer = document.getElementById("carouselDots");
 const activeSlideTitle = document.getElementById("activeSlideTitle");
+const activeSlideLink = document.getElementById("activeSlideLink");
 const activeSlideDescription = document.getElementById(
   "activeSlideDescription",
 );
@@ -36,6 +37,7 @@ function readSlide(card, index) {
   return {
     label: cleanText(title?.textContent || image?.alt || `Slide ${index + 1}`),
     description: cleanText(description?.textContent || ""),
+    link: card.dataset.slideLink || "",
     template: card,
   };
 }
@@ -116,10 +118,7 @@ if (track && viewport) {
         const image = card.querySelector("img");
 
         card.dataset.index = originalIndex;
-        if (copy !== 1) {
-          card.setAttribute("aria-hidden", "true");
-          card.querySelectorAll("a").forEach(link => link.tabIndex = -1);
-        }
+        if (copy !== 1) card.setAttribute("aria-hidden", "true");
 
         if (image) {
           image.draggable = false;
@@ -250,6 +249,12 @@ if (track && viewport) {
 
       if (activeSlideDescription) {
         activeSlideDescription.textContent = activeItem.description;
+      }
+
+      if (activeSlideLink) {
+        activeSlideLink.hidden = !activeItem.link;
+        if (activeItem.link) activeSlideLink.href = activeItem.link;
+        else activeSlideLink.removeAttribute("href");
       }
 
       dots.forEach((dot, index) => {
@@ -476,11 +481,8 @@ if (track && viewport) {
     });
 
     allCards.forEach(({ el }, index) => {
-      el.addEventListener("click", (event) => {
-        if (hasDragged && event.detail !== 0) {
-          event.preventDefault();
-          return;
-        }
+      el.addEventListener("click", () => {
+        if (hasDragged) return;
 
         activeIndex = index;
         snapTarget = calculateOffset(activeIndex);

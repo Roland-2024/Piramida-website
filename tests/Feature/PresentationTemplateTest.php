@@ -81,14 +81,15 @@ class PresentationTemplateTest extends TestCase
 
         foreach (['al', 'en'] as $locale) {
             $url = route('public.pages.show', [$locale, $page->translation($locale)->slug]);
-            $this->get($url)->assertOk()->assertSee('href="https://example.test/business"', false);
+            $this->get($url)->assertOk()->assertSee('href="https://example.test/business"', false)
+                ->assertSee('data-slide-link="https://example.test/business"', false);
         }
 
         foreach ([null, '', 'javascript:alert(1)', 'ftp://example.test/file'] as $value) {
             $business->update(['website_url' => $value]);
             $this->get('/en/business')->assertOk()
                 ->assertViewHas('slides', fn ($slides) => $slides->first()['link'] === null)
-                ->assertDontSee('rel="noopener noreferrer" draggable="false"', false);
+                ->assertDontSee('href="https://example.test/business"', false);
         }
     }
 
