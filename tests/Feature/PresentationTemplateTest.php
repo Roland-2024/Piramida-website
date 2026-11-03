@@ -73,6 +73,25 @@ class PresentationTemplateTest extends TestCase
                 && $slides[0]['url'] === $business->featuredMedia->url());
     }
 
+    public function test_business_carousel_uses_optional_safe_website_link_in_both_languages(): void
+    {
+        $page = Page::factory()->published()->create();
+        $page->translations()->where('locale', 'en')->update(['slug' => 'business']);
+        $business = Business::factory()->published()->create(['website_url' => 'https://example.test/business']);
+
+        foreach (['al', 'en'] as $locale) {
+            $url = route('public.pages.show', [$locale, $page->translation($locale)->slug]);
+            $this->get($url)->assertOk()->assertSee('href="https://example.test/business"', false);
+        }
+
+        foreach ([null, '', 'javascript:alert(1)', 'ftp://example.test/file'] as $value) {
+            $business->update(['website_url' => $value]);
+            $this->get('/en/business')->assertOk()
+                ->assertViewHas('slides', fn ($slides) => $slides->first()['link'] === null)
+                ->assertDontSee('rel="noopener noreferrer" draggable="false"', false);
+        }
+    }
+
     public function test_template_seed_adds_missing_pages_without_overwriting_drafts_or_deleted_pages(): void
     {
         Storage::fake('public');

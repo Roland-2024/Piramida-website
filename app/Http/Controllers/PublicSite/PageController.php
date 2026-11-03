@@ -44,6 +44,7 @@ class PageController extends Controller
                     ->with(['translations', 'featuredMedia'])
                     ->orderBy('display_order')->orderBy('id')->get()
                     ->map(fn (Business $business) => [
+                        'link' => filter_var($business->website_url, FILTER_VALIDATE_URL) && in_array(strtolower(parse_url($business->website_url, PHP_URL_SCHEME) ?? ''), ['http', 'https'], true) ? $business->website_url : null,
                         'url' => $business->featuredMedia?->displayUrl(),
                         'media' => $business->featuredMedia,
                         'title' => $business->translation($locale, false)->name,
