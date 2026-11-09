@@ -166,7 +166,7 @@
   line-height: 1.25;
 }
 
-.contact-form p {
+.contact-form > p:not(.template-success) {
   max-width: 375px;
   margin: 10px 0 26px;
   color: rgba(255, 255, 255, 0.94);
