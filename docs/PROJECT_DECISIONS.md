@@ -32,6 +32,8 @@ This file records durable decisions that future tasks should preserve. Implement
 
 ## Events and WordPress synchronization
 
+- Homepage event cards use native horizontal touch scrolling and CSS snap, preserving vertical page scrolling and pinch zoom. Custom swipe handling is mouse-only; infinite-loop recentering waits until touch release and scroll settling. Pointer cancellation must not prevent touch navigation. Desktop arrows and card links remain unchanged. Real iOS/Android validation is required after deployment.
+
 - Piramida Ime's WordPress API is an external source for bilingual events.
 - WordPress-imported events and manually created dashboard events coexist. Manual records are never overwritten by the importer.
 - Imported translations retain their WordPress IDs. The initial import pairs translations only when the available data gives an unambiguous match; later runs update by stored ID.

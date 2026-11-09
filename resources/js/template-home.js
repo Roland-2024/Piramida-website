@@ -6,13 +6,6 @@ const track = document.getElementById("cardTrack");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 
-// Let the browser handle vertical page scrolling natively, but hand
-// horizontal gestures on this track entirely to our own swipe logic below.
-// Without this, touchstart can kick off a native horizontal scroll before
-// pointermove's preventDefault() has a chance to run, so the drag and our
-// next()/prev() snap end up fighting each other.
-track.style.touchAction = "pan-y";
-
 // ---- Infinite loop setup: clone all cards before and after ----
 const originalCards = Array.from(track.children);
 const cardCount = originalCards.length;
@@ -96,6 +89,27 @@ nextBtn.addEventListener("click", next);
 // Also update the active card live while scrolling (rAF-throttled).
 let settleTimer;
 let scrollTicking = false;
+let touching = false;
+
+function scheduleSettle() {
+  clearTimeout(settleTimer);
+  settleTimer = setTimeout(() => {
+    if (touching) return;
+    const idx = currentIndex();
+    if (idx >= cardCount * 2) goTo(idx - cardCount, false);
+    else if (idx < cardCount) goTo(idx + cardCount, false);
+    updateActiveCard();
+  }, 200);
+}
+
+// Touch scrolling stays native; never re-center clones under a held finger.
+track.addEventListener("touchstart", () => { touching = true; }, { passive: true });
+["touchend", "touchcancel"].forEach(type => {
+  track.addEventListener(type, (event) => {
+    touching = event.touches.length > 0;
+    scheduleSettle();
+  }, { passive: true });
+});
 
 track.addEventListener("scroll", () => {
   if (!scrollTicking) {
@@ -106,13 +120,7 @@ track.addEventListener("scroll", () => {
     scrollTicking = true;
   }
 
-  clearTimeout(settleTimer);
-  settleTimer = setTimeout(() => {
-    const idx = currentIndex();
-    if (idx >= cardCount * 2) goTo(idx - cardCount, false);
-    else if (idx < cardCount) goTo(idx + cardCount, false);
-    updateActiveCard();
-  }, 80);
+  scheduleSettle();
 });
 
 window.addEventListener("resize", () => {
@@ -120,7 +128,7 @@ window.addEventListener("resize", () => {
   updateActiveCard();
 });
 
-// ---- Swipe (pointer-based) — snaps to next/prev, no live drag-follow ----
+// Mouse drag only; native touch scrolling must not depend on pointerup.
 let startX = 0;
 let startY = 0;
 let pointerDown = false;
@@ -128,11 +136,11 @@ let swiped = false;
 const SWIPE_THRESHOLD = 40;
 
 track.addEventListener("pointerdown", (e) => {
-  pointerDown = true;
   swiped = false;
+  if (e.pointerType !== "mouse" || e.button !== 0) return;
+  pointerDown = true;
   startX = e.clientX;
   startY = e.clientY;
-  // Keep normal link clicks intact; native horizontal scrolling handles touch.
 });
 
 track.addEventListener("pointermove", (e) => {
@@ -148,7 +156,8 @@ track.addEventListener("pointerup", (e) => {
   if (!pointerDown) return;
   pointerDown = false;
   const dx = e.clientX - startX;
-  if (Math.abs(dx) > SWIPE_THRESHOLD) {
+  const dy = e.clientY - startY;
+  if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
     swiped = true;
     dx < 0 ? next() : prev();
   }

@@ -13,11 +13,17 @@
 }
 
 #cardTrack {
+  touch-action: auto;
+  scroll-snap-type: x mandatory;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: calc((100% - (var(--visible-cards) - 1) * 1rem) / var(--visible-cards));
   gap: 1rem;
   --visible-cards: 3;
+}
+
+#cardTrack > .card-snap {
+  scroll-snap-align: start;
 }
 
 #eventsSection {
