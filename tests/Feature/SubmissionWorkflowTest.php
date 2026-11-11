@@ -75,7 +75,7 @@ class SubmissionWorkflowTest extends TestCase
             'employee_count' => 12, 'annual_turnover' => 250000, 'contact_first_name' => 'Business',
             'contact_last_name' => 'Owner', 'contact_position' => 'Director',
             'contact_phone' => '+35542222222', 'contact_mobile' => '+355692222222',
-            'contact_email' => 'owner@example.test', 'offer_per_sqm' => 22, 'privacy' => '1', ...$documents,
+            'contact_email' => 'owner@example.test', 'offer_per_sqm' => 1500, 'privacy' => '1', ...$documents,
         ])->assertSessionHasErrors(array_keys($documents)[1]);
         $this->assertDatabaseCount('submissions', 0);
         $this->assertDatabaseCount('submission_attachments', 0);
@@ -240,7 +240,7 @@ class SubmissionWorkflowTest extends TestCase
             'contact_phone' => '+355 4 222 2222',
             'contact_mobile' => '+355 69 222 2222',
             'contact_email' => 'owner@example.test',
-            'offer_per_sqm' => 22,
+            'offer_per_sqm' => 1500,
             ...$documents,
             'privacy' => '1',
             'website' => '',
@@ -252,7 +252,9 @@ class SubmissionWorkflowTest extends TestCase
         $this->assertSame(SubmissionType::Leasing, $submission->type);
         $this->assertSame('Business Owner', $submission->name);
         $this->assertSame('Example Studio', $submission->details['company_name']);
-        $this->assertSame(2424.4, $submission->details['monthly_rent']);
+        $this->assertEquals(165300, $submission->details['monthly_rent']);
+        $this->assertSame('ALL', $submission->details['currency']);
+        $this->assertSame('1500.00', $submission->details['minimum_offer_per_sqm']);
         $this->assertSame('A1', $submission->details['unit_code']);
         $this->assertSame('ground', $submission->details['floor']);
         $this->assertCount(10, $submission->attachments);
@@ -288,7 +290,7 @@ class SubmissionWorkflowTest extends TestCase
         ]);
 
         $this->post(route('public.spaces.leasing-request', ['en', "space-{$space->id}"]), [
-            'offer_per_sqm' => 21.99,
+            'offer_per_sqm' => 1499.99,
         ])->assertRedirect()->assertSessionHasErrors('offer_per_sqm');
 
         $this->assertDatabaseCount('submissions', 0);

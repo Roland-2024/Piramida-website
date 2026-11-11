@@ -78,6 +78,10 @@ class StoreSubmissionRequest extends FormRequest
      */
     private function leasingRules(array $common): array
     {
+        $space = Space::query()->where('type', SpaceType::Leasing)
+            ->whereHas('translations', fn ($query) => $query->where('locale', $this->route('locale'))->where('slug', $this->route('slug')))
+            ->with('leasingUnit')->first();
+        $minimum = $space?->leasingMinimumOffer();
         $rules = [
             ...$common,
             'company_name' => ['required', 'string', 'max:255'],
@@ -94,7 +98,7 @@ class StoreSubmissionRequest extends FormRequest
             'contact_phone' => ['required', 'string', 'max:50'],
             'contact_mobile' => ['required', 'string', 'max:50'],
             'contact_email' => ['required', 'email:rfc', 'max:255'],
-            'offer_per_sqm' => ['required', 'numeric', 'min:22', 'max:999999.99'],
+            'offer_per_sqm' => [Rule::prohibitedIf($minimum === null), 'required', 'numeric', 'min:'.($minimum ?? 0), 'max:99999999.99'],
         ];
 
         foreach (array_keys(self::leasingDocumentLabels()) as $field) {

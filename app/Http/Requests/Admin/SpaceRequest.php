@@ -49,8 +49,8 @@ class SpaceRequest extends TranslatedContentRequest
                 Rule::requiredIf($this->boolean('is_available')),
                 'nullable', 'numeric', $this->boolean('is_available') ? 'gt:0' : 'min:0', 'max:99999999.99',
             ],
-            'price_from' => ['nullable', 'numeric', 'min:0', 'max:99999999.99'],
-            'currency' => ['required', 'string', 'size:3'],
+            'price_from' => ['nullable', 'numeric', $this->routeIs('admin.leasing.*') ? 'gt:0' : 'min:0', 'max:99999999.99'],
+            'currency' => ['required', 'string', 'size:3', ...($this->routeIs('admin.leasing.*') ? [Rule::in(['ALL'])] : [])],
             'booking_mode' => ['required', Rule::enum(BookingMode::class)],
             'external_url' => [
                 Rule::requiredIf(in_array($this->input('booking_mode'), ['external', 'both'], true)),

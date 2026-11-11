@@ -1,3 +1,7 @@
+@php $minimumOffer = $item->leasingMinimumOffer(); @endphp
+@if ($minimumOffer === null)
+    <p class="template-request-notice">{{ __('cms.leasing_price_unavailable') }}</p>
+@else
 <form method="POST" action="{{ $action }}" enctype="multipart/form-data" class="leasing-application-form" data-leasing-form data-area="{{ $item->area_sqm }}">
     @csrf
 
@@ -55,8 +59,8 @@
         <legend>3. {{ __('cms.your_offer') }}</legend>
         <div class="leasing-form-grid leasing-form-grid-3">
             <div>
-                <label for="leasing_offer_per_sqm" class="leasing-field-label">{{ __('cms.offer_per_sqm') }} * <span class="font-normal text-slate-500">({{ __('cms.minimum') }} 22.00 EUR)</span></label>
-                <input id="leasing_offer_per_sqm" name="offer_per_sqm" type="number" min="22" max="999999.99" step="0.01" value="{{ old('offer_per_sqm', 22) }}" aria-describedby="leasing_offer_error" required>
+                <label for="leasing_offer_per_sqm" class="leasing-field-label">{{ __('cms.offer_per_sqm') }} * <span class="font-normal text-slate-500">({{ __('cms.minimum') }} {{ $minimumOffer }} ALL)</span></label>
+                <input id="leasing_offer_per_sqm" name="offer_per_sqm" type="number" min="{{ $minimumOffer }}" max="99999999.99" step="0.01" value="{{ old('offer_per_sqm', $minimumOffer) }}" aria-describedby="leasing_offer_error" required>
                 <p id="leasing_offer_error" class="leasing-offer-error" aria-live="polite" hidden></p>
                 @error('offer_per_sqm')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
             </div>
@@ -100,9 +104,10 @@
             offer.setAttribute('aria-invalid', String(!valid));
             error.hidden = valid;
             error.textContent = valid ? '' : offer.validationMessage;
-            output.textContent = valid ? `${(offer.valueAsNumber * area).toFixed(2)} EUR` : '—';
+            output.textContent = valid ? `${(offer.valueAsNumber * area).toFixed(2)} ALL` : '—';
         };
         offer.addEventListener('input', update);
         update();
     })();
 </script>
+@endif

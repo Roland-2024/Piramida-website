@@ -207,7 +207,7 @@ class LeasingMapTest extends TestCase
     {
         return array_replace([
             'status' => 'published', 'published_at' => now()->subDay()->toDateTimeString(),
-            'display_order' => 0, 'currency' => 'EUR', 'booking_mode' => 'internal',
+            'display_order' => 0, 'currency' => 'ALL', 'booking_mode' => 'internal',
             'area_sqm' => 100, 'is_featured' => '0',
             'translations' => [
                 'al' => ['title' => 'Test leasing', 'slug' => 'test-qira'],

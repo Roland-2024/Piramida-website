@@ -42,6 +42,17 @@ class Space extends Model
         return $this->belongsTo(LeasingUnit::class);
     }
 
+    public function leasingMinimumOffer(): ?string
+    {
+        if ($this->currency === 'ALL' && (float) $this->price_from > 0) {
+            return $this->price_from;
+        }
+
+        $minimum = config('leasing.minimum_prices_all')[$this->leasingUnit?->code] ?? null;
+
+        return $minimum === null ? null : number_format($minimum, 2, '.', '');
+    }
+
     public function scopePubliclyAccessible(Builder $query): Builder
     {
         return $query->where(fn (Builder $query) => $query

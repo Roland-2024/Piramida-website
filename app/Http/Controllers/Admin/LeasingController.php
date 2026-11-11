@@ -24,7 +24,11 @@ class LeasingController extends SpaceController
                     ->orderBy('display_order')->get()->mapWithKeys(fn (LeasingUnit $unit) => [$unit->id => $unit->label()])->all(),
             ],
             ['name' => 'is_available', 'label' => 'Available for applications', 'type' => 'checkbox'],
-            ...parent::globalFields(),
+            ...array_map(fn (array $field) => match ($field['name']) {
+                'price_from' => [...$field, 'label' => 'Minimum offer per m² (ALL)'],
+                'currency' => [...$field, 'default' => 'ALL'],
+                default => $field,
+            }, parent::globalFields()),
         ];
     }
 }

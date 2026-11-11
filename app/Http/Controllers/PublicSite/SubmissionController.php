@@ -190,6 +190,8 @@ class SubmissionController extends Controller
                 $details['floor'] = $space->leasingUnit->floor;
                 $details['area_sqm'] = $space->area_sqm;
                 $details['monthly_rent'] = round((float) $validated['offer_per_sqm'] * (float) $space->area_sqm, 2);
+                $details['currency'] = 'ALL';
+                $details['minimum_offer_per_sqm'] = $space->leasingMinimumOffer();
 
                 $submission = new Submission([
                     'type' => SubmissionType::Leasing,
