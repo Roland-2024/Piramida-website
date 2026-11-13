@@ -1,6 +1,16 @@
 <?php
 
 return [
+    'floor_plan' => 'Planimetria',
+    'business_category' => 'Kategoria e Biznesit',
+    'select_business_category' => 'Zgjidhni kategorinë',
+    'business_category_art_culture' => 'Art/Kulturë',
+    'business_category_education' => 'Edukim',
+    'business_category_electronics' => 'Elektronikë',
+    'business_category_bar_restaurant' => 'Bar/Restorant',
+    'business_category_government_office' => 'Zyrë qeveritare',
+    'business_category_shop' => 'Dyqan',
+    'business_category_technology_innovation' => 'Teknologji/Inovacion',
     'upload_failed' => 'Skedari nuk mund të ruhej. Ju lutemi provoni përsëri.',
     'contact_title_first' => 'Na',
     'contact_title_second' => 'Kontaktoni',

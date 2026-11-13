@@ -7,8 +7,10 @@ use App\Models\LeasingUnit;
 use App\Models\Space;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SpaceController extends TranslatedCatalogController
 {
@@ -20,7 +22,20 @@ class SpaceController extends TranslatedCatalogController
 
     protected string $showView = 'public.spaces.show';
 
-    protected array $with = ['translations', 'featuredMedia', 'gallery', 'leasingUnit'];
+    protected array $with = ['translations', 'featuredMedia', 'gallery', 'leasingUnit', 'floorPlan'];
+
+    public function floorPlan(string $locale, string $slug): StreamedResponse
+    {
+        $space = Space::query()->published()->publiclyAccessible()->where('type', SpaceType::Leasing)
+            ->whereHas('translations', fn (Builder $query) => $query->where('locale', $locale)->where('slug', $slug))
+            ->with('floorPlan')->firstOrFail();
+        $plan = $space->floorPlan;
+        abort_unless($plan && Storage::disk('public')->exists($plan->path), 404);
+
+        return Storage::disk('public')->download($plan->path, 'floor-plan-'.$space->id.'.pdf', [
+            'Content-Type' => 'application/pdf', 'X-Content-Type-Options' => 'nosniff', 'Cache-Control' => 'private, no-store',
+        ]);
+    }
 
     protected function showQuery(Builder $query): Builder
     {

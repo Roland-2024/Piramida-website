@@ -1,6 +1,16 @@
 <?php
 
 return [
+    'floor_plan' => 'Floor plan',
+    'business_category' => 'Business Category',
+    'select_business_category' => 'Select a category',
+    'business_category_art_culture' => 'Art/Culture',
+    'business_category_education' => 'Education',
+    'business_category_electronics' => 'Electronics',
+    'business_category_bar_restaurant' => 'Bar/Restaurant',
+    'business_category_government_office' => 'Government office',
+    'business_category_shop' => 'Shop',
+    'business_category_technology_innovation' => 'Technology/Innovation',
     'upload_failed' => 'The file could not be saved. Please try again.',
     'contact_title_first' => 'Contact',
     'contact_title_second' => 'Us',

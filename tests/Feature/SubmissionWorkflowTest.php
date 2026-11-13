@@ -70,7 +70,7 @@ class SubmissionWorkflowTest extends TestCase
         $disk->shouldReceive('delete')->once()->with('submissions/test-first.pdf')->andReturn(true);
         Storage::shouldReceive('disk')->with('local')->andReturn($disk);
         $this->post(route('public.spaces.leasing-request', ['en', "space-{$space->id}"]), [
-            'company_name' => 'Example Studio', 'nipt' => 'L12345678A', 'entity_type' => 'llc',
+            'company_name' => 'Example Studio', 'nipt' => 'L12345678A', 'entity_type' => 'llc', 'business_category' => 'education',
             'established_year' => 2018, 'company_address' => 'Main Street 10', 'city' => 'Tirana',
             'employee_count' => 12, 'annual_turnover' => 250000, 'contact_first_name' => 'Business',
             'contact_last_name' => 'Owner', 'contact_position' => 'Director',
@@ -229,6 +229,7 @@ class SubmissionWorkflowTest extends TestCase
             'company_name' => 'Example Studio',
             'nipt' => 'L12345678A',
             'entity_type' => 'llc',
+            'business_category' => 'technology_innovation',
             'established_year' => 2018,
             'company_address' => 'Main Street 10',
             'city' => 'Tirana',
@@ -252,6 +253,7 @@ class SubmissionWorkflowTest extends TestCase
         $this->assertSame(SubmissionType::Leasing, $submission->type);
         $this->assertSame('Business Owner', $submission->name);
         $this->assertSame('Example Studio', $submission->details['company_name']);
+        $this->assertSame('technology_innovation', $submission->details['business_category']);
         $this->assertEquals(165300, $submission->details['monthly_rent']);
         $this->assertSame('ALL', $submission->details['currency']);
         $this->assertSame('1500.00', $submission->details['minimum_offer_per_sqm']);

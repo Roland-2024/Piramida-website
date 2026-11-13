@@ -91,7 +91,8 @@ class Media extends Model
                     ->where('featured_media_id', $this->id)
                     ->orWhere('logo_media_id', $this->id))
                 ->exists()
-            || Space::withTrashed()->where('featured_media_id', $this->id)->exists()
+            || Space::withTrashed()->where(fn ($query) => $query
+                ->where('featured_media_id', $this->id)->orWhere('floor_plan_media_id', $this->id))->exists()
             || DB::table('media_attachments')->where('media_id', $this->id)->exists();
     }
 

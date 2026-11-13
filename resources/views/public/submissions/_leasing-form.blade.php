@@ -7,20 +7,28 @@
 
     <fieldset>
         <legend>1. {{ __('cms.applicant_information') }}</legend>
-        <div class="leasing-form-grid leasing-form-grid-4">
+        <div class="leasing-form-grid leasing-form-grid-3">
             @foreach ([
                 ['company_name', 'company_name', 'text'],
                 ['nipt', 'nipt', 'text'],
                 ['company_address', 'address', 'text'],
                 ['city', 'city', 'text'],
                 ['entity_type', 'entity_type', 'select'],
+                ['business_category', 'business_category', 'category'],
                 ['established_year', 'established_year', 'number'],
                 ['annual_turnover', 'annual_turnover', 'number'],
                 ['employee_count', 'employee_count', 'number'],
             ] as [$name, $label, $type])
                 <div>
                     <label for="leasing_{{ $name }}" class="leasing-field-label">{{ __('cms.'.$label) }} *</label>
-                    @if ($type === 'select')
+                    @if ($type === 'category')
+                        <select id="leasing_{{ $name }}" name="{{ $name }}" required>
+                            <option value="">{{ __('cms.select_business_category') }}</option>
+                            @foreach(config('leasing.business_categories') as $category)
+                                <option value="{{ $category }}" @selected(old($name) === $category)>{{ __('cms.business_category_'.$category) }}</option>
+                            @endforeach
+                        </select>
+                    @elseif ($type === 'select')
                         <select id="leasing_{{ $name }}" name="{{ $name }}" required>
                             @foreach (['corporation', 'llc', 'partnership', 'sole_proprietor', 'ngo', 'other'] as $entityType)
                                 <option value="{{ $entityType }}" @selected(old($name) === $entityType)>{{ __('cms.entity_'.$entityType) }}</option>

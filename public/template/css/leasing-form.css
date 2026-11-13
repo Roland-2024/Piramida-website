@@ -230,7 +230,7 @@ html.leasing-form-document footer {
 
 .leasing-form-summary {
   display: grid;
-  grid-template-columns: 1.42fr 0.96fr 1.05fr 0.48fr 162px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr) minmax(0, 1fr) auto;
   align-items: end;
   gap: 32px;
   margin: 103px 0 0;
@@ -256,6 +256,7 @@ html.leasing-form-document footer {
 }
 
 .leasing-form-plan {
+  gap: 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;

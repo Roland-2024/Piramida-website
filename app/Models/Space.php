@@ -20,6 +20,7 @@ class Space extends Model
 
     protected $fillable = [
         'featured_media_id',
+        'floor_plan_media_id',
         'type',
         'leasing_unit_id',
         'is_available',
@@ -69,6 +70,12 @@ class Space extends Model
     public function featuredMedia(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'featured_media_id');
+    }
+
+    public function floorPlan(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'floor_plan_media_id')
+            ->where('disk', 'public')->where('mime_type', 'application/pdf');
     }
 
     public function createdBy(): BelongsTo

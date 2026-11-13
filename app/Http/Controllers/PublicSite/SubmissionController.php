@@ -174,6 +174,7 @@ class SubmissionController extends Controller
                     'company_name',
                     'nipt',
                     'entity_type',
+                    'business_category',
                     'established_year',
                     'company_address',
                     'city',

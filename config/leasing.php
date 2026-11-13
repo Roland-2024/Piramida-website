@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'business_categories' => ['art_culture', 'education', 'electronics', 'bar_restaurant', 'government_office', 'shop', 'technology_innovation'],
     // ALL/m² from “Piramida Functions per each unit (002) (1).xlsx”, Tenants Proposals, D3:D54.
     'minimum_prices_all' => [
         'E1' => 2000, 'E2' => 1500, 'D1' => 2000, 'D2' => 2000, 'D3' => 1500,

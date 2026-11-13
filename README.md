@@ -264,6 +264,8 @@ Editors may also manage attractions, businesses, spaces, and careers. Submission
 
 ## Request workflow
 
+Leasing floor plans: upload a PDF (maximum 10 MB) under **Media**, then select it in **Leasing spaces > Floor plan (PDF)**. Choose **No floor plan** to remove the association without deleting the shared file. Only public PDFs can be selected. The public unit page shows a localized download button only when a PDF is attached. Run `php artisan migrate --force` and refresh config/views on deployment; existing units start without a plan. New applications require a fixed Business Category; old submissions are not rewritten.
+
 1. Configure the public action on an event, space, or career as `Internal request form`, `External link`, `Internal form and external link`, or `No booking`.
 2. Create event spaces in **Event spaces** and rental posts in **Leasing spaces**. For leasing, select **Floor / map unit** and enable **Available for applications** when appropriate; publish the post with both translations. The floor follows the selected unit automatically.
 3. Set the submission notification address under **Dashboard → Site settings**.

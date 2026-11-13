@@ -46,7 +46,12 @@
                 <span>{{ __('cms.area') }}</span>
                 <strong>{{ $item->area_sqm }} m²</strong>
               </div>
-
+              @if($item->floorPlan)
+                <a class="leasing-form-plan" href="{{ route('public.spaces.floor-plan', [app()->getLocale(), $translation->slug]) }}">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 2H6v20h12V6zM14 2v5h5M12 10v8m-3-3 3 3 3-3" /></svg>
+                  {{ __('cms.floor_plan') }}
+                </a>
+              @endif
             </div>
 
             @if($item->booking_mode->allowsInternal())

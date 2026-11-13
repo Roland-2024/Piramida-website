@@ -22,6 +22,7 @@
 @endif
 
 @if ($routePrefix === 'admin.leasing')
+    <p class="mb-5 text-sm text-slate-600">Upload a PDF (up to 10 MB) in <a href="{{ route('admin.media.create') }}" target="_blank" rel="noopener" class="underline">Media</a>, then return/reload and select it in Floor plan. Choose No floor plan to detach it; the shared file is not deleted.</p>
     <p class="mb-5 rounded-lg bg-slate-50 p-4 text-sm text-slate-600">Select a real map unit; its floor is assigned automatically. Each unit can belong to only one post (including trashed posts). Only published, available posts with a map unit and a translation are green and clickable. Unassigned or unavailable units stay red.</p>
 @endif
 <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">

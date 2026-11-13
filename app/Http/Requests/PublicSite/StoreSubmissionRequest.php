@@ -87,6 +87,7 @@ class StoreSubmissionRequest extends FormRequest
             'company_name' => ['required', 'string', 'max:255'],
             'nipt' => ['required', 'string', 'max:50'],
             'entity_type' => ['required', Rule::in(['corporation', 'llc', 'partnership', 'sole_proprietor', 'ngo', 'other'])],
+            'business_category' => ['required', Rule::in(config('leasing.business_categories'))],
             'established_year' => ['required', 'integer', 'min:1800', 'max:'.now()->year],
             'company_address' => ['required', 'string', 'max:500'],
             'city' => ['required', 'string', 'max:100'],

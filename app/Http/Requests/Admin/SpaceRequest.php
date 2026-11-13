@@ -38,6 +38,9 @@ class SpaceRequest extends TranslatedContentRequest
     {
         return $this->contentRules('space_translations', [
             'type' => ['required', Rule::enum(SpaceType::class)],
+            'floor_plan_media_id' => [$this->routeIs('admin.leasing.*') ? 'nullable' : 'prohibited', 'integer',
+                Rule::exists('media', 'id')->where(fn ($query) => $query
+                    ->where('disk', 'public')->where('mime_type', 'application/pdf')->whereNull('deleted_at'))],
             'is_available' => ['required', 'boolean'],
             'leasing_unit_id' => [
                 Rule::requiredIf($this->boolean('is_available')),
