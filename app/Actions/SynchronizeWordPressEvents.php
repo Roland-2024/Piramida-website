@@ -90,13 +90,6 @@ class SynchronizeWordPressEvents
                 continue;
             }
 
-            if ($eventIds->isEmpty() && $byLocale->keys()->sort()->values()->all() !== collect(array_keys(config('cms.locales')))->sort()->values()->all()) {
-                $result['skipped']++;
-                $this->warnings[] = 'Skipped an unpaired WordPress event.';
-
-                continue;
-            }
-
             $event = $eventIds->isNotEmpty()
                 ? Event::withTrashed()->find($eventIds->first())
                 : null;

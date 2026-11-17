@@ -232,6 +232,78 @@ class WordPressEventSyncTest extends TestCase
             ->assertSessionHas('success');
     }
 
+    public function test_single_language_events_import_and_later_translations_join_without_duplicates(): void
+    {
+        Storage::fake('public');
+        config(['services.wordpress_events.url' => 'https://wordpress.test/wp-json', 'services.wordpress_events.api_key' => 'test-key',
+            'services.wordpress_events.image_hosts' => ['cdn.test'], 'filesystems.default' => 'public']);
+        $posts = ['al' => [$this->wordPressPost(301, 'al', 'NDËRTO NGA SHQIPËRIA')], 'en' => []];
+        Http::fake(function (Request $request) use (&$posts) {
+            if ($request->url() === 'https://cdn.test/event.png') {
+                return Http::response(base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='));
+            }
+            parse_str((string) parse_url($request->url(), PHP_URL_QUERY), $query);
+            $items = $posts[$query['lang']];
+
+            return Http::response($items, 200, ['X-WP-TotalPages' => count($items) ? '1' : '0', 'X-WP-Total' => count($items)]);
+        });
+        $result = app(SynchronizeWordPressEvents::class)->handle();
+        $this->assertSame(1, $result['created']);
+        $this->assertSame(0, $result['skipped']);
+        $event = Event::firstOrFail();
+        $slug = $event->translation('al', false)->slug;
+        $this->assertNull($event->translation('en', false));
+        $this->get(route('public.events.show', ['al', $slug]))->assertOk()->assertSee('NDËRTO NGA SHQIPËRIA');
+        $this->get(route('public.events.show', ['en', $slug]))->assertNotFound();
+        $this->get(route('public.events.index', 'en'))->assertOk()->assertDontSee('NDËRTO NGA SHQIPËRIA');
+        $this->assertSame(1, app(SynchronizeWordPressEvents::class)->handle()['updated']);
+        $this->assertDatabaseCount('events', 1);
+
+        $posts['en'] = [$this->wordPressPost(302, 'en', 'Build from Albania')];
+        $result = app(SynchronizeWordPressEvents::class)->handle();
+        $this->assertSame(0, $result['created']);
+        $this->assertSame(1, $result['updated']);
+        $this->assertSame($event->id, Event::firstOrFail()->id);
+        $this->assertDatabaseCount('events', 1);
+        $this->assertDatabaseHas('event_translations', ['event_id' => $event->id, 'locale' => 'en', 'wordpress_id' => 302]);
+        $this->get(route('public.events.show', ['en', $event->fresh()->translation('en')->slug]))->assertOk()->assertSee('Build from Albania');
+    }
+
+    public function test_single_language_events_without_images_keep_their_source_id_on_resync(): void
+    {
+        config(['services.wordpress_events.url' => 'https://wordpress.test/wp-json', 'services.wordpress_events.api_key' => 'test-key']);
+        Http::fake(function (Request $request) {
+            parse_str((string) parse_url($request->url(), PHP_URL_QUERY), $query);
+            $post = $this->wordPressPost(401, $query['lang'], 'Single language');
+            $post['featured_image_url'] = '';
+            $items = $query['lang'] === 'al' ? [$post] : [];
+
+            return Http::response($items, 200, ['X-WP-TotalPages' => count($items) ? '1' : '0', 'X-WP-Total' => count($items)]);
+        });
+        $this->assertSame(1, app(SynchronizeWordPressEvents::class)->handle()['created']);
+        $this->assertSame(1, app(SynchronizeWordPressEvents::class)->handle()['updated']);
+        $this->assertDatabaseCount('events', 1);
+        $this->assertDatabaseHas('event_translations', ['locale' => 'al', 'wordpress_id' => 401]);
+    }
+
+    public function test_ambiguous_images_and_missing_start_dates_are_still_skipped(): void
+    {
+        config(['services.wordpress_events.url' => 'https://wordpress.test/wp-json', 'services.wordpress_events.api_key' => 'test-key']);
+        Http::fake(function (Request $request) {
+            parse_str((string) parse_url($request->url(), PHP_URL_QUERY), $query);
+            $invalid = $this->wordPressPost(503, 'al', 'No date');
+            $invalid['featured_image_url'] = '';
+            $invalid['meta']['_event_start_date'] = '';
+            $items = $query['lang'] === 'al' ? [$this->wordPressPost(501, 'al', 'First'), $this->wordPressPost(502, 'al', 'Second'), $invalid] : [];
+
+            return Http::response($items, 200, ['X-WP-TotalPages' => count($items) ? '1' : '0', 'X-WP-Total' => count($items)]);
+        });
+        $result = app(SynchronizeWordPressEvents::class)->handle();
+        $this->assertSame(2, $result['skipped']);
+        $this->assertContains('Skipped an ambiguous WordPress image match.', $result['warnings']);
+        $this->assertDatabaseCount('events', 0);
+    }
+
     /**
      * @return array<string, mixed>
      */
