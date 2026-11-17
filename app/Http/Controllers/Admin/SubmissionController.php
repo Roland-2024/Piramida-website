@@ -64,7 +64,7 @@ class SubmissionController extends Controller
 
     public function download(Submission $submission): StreamedResponse
     {
-        Gate::authorize('manage-submissions');
+        Gate::authorize('view-submissions');
         abort_unless($submission->hasAttachment(), 404);
 
         return Storage::disk($submission->attachment_disk)
@@ -73,7 +73,7 @@ class SubmissionController extends Controller
 
     public function downloadAttachment(Submission $submission, SubmissionAttachment $attachment): StreamedResponse
     {
-        Gate::authorize('manage-submissions');
+        Gate::authorize('view-submissions');
         abort_unless($attachment->submission_id === $submission->id, 404);
 
         return Storage::disk($attachment->disk)

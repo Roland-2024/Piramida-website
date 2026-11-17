@@ -264,11 +264,13 @@ class SubmissionWorkflowTest extends TestCase
 
         $attachment = $submission->attachments->first();
         $this->actingAs(User::factory()->create())
-            ->get(route('admin.submissions.attachments.download', [$submission, $attachment]))
-            ->assertForbidden();
+            ->get(route('admin.submissions.show', $submission))
+            ->assertOk()->assertSee(route('admin.submissions.attachments.download', [$submission, $attachment]), false);
+        $this->get(route('admin.submissions.attachments.download', [$submission, $attachment]))
+            ->assertOk()->assertDownload($attachment->original_name);
         $this->actingAs(User::factory()->admin()->create())
             ->get(route('admin.submissions.attachments.download', [$submission, $attachment]))
-            ->assertOk();
+            ->assertOk()->assertDownload($attachment->original_name);
 
         $this->post(route('public.spaces.event-request', ['en', "space-{$space->id}"]), [
             'name' => 'Business Owner',
@@ -324,11 +326,11 @@ class SubmissionWorkflowTest extends TestCase
 
         $this->actingAs($editor)
             ->get(route('admin.submissions.show', $submission))
-            ->assertOk()->assertSee('Read-only access')->assertDontSee('Save review')->assertDontSee('Download');
+            ->assertOk()->assertSee('Read-only access')->assertDontSee('Save review')->assertSee('Download');
         $this->get(route('admin.submissions.index'))->assertOk()->assertDontSee('Export CSV');
         $this->put(route('admin.submissions.update', $submission), ['status' => 'closed', 'internal_notes' => 'Not allowed'])->assertForbidden();
         $this->get(route('admin.submissions.export'))->assertForbidden();
-        $this->get(route('admin.submissions.download', $submission))->assertForbidden();
+        $this->get(route('admin.submissions.download', $submission))->assertOk()->assertDownload('cv.pdf');
         $this->assertNull($submission->fresh()->internal_notes);
 
         $this->actingAs($admin)
@@ -341,5 +343,39 @@ class SubmissionWorkflowTest extends TestCase
         $submission->refresh();
         $this->assertSame(SubmissionStatus::InReview, $submission->status);
         $this->assertSame($admin->id, $submission->handled_by);
+        $this->actingAs($editor)->get(route('admin.submissions.show', $submission))
+            ->assertOk()->assertDontSee('Reviewing the application.');
+    }
+
+    public function test_private_document_downloads_require_active_staff_and_matching_submission(): void
+    {
+        Storage::fake('local');
+        Storage::disk('local')->put('submissions/private.pdf', '%PDF-1.4 test');
+        $submission = Submission::factory()->create([
+            'attachment_disk' => 'local', 'attachment_path' => 'submissions/private.pdf',
+            'attachment_name' => 'private.pdf',
+        ]);
+        $attachment = $submission->attachments()->create([
+            'document_type' => 'company_profile', 'disk' => 'local', 'path' => 'submissions/private.pdf',
+            'original_name' => 'private.pdf', 'mime_type' => 'application/pdf', 'size' => 13,
+        ]);
+        $urls = [route('admin.submissions.download', $submission),
+            route('admin.submissions.attachments.download', [$submission, $attachment])];
+        foreach ($urls as $url) {
+            $this->get($url)->assertRedirect(route('login'));
+        }
+        $inactive = User::factory()->inactive()->create();
+        foreach ($urls as $url) {
+            $this->actingAs($inactive)->get($url)->assertRedirect(route('login'));
+        }
+        $editor = User::factory()->create();
+        $other = Submission::factory()->create();
+        $this->actingAs($editor)->get(route('admin.submissions.attachments.download', [$other, $attachment]))
+            ->assertNotFound();
+        $this->get(route('admin.submissions.download', $other))->assertNotFound();
+        $submission->delete();
+        foreach ($urls as $url) {
+            $this->get($url)->assertNotFound();
+        }
     }
 }

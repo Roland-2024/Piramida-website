@@ -16,7 +16,7 @@
             @if ($submission->details)
                 <div><p class="text-xs uppercase tracking-wide text-slate-400">Request details</p><dl class="mt-2 divide-y divide-slate-100 rounded-lg border border-slate-200">@foreach ($submission->details as $label => $value)<div class="grid grid-cols-2 gap-3 px-4 py-2 text-sm"><dt class="font-medium">{{ str($label)->replace('_', ' ')->title() }}</dt><dd>{{ is_array($value) ? implode(', ', $value) : $value }}</dd></div>@endforeach</dl></div>
             @endif
-            @can('manage-submissions')
+            @can('view-submissions')
             @if ($submission->hasAttachment())<a href="{{ route('admin.submissions.download', $submission) }}" class="inline-flex rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium">Download {{ $submission->attachment_name }}</a>@endif
             @if ($submission->attachments->isNotEmpty())
                 <div>
@@ -47,7 +47,7 @@
         @else
             <section class="h-fit rounded-2xl border border-slate-200 bg-white p-5">
                 <h3 class="font-semibold">{{ $submission->status->label() }}</h3>
-                <p class="mt-2 text-sm text-slate-500">Read-only access. An administrator manages reviews, private notes and documents.</p>
+                <p class="mt-2 text-sm text-slate-500">Read-only access. You may download application documents. An administrator manages reviews, private notes and exports.</p>
             </section>
         @endcan
     </div>
